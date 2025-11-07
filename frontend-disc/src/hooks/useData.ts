@@ -24,6 +24,8 @@ const useData = <T>(
         })
         .then((res) => {
           console.log(endpoint)
+          console.log(res.data)
+          console.log(import.meta.env["VITE_API_URL"])
           
           setData(res.data);
           setLoading(false);

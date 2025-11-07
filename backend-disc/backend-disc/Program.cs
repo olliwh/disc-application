@@ -2,8 +2,19 @@ using backend_disc.Repositories;
 using backend_disc.Services;
 using class_library_disc.Data;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Logging;
 var builder = WebApplication.CreateBuilder(args);
+
+// Create a logger early (before app.Build)
+var startupLogger = LoggerFactory.Create(config =>
+{
+    config.AddConsole();
+}).CreateLogger("Startup");
+
+startupLogger.LogInformation("App starting...");
+startupLogger.LogInformation("Connection string: {ConnectionString}", builder.Configuration.GetConnectionString("DefaultConnection"));
+
+
 
 // Add services to the container.
 
@@ -36,11 +47,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+Console.WriteLine("Connection string!!!!!!!!!!!!!!!!!");
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-// Add DbContext
 builder.Services.AddDbContext<DiscProfileDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+Console.WriteLine("Connection string: " + builder.Configuration.GetConnectionString("DefaultConnection"));
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
@@ -65,6 +77,10 @@ app.UseAuthorization();
 app.UseCors("AllowAll");
 
 app.MapControllers();
-
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DiscProfileDbContext>();
+    await db.Database.EnsureCreatedAsync(); 
+}
 
 await app.RunAsync();
