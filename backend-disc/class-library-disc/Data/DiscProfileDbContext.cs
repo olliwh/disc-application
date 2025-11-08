@@ -26,7 +26,7 @@ public partial class DiscProfileDbContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
-    public virtual DbSet<EmployeesPrivateDatum> EmployeesPrivateData { get; set; }
+    public virtual DbSet<EmployeePrivateData> EmployeesPrivateData { get; set; }
 
     public virtual DbSet<Position> Positions { get; set; }
 
@@ -210,11 +210,11 @@ public partial class DiscProfileDbContext : DbContext
                     });
         });
 
-        modelBuilder.Entity<EmployeesPrivateDatum>(entity =>
+        modelBuilder.Entity<EmployeePrivateData>(entity =>
         {
             entity.HasKey(e => e.EmployeeId).HasName("PK__employee__C52E0BA81B0EEA66");
 
-            entity.ToTable("employees_private_data");
+            entity.ToTable("employee_private_data");
 
             entity.Property(e => e.EmployeeId)
                 .ValueGeneratedNever()
@@ -232,8 +232,8 @@ public partial class DiscProfileDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("private_phone");
 
-            entity.HasOne(d => d.Employee).WithOne(p => p.EmployeesPrivateDatum)
-                .HasForeignKey<EmployeesPrivateDatum>(d => d.EmployeeId)
+            entity.HasOne(d => d.Employee).WithOne(p => p.EmployeePrivateData)
+                .HasForeignKey<EmployeePrivateData>(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__employees__emplo__03F0984C");
         });

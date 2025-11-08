@@ -1,4 +1,5 @@
-﻿using class_library_disc.Data;
+﻿using backend_disc.Dtos.Employees;
+using class_library_disc.Data;
 using class_library_disc.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,15 @@ namespace backend_disc.Repositories
             _context = context;
         }
 
+        public Task<ReadEmployee> Add(CreateNewEmployee employee)
+        {
+            throw new NotImplementedException();
+        }
 
-        public async Task<List<Employee>?> GetAll(int? departmentId, int? discProfileId, int? positionId)
+        public async Task<List<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId)
         {
             IQueryable<Employee> query = _context.Employees
+            .AsNoTracking()//because we are only reading
            .Include(e => e.DiscProfile);
             if (departmentId.HasValue)
                 query = query.Where(e => e.DepartmentId == departmentId);

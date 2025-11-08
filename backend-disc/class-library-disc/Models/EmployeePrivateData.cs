@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace class_library_disc.Models;
 
-public partial class EmployeesPrivateDatum
+public partial class EmployeePrivateData
 {
     public int EmployeeId { get; set; }
 
