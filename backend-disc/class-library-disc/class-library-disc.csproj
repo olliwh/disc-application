@@ -5,6 +5,7 @@
     <RootNamespace>class_library_disc</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<NoWarn>$(NoWarn);CS8795</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

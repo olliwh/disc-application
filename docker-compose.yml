@@ -24,7 +24,9 @@ services:
       context: .               
       dockerfile: backend-disc/backend-disc/Dockerfile
     env_file:
-      - .env  # 👈 loads environment variables from .env file
+      - .env  
+    environment:
+      - API_SECRET_KEY=${API_SECRET_KEY}  
     ports:
       - "5000:5000"
     depends_on:

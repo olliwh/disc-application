@@ -41,6 +41,11 @@ namespace backend_disc.Repositories
             return await _dbSet.FindAsync(id);
         }
 
+        public IQueryable<T> Query()
+        {
+            return _dbSet.AsQueryable();
+        }
+
         public async Task<T?> Update(int id, T entity)
         {
             var existing = await _dbSet.FindAsync(id);

@@ -6,13 +6,13 @@
 
         public string? PrivatePhone { get; set; }
 
-        public string FirstName { get; set; } = null!;
+        public required string FirstName { get; set; }
 
-        public string LastName { get; set; } = null!;
+        public required string LastName { get; set; }
 
         public int? Experience { get; set; }
 
-        public int CompanyId { get; set; }
+        public required int CompanyId { get; set; }
 
         public int? DepartmentId { get; set; }
 

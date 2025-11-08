@@ -88,6 +88,8 @@ namespace backend_disc.Services
         }
         private async System.Threading.Tasks.Task AddUser(Employee addedEmployee)
         {
+            if (string.IsNullOrEmpty(addedEmployee.Email))
+                throw new InvalidOperationException("Employee email cannot be null when creating user.");
             string username = addedEmployee.Email.Split('@')[0];
             User user = new User
             {

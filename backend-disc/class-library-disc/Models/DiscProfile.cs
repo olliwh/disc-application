@@ -7,11 +7,11 @@ public partial class DiscProfile
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
-    public string? Color { get; set; }
+    public required string Color { get; set; }
 
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
