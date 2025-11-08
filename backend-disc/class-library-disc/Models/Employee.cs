@@ -33,7 +33,7 @@ public partial class Employee
 
     public virtual DiscProfile? DiscProfile { get; set; }
 
-    public virtual EmployeesPrivateDatum? EmployeesPrivateDatum { get; set; }
+    public virtual EmployeePrivateData? EmployeePrivateData { get; set; }
 
     public virtual Position? Position { get; set; }
 
