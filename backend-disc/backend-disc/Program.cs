@@ -1,3 +1,4 @@
+using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Services;
 using class_library_disc.Data;
@@ -73,8 +74,8 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<DiscProfileDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();

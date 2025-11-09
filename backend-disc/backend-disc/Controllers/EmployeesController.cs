@@ -24,9 +24,11 @@ namespace backend_disc.Controllers
         public async Task<IActionResult> GetAll(
             [FromQuery] int? departmentId = null,
             [FromQuery] int? discProfileId = null,
-            [FromQuery] int? positionId = null)
+            [FromQuery] int? positionId = null,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId);
+            var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, pageIndex, pageSize);
             //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
             return Ok(employees);
         }
