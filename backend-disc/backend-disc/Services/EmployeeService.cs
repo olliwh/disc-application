@@ -161,6 +161,10 @@ namespace backend_disc.Services
         }
         public async Task<List<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, int pageIndex, int pageSize)
         {
+            if(pageSize > 50)
+            {
+                pageSize = 50; //max page size
+            }
             var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, pageIndex, pageSize);
 
             if (employees.TotalCount == 0)
