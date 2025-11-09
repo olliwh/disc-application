@@ -5,7 +5,7 @@ namespace backend_disc.Services
 {
     public interface IEmployeeService
     {
-        Task<List<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId);
+        Task<List<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, int pageIndex, int pageSize);
         Task<ReadEmployee> CreateEmployee(CreateNewEmployee dto);
 
     }

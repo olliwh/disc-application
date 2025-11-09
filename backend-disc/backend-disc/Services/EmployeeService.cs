@@ -159,16 +159,16 @@ namespace backend_disc.Services
             }
             return stringBuilder;
         }
-        public async Task<List<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId)
+        public async Task<List<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, int pageIndex, int pageSize)
         {
-            var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId);
+            var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, pageIndex, pageSize);
 
-            if (employees.Count == 0)
+            if (employees.TotalCount == 0)
             {
                 return new List<ReadEmployee>();
             }
 
-            return employees.Select(e => new ReadEmployee
+            return employees.Items.Select(e => new ReadEmployee
             {
                 Id = e.Id,
                 FirstName = e.FirstName,
