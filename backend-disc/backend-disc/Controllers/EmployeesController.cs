@@ -38,6 +38,7 @@ namespace backend_disc.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
 
         [Authorize(Roles = "Admin")]

@@ -21,9 +21,7 @@ namespace backend_disc.Controllers
             _repository = repository;
         }
 
-        //put ProducesResponseType on all
-        //addemployee needs to do something about person
-        //person has a list of employees
+
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -47,6 +45,8 @@ namespace backend_disc.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public virtual async Task<IActionResult> Create([FromBody] TEntity entity)
         {
             var created = await _repository.Add(entity);
@@ -57,6 +57,9 @@ namespace backend_disc.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual async Task<IActionResult> Update(int id, [FromBody] TEntity entity)
         {
             var updated = await _repository.Update(id, entity);
@@ -65,6 +68,8 @@ namespace backend_disc.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual async Task<IActionResult> Delete(int id)
         {
             var deleted = await _repository.Delete(id);
