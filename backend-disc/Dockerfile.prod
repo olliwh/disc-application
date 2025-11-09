@@ -3,21 +3,17 @@ WORKDIR /src
 
 COPY backend-disc.sln ./
 COPY backend-disc/backend-disc.csproj backend-disc/
-COPY backend-disc/class-library-disc/class-library-disc.csproj class-library-disc/
+COPY class-library-disc/class-library-disc.csproj class-library-disc/
 
-RUN dotnet restore backend-disc/backend-disc.csproj
+RUN dotnet restore backend-disc.sln
+COPY . .
 
-COPY backend-disc/ backend-disc/
-COPY backend-disc/class-library-disc/ class-library-disc/
+WORKDIR /src/backend-disc
+RUN dotnet publish -c Release -o /app/publish
 
-RUN dotnet publish backend-disc/backend-disc.csproj -c Release -o /app/publish /p:UseAppHost=false
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
-
-EXPOSE 5000
-ENV ASPNETCORE_URLS=http://+:5000
-ENV ASPNETCORE_ENVIRONMENT=Production
-
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "backend-disc.dll"]
