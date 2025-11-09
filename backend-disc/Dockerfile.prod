@@ -1,20 +1,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
 COPY backend-disc.sln ./
 COPY backend-disc/backend-disc.csproj backend-disc/
 COPY class-library-disc/class-library-disc.csproj class-library-disc/
 
 RUN dotnet restore backend-disc.sln
 
-# Copy the rest of the source
 COPY . .
 
 WORKDIR /src/backend-disc
 RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 
-# Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
