@@ -3,7 +3,7 @@ WORKDIR /src
 
 COPY backend-disc.sln ./
 COPY backend-disc/backend-disc.csproj backend-disc/
-COPY class-library-disc/class-library-disc.csproj class-library-disc/
+COPY backend-disc/class-library-disc/class-library-disc.csproj class-library-disc/
 
 
 RUN dotnet restore backend-disc/backend-disc.csproj
