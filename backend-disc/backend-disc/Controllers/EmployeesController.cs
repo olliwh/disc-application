@@ -3,6 +3,7 @@ using backend_disc.Repositories;
 using backend_disc.Services;
 using class_library_disc.Models;
 using Isopoh.Cryptography.Argon2;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,18 +19,6 @@ namespace backend_disc.Controllers
             _employeeService = employeeService;
         }
 
-        /// <summary>
-        /// Helper function to create password hashes for inserting new emplyees to DB using sql
-        /// returning IActionResult<string> gives error
-        /// </summary>
-        /// <returns>String</returns>
-        [HttpGet("getDefaultPass")]
-        public ActionResult<string> getDefaultPass()
-        {
-            string password = "Pass@word1";
-            string hash = Argon2.Hash(password);
-            return Ok(hash);
-        }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
@@ -41,10 +30,18 @@ namespace backend_disc.Controllers
             //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
             return Ok(employees);
         }
-        //needs to retrun specific dto
+        /// <summary>
+        /// Creates a new employee only admin users are allowed to create employees
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateNewEmployee dto)
         {
             if (!ModelState.IsValid)
