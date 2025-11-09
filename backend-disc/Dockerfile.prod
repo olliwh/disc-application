@@ -1,23 +1,26 @@
+# ===== Build Stage =====
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copy the solution file and restore dependencies
 COPY backend-disc.sln ./
 COPY backend-disc/backend-disc.csproj backend-disc/
-COPY backend-disc/class-library-disc/class-library-disc.csproj class-library-disc/
+COPY class-library-disc/class-library-disc.csproj class-library-disc/
 
-RUN dotnet restore backend-disc/backend-disc.csproj
+RUN dotnet restore backend-disc.sln
 
-COPY backend-disc/ backend-disc/
-COPY backend-disc/class-library-disc/ class-library-disc/
+# Copy everything else and build
+COPY . .
+WORKDIR /src/backend-disc
+RUN dotnet publish -c Release -o /app/publish
 
-RUN dotnet publish backend-disc/backend-disc.csproj -c Release -o /app/publish /p:UseAppHost=false
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# ===== Runtime Stage =====
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-EXPOSE 5000
-ENV ASPNETCORE_URLS=http://+:5000
-ENV ASPNETCORE_ENVIRONMENT=Production
+# Expose port 8080 (Render default)
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "backend-disc.dll"]
