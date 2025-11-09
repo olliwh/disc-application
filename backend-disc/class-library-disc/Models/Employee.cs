@@ -7,13 +7,13 @@ public partial class Employee
 {
     public int Id { get; set; }
 
-    public string? Email { get; set; }
+    public required string Email { get; set; }
 
     public string? Phone { get; set; }
 
-    public string FirstName { get; set; } = null!;
+    public required string FirstName { get; set; }
 
-    public string LastName { get; set; } = null!;
+    public required string LastName { get; set; }
 
     public int? Experience { get; set; }
 
@@ -33,7 +33,7 @@ public partial class Employee
 
     public virtual DiscProfile? DiscProfile { get; set; }
 
-    public virtual EmployeesPrivateDatum? EmployeesPrivateDatum { get; set; }
+    public virtual EmployeePrivateData? EmployeePrivateData { get; set; }
 
     public virtual Position? Position { get; set; }
 

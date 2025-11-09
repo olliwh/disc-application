@@ -7,13 +7,13 @@ public partial class User
 {
     public int EmployeeId { get; set; }
 
-    public string? Username { get; set; }
+    public required string Username { get; set; }
 
-    public string? PasswordHash { get; set; }
+    public required string PasswordHash { get; set; }
 
-    public bool? RequiresReset { get; set; }
+    public bool RequiresReset { get; set; }
 
-    public int? UserRoleId { get; set; }
+    public int UserRoleId { get; set; }
 
     public virtual Employee Employee { get; set; } = null!;
 
