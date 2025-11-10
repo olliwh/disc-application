@@ -5,7 +5,7 @@ namespace backend_disc.Repositories
     {
         Task<T> Add(T entity);
         IQueryable<T> Query();
-        Task<T?> Delete(int id);
+        Task<int?> Delete(int id);
         Task<List<T>> GetAll();
         Task<T?> GetById(int id);
         Task<T?> Update(int id, T entity);

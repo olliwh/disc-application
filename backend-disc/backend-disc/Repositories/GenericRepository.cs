@@ -17,18 +17,19 @@ namespace backend_disc.Repositories
 
         public async Task<T> Add(T entity)
         {
+            Console.WriteLine(entity);
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<T?> Delete(int id)
+        public async Task<int?> Delete(int id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity == null) return null;
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
-            return entity;
+            return id;
         }
 
         public async Task<List<T>> GetAll()
@@ -50,6 +51,14 @@ namespace backend_disc.Repositories
         {
             var existing = await _dbSet.FindAsync(id);
             if (existing == null) return null;
+
+            //when AutoMapper maps UpdateCompanyDto to Company, it creates a new Company object 
+            // When mapper creates entity, the Id will be 0 so we have to set it here
+            var idProperty = entity.GetType().GetProperty("Id");
+            if (idProperty != null && idProperty.CanWrite)
+            {
+                idProperty.SetValue(entity, id);
+            }
 
             _context.Entry(existing).CurrentValues.SetValues(entity);
             await _context.SaveChangesAsync();

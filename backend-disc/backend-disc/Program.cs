@@ -1,7 +1,9 @@
+using backend_disc.Dtos.Companies;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Services;
 using class_library_disc.Data;
+using class_library_disc.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,12 +34,6 @@ builder.Services.AddCors(options =>
                                   policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 
                               });
-    options.AddPolicy(name: "AllowSome",
-                              policy =>
-                              {
-                                  policy.WithOrigins("http://zealand.dk").WithMethods("Post", "Put").SetPreflightMaxAge(TimeSpan.FromSeconds(1440)).AllowAnyHeader();
-
-                              });
     options.AddPolicy(name: "OnlyGET",
                               policy =>
                               {
@@ -49,7 +45,6 @@ builder.Services.AddCors(options =>
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -74,8 +69,20 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<DiscProfileDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-builder.Services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
+builder.Services.AddAutoMapper(
+    cfg => { }, // optional config lambda 
+    typeof(AutoMapperProfile) // where is to find amppers
+);
+
+builder.Services.AddScoped<IGenericService<DepartmentDto, CreateDepartmentDto, UpdateDepartmentDto>,
+    GenericService<Department, DepartmentDto, CreateDepartmentDto, UpdateDepartmentDto>>();
+builder.Services.AddScoped<IGenericService<DiscProfileDto, CreateDiscProfileDto, UpdateDiscProfileDto>,
+    GenericService<DiscProfile, DiscProfileDto, CreateDiscProfileDto, UpdateDiscProfileDto>>();
+builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, UpdatePositionDto>,
+    GenericService<Position, PositionDto, CreatePositionDto, UpdatePositionDto>>();
+builder.Services.AddScoped<IGenericService<CompanyDto, CreateCompanyDto, UpdateCompanyDto>,
+    GenericService<Company, CompanyDto, CreateCompanyDto, UpdateCompanyDto>>();
+
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
