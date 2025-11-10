@@ -21,7 +21,7 @@ namespace backend_disc.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, int pageIndex, int pageSize)
+        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             IQueryable<Employee> query = _context.Employees
             .AsNoTracking()//because we are only reading
@@ -34,6 +34,15 @@ namespace backend_disc.Repositories
 
             if (positionId.HasValue)
                 query = query.Where(e => e.PositionId == positionId);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizedSearch = search.Trim().ToLower();
+                query = query.Where(e =>
+                    e.FirstName.ToLower().Contains(normalizedSearch) ||
+                    e.LastName.ToLower().Contains(normalizedSearch) ||
+                    (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
+                );
+            }
 
             var totalCount = await query.CountAsync();
 

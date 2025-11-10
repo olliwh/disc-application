@@ -1,6 +1,8 @@
-﻿namespace backend_disc.Dtos.Companies
+﻿using backend_disc.Dtos.BaseDtos;
+
+namespace backend_disc.Dtos.Companies
 {
-    public class CompanyDto : BaseDtos.BaseDto
+    public class UpdateCompanyDto : IUpdateDtoBase
     {
         public required string Name { get; set; }
         public string? Location { get; set; }

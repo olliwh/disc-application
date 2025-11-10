@@ -15,6 +15,7 @@ export interface EmployeeQuery {
   department: Department | null;
   position: Position | null;
   discProfile: DiscProfile | null;
+  searchText: string | null;
 }
 
 function App() {
@@ -26,17 +27,21 @@ function App() {
     key: keyof EmployeeQuery,
     value: Department | Position | DiscProfile | null,
   ) => setEmployeeQuery({ ...employeeQuery, [key]: value });
+
+  const handleSearch = (searchText: string | null) => {
+    setEmployeeQuery((prev) => ({ ...prev, searchText }));
+  };
+
   return (
     <Grid
       templateAreas={{ base: `"nav" "main"`, lg: `"nav nav" "aside main"` }}
       templateColumns={{ base: "1fr", lg: "200px 1fr" }}
     >
       <GridItem area="nav">
-        <NavBar />
+        <NavBar onSearch={handleSearch} />
       </GridItem>
       <Show above="lg">
         <GridItem area="aside">
-          
           <DepartmentList
             selectedDepartment={employeeQuery.department}
             onSelectDepartment={(department) =>

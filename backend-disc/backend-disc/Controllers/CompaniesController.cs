@@ -1,15 +1,15 @@
-﻿using backend_disc.Repositories;
-using class_library_disc.Models;
-using Microsoft.AspNetCore.Http;
+﻿using backend_disc.Dtos.Companies;
+using backend_disc.Services;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace backend_disc.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompaniesController : GenericController<Company>
+    public class CompaniesController : GenericController<CompanyDto, CreateCompanyDto, UpdateCompanyDto>
     {
-        public CompaniesController(IGenericRepository<Company> repository) : base(repository) { }
+        public CompaniesController(IGenericService<CompanyDto, CreateCompanyDto, UpdateCompanyDto> service) : base(service) { }
 
     }
 }

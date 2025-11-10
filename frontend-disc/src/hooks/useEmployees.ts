@@ -21,6 +21,7 @@ const useEmployees = (employeeQuery: EmployeeQuery) =>
         departmentId: employeeQuery.department?.id,
         positionId: employeeQuery.position?.id,
         discProfileId: employeeQuery.discProfile?.id,
+        search: employeeQuery.searchText,
       },
     },
     [employeeQuery],
