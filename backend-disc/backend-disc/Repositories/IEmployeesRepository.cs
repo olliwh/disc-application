@@ -6,7 +6,7 @@ namespace backend_disc.Repositories
 {
     public interface IEmployeesRepository
     {
-        Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, int pageIndex, int pageSize);
+        Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize);
 
         
         Task<ReadEmployee> Add(CreateNewEmployee employee);

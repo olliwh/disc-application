@@ -1,3 +1,4 @@
+import { em } from "framer-motion/client";
 import type { EmployeeQuery } from "../App";
 import useData from "./useData";
 
@@ -21,6 +22,7 @@ const useEmployees = (employeeQuery: EmployeeQuery) =>
         departmentId: employeeQuery.department?.id,
         positionId: employeeQuery.position?.id,
         discProfileId: employeeQuery.discProfile?.id,
+        search: employeeQuery.searchText,
       },
     },
     [employeeQuery],
