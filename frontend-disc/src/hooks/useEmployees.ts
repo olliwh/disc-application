@@ -1,4 +1,3 @@
-import { em } from "framer-motion/client";
 import type { EmployeeQuery } from "../App";
 import useData from "./useData";
 
