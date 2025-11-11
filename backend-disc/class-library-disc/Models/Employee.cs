@@ -19,7 +19,7 @@ public partial class Employee
 
     public string? ImagePath { get; set; }
 
-    public int CompanyId { get; set; }
+    public required int CompanyId { get; set; }
 
     public int? DepartmentId { get; set; }
 
