@@ -7,15 +7,13 @@ public partial class DiscProfile
 {
     public int Id { get; set; }
 
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
-    public required string Color { get; set; }
+    public string Color { get; set; } = null!;
 
-    public required string Description { get; set; }
+    public string Description { get; set; } = null!;
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     public virtual ICollection<ProjectsDiscProfile> ProjectsDiscProfiles { get; set; } = new List<ProjectsDiscProfile>();
-
-    public virtual ICollection<SocialEvent> SocialEvents { get; set; } = new List<SocialEvent>();
 }

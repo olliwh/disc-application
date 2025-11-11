@@ -6,10 +6,10 @@ namespace backend_disc.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DiscProfileDbContext _context;
+        private readonly DiscProfileRealtionalDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericRepository(DiscProfileDbContext context)
+        public GenericRepository(DiscProfileRealtionalDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();

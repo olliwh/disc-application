@@ -67,7 +67,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddDbContext<DiscProfileDbContext>(options =>
+builder.Services.AddDbContext<DiscProfileRealtionalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(
     cfg => { }, // optional config lambda 
@@ -125,7 +125,7 @@ app.UseCors("AllowAll");
 app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<DiscProfileDbContext>();
+    var db = scope.ServiceProvider.GetRequiredService<DiscProfileRealtionalDbContext>();
     await db.Database.EnsureCreatedAsync(); 
 }
 

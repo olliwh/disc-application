@@ -9,9 +9,9 @@ namespace backend_disc.Repositories
 {
     public class EmployeesRepository : IEmployeesRepository
     {
-        private readonly DiscProfileDbContext _context;
+        private readonly DiscProfileRealtionalDbContext _context;
 
-        public EmployeesRepository(DiscProfileDbContext context)
+        public EmployeesRepository(DiscProfileRealtionalDbContext context)
         {
             _context = context;
         }

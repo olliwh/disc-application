@@ -14,7 +14,7 @@ namespace backend_disc.Services
     {
         private readonly IEmployeesRepository _employeeRepository;
         private readonly IGenericRepository<Employee> _genericEmployeeRepository;
-        private readonly DiscProfileDbContext _context;
+        private readonly DiscProfileRealtionalDbContext _context;
         private readonly IGenericRepository<User> _userRepository;
         private readonly IGenericRepository<Company> _companiesRepository;
         private readonly IGenericRepository<EmployeePrivateData> _privateDataRepository;
@@ -23,7 +23,7 @@ namespace backend_disc.Services
 
 
         public EmployeeService(IEmployeesRepository employeeRepository, IGenericRepository<Employee> genericEmployeeRepository, 
-            DiscProfileDbContext context, IGenericRepository<User> userRepository, IGenericRepository<EmployeePrivateData> employeePrivateData,
+            DiscProfileRealtionalDbContext context, IGenericRepository<User> userRepository, IGenericRepository<EmployeePrivateData> employeePrivateData,
             IGenericRepository<Company> companiesRepository)
         {
             _employeeRepository = employeeRepository;

@@ -17,5 +17,5 @@ public partial class StressMeasure
 
     public virtual Employee Employee { get; set; } = null!;
 
-    public virtual Task Task { get; set; } = null!;
+    public virtual ProjectTask Task { get; set; } = null!;
 }

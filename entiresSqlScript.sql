@@ -66,8 +66,8 @@ GO
 
 CREATE TABLE employees (
     id INT PRIMARY KEY IDENTITY(1,1),
-    email VARCHAR(255) NOT NULL ,
-    phone VARCHAR(255),
+    work_email VARCHAR(255) NOT NULL ,
+    work_phone VARCHAR(255),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     experience INT,
@@ -258,7 +258,7 @@ AS
 BEGIN
     BEGIN TRY
         BEGIN TRANSACTION
-            INSERT INTO employees (first_name, last_name, email, phone, experience, image_path, company_id, department_id, position_id, disc_profile_id) VALUES
+            INSERT INTO employees (first_name, last_name, work_email, work_phone, experience, image_path, company_id, department_id, position_id, disc_profile_id) VALUES
             (@first_name, @last_name, @work_email, @work_phone, @experience_in_years, @image_path, @company_id, @department_id, @position_id, @disc_profile_id);
             DECLARE @GeneratedId INT = SCOPE_IDENTITY();
             INSERT INTO employee_private_data (employee_id, cpr, private_email, private_phone) VALUES
@@ -394,7 +394,7 @@ GO
 -- Create variables to make code DRY
 DECLARE @JobName NVARCHAR(128) = N'Delete Completed Projects Older Than 1 Year';
 DECLARE @ScheduleName NVARCHAR(128) = N'Daily_Delete_Old_Projects';
-DECLARE @DatabaseName NVARCHAR(128) = N'disc_profile_db';
+DECLARE @DatabaseName NVARCHAR(128) = N'disc_profile_relational_db';
 
 -- If the job already exists delete it
 IF EXISTS (SELECT 1 FROM msdb.dbo.sysjobs WHERE name = @JobName)

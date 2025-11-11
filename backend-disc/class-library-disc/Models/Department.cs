@@ -7,11 +7,11 @@ public partial class Department
 {
     public int Id { get; set; }
 
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
-    public required int CompanyId { get; set; }
+    public int CompanyId { get; set; }
 
     public virtual Company Company { get; set; } = null!;
 
-    public virtual ICollection<Employee> Employees { get; set; } = [];
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }

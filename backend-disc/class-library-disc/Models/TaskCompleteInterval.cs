@@ -7,7 +7,7 @@ public partial class TaskCompleteInterval
 {
     public int Id { get; set; }
 
-    public required string TimeToComplete { get; set; }
+    public string TimeToComplete { get; set; } = null!;
 
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 }
