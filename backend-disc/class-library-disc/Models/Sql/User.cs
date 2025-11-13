@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace class_library_disc.Models;
+namespace class_library_disc.Models.Sql;
 
 public partial class User
 {
     public int EmployeeId { get; set; }
 
-    public required string Username { get; set; }
+    public string Username { get; set; } = null!;
 
-    public required string PasswordHash { get; set; }
+    public string PasswordHash { get; set; } = null!;
 
     public bool RequiresReset { get; set; }
 
@@ -17,5 +17,5 @@ public partial class User
 
     public virtual Employee Employee { get; set; } = null!;
 
-    public virtual UserRole? UserRole { get; set; }
+    public virtual UserRole UserRole { get; set; } = null!;
 }

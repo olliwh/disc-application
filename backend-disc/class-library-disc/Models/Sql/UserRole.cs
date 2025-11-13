@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace class_library_disc.Models;
+namespace class_library_disc.Models.Sql;
 
 public partial class UserRole
 {
     public int Id { get; set; }
 
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.Companies;
-using class_library_disc.Models;
+using class_library_disc.Models.Sql;
 
 namespace backend_disc.Models
 {

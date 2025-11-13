@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace class_library_disc.Models;
+namespace class_library_disc.Models.Sql;
 
 public partial class ProjectsDiscProfile
 {

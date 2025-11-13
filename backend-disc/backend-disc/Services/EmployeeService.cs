@@ -1,7 +1,7 @@
 ﻿using backend_disc.Dtos.Employees;
 using backend_disc.Repositories;
 using class_library_disc.Data;
-using class_library_disc.Models;
+using class_library_disc.Models.Sql;
 using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -56,9 +56,8 @@ namespace backend_disc.Services
                     Id = addedEmployee.Id,
                     FirstName = addedEmployee.FirstName,
                     LastName = addedEmployee.LastName,
-                    Email = addedEmployee.Email,
-                    Phone = addedEmployee.Phone,
-                    Experience = addedEmployee.Experience,
+                    WorkEmail = addedEmployee.WorkEmail,
+                    WorkPhone = addedEmployee.WorkPhone,
                     ImagePath = addedEmployee.ImagePath,
                     CompanyId = addedEmployee.CompanyId,
                     DepartmentId = addedEmployee.DepartmentId,
@@ -88,9 +87,9 @@ namespace backend_disc.Services
         }
         private async System.Threading.Tasks.Task AddUser(Employee addedEmployee)
         {
-            if (string.IsNullOrEmpty(addedEmployee.Email))
+            if (string.IsNullOrEmpty(addedEmployee.WorkEmail))
                 throw new InvalidOperationException("Employee email cannot be null when creating user.");
-            string username = addedEmployee.Email.Split('@')[0];
+            string username = addedEmployee.WorkEmail.Split('@')[0];
             User user = new User
             {
                 EmployeeId = addedEmployee.Id,
@@ -116,13 +115,12 @@ namespace backend_disc.Services
             {
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-                Experience = dto.Experience,
                 CompanyId = dto.CompanyId,
                 DepartmentId = dto.DepartmentId,
                 PositionId = dto.PositionId,
                 DiscProfileId = dto.DiscProfileId,
-                Email = workMailAndPhone["workEmail"],
-                Phone = workMailAndPhone["phoneNumber"],
+                WorkEmail = workMailAndPhone["workEmail"],
+                WorkPhone = workMailAndPhone["phoneNumber"],
                 ImagePath = DEFAULT_IMAGE_PATH
             };
 
@@ -177,10 +175,9 @@ namespace backend_disc.Services
                 Id = e.Id,
                 FirstName = e.FirstName,
                 LastName = e.LastName,
-                Email = e.Email,
-                Phone = e.Phone,
+                WorkEmail = e.WorkEmail,
+                WorkPhone = e.WorkPhone,
                 DiscProfileColor = e.DiscProfile?.Color,
-                Experience = e.Experience,
                 ImagePath = e.ImagePath,
                 CompanyId = e.CompanyId,
                 DepartmentId = e.DepartmentId,

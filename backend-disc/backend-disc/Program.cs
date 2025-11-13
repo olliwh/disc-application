@@ -3,7 +3,7 @@ using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Services;
 using class_library_disc.Data;
-using class_library_disc.Models;
+using class_library_disc.Models.Sql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
