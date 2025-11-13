@@ -4,15 +4,13 @@
     {
         public int Id { get; set; }
 
-        public string? Email { get; set; }
+        public string? WorkEmail { get; set; }
 
-        public string? Phone { get; set; }
+        public string? WorkPhone { get; set; }
 
         public string FirstName { get; set; } = null!;
 
         public string LastName { get; set; } = null!;
-
-        public int? Experience { get; set; }
 
         public string? ImagePath { get; set; }
 

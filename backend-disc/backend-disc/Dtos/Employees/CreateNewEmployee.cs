@@ -10,8 +10,6 @@
 
         public required string LastName { get; set; }
 
-        public int? Experience { get; set; }
-
         public required int CompanyId { get; set; }
 
         public int? DepartmentId { get; set; }

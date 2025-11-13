@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace class_library_disc.Models;
+namespace class_library_disc.Models.Sql;
 
 public partial class Employee
 {
     public int Id { get; set; }
 
-    public required string Email { get; set; }
+    public string WorkEmail { get; set; } = null!;
 
-    public string? Phone { get; set; }
+    public string? WorkPhone { get; set; }
 
-    public required string FirstName { get; set; }
+    public string FirstName { get; set; } = null!;
 
-    public required string LastName { get; set; }
-
-    public int? Experience { get; set; }
+    public string LastName { get; set; } = null!;
 
     public string? ImagePath { get; set; }
 
@@ -33,7 +31,7 @@ public partial class Employee
 
     public virtual DiscProfile? DiscProfile { get; set; }
 
-    public virtual EmployeePrivateData? EmployeePrivateData { get; set; }
+    public virtual EmployeePrivateData? EmployeePrivateDatum { get; set; }
 
     public virtual Position? Position { get; set; }
 
@@ -41,11 +39,7 @@ public partial class Employee
 
     public virtual User? User { get; set; }
 
-    public virtual ICollection<Education> Educations { get; set; } = new List<Education>();
-
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 
-    public virtual ICollection<SocialEvent> SocialEvents { get; set; } = new List<SocialEvent>();
-
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+    public virtual ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
 }
