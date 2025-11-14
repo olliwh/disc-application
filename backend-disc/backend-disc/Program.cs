@@ -85,6 +85,9 @@ builder.Services.AddScoped<IGenericService<CompanyDto, CreateCompanyDto, UpdateC
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 

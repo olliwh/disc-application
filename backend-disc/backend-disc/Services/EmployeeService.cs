@@ -15,7 +15,7 @@ namespace backend_disc.Services
         private readonly IEmployeesRepository _employeeRepository;
         private readonly IGenericRepository<Employee> _genericEmployeeRepository;
         private readonly DiscProfileDbContext _context;
-        private readonly IGenericRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IGenericRepository<Company> _companiesRepository;
         private readonly IGenericRepository<EmployeePrivateData> _privateDataRepository;
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
@@ -23,7 +23,7 @@ namespace backend_disc.Services
 
 
         public EmployeeService(IEmployeesRepository employeeRepository, IGenericRepository<Employee> genericEmployeeRepository, 
-            DiscProfileDbContext context, IGenericRepository<User> userRepository, IGenericRepository<EmployeePrivateData> employeePrivateData,
+            DiscProfileDbContext context, IUserRepository userRepository, IGenericRepository<EmployeePrivateData> employeePrivateData,
             IGenericRepository<Company> companiesRepository)
         {
             _employeeRepository = employeeRepository;
@@ -46,7 +46,6 @@ namespace backend_disc.Services
             try
             {
                 var addedEmployee = await AddEmployee(dto);
-                await AddUser(addedEmployee);
                 await AddPrivateData(dto, addedEmployee.Id);
                 
 
@@ -73,7 +72,7 @@ namespace backend_disc.Services
                 throw;
             }
         }
-        private async System.Threading.Tasks.Task AddPrivateData(CreateNewEmployee dto, int id)
+        private async Task AddPrivateData(CreateNewEmployee dto, int id)
         {
             EmployeePrivateData privateData = new EmployeePrivateData
             {
@@ -85,11 +84,8 @@ namespace backend_disc.Services
 
             await _privateDataRepository.Add(privateData);
         }
-        private async System.Threading.Tasks.Task AddUser(Employee addedEmployee)
+        private async Task AddUser(Employee addedEmployee, string username)
         {
-            if (string.IsNullOrEmpty(addedEmployee.WorkEmail))
-                throw new InvalidOperationException("Employee email cannot be null when creating user.");
-            string username = addedEmployee.WorkEmail.Split('@')[0];
             User user = new User
             {
                 EmployeeId = addedEmployee.Id,
@@ -109,7 +105,7 @@ namespace backend_disc.Services
 
         private async Task<Employee> AddEmployee(CreateNewEmployee dto)
         {
-            Dictionary<string, string> workMailAndPhone = await GenerateWorkMailAndPhone(dto.FirstName, dto.LastName, dto.CompanyId);
+            Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName, dto.CompanyId);
 
             Employee employee = new Employee
             {
@@ -119,12 +115,14 @@ namespace backend_disc.Services
                 DepartmentId = dto.DepartmentId,
                 PositionId = dto.PositionId,
                 DiscProfileId = dto.DiscProfileId,
-                WorkEmail = workMailAndPhone["workEmail"],
-                WorkPhone = workMailAndPhone["phoneNumber"],
+                WorkEmail = usernameWorkMailAndPhone["workEmail"],
+                WorkPhone = usernameWorkMailAndPhone["phoneNumber"],
                 ImagePath = DEFAULT_IMAGE_PATH
             };
 
             await _genericEmployeeRepository.Add(employee);
+            await AddUser(employee, usernameWorkMailAndPhone["username"]);
+
             return employee;
         }
 
@@ -135,17 +133,30 @@ namespace backend_disc.Services
         /// <param name="lastName"></param>
         /// <param name="companyId"></param>
         /// <returns></returns>
-        private async Task<Dictionary<string, string>> GenerateWorkMailAndPhone(string firstName, string lastName, int companyId)
+        private async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName, int companyId)
         {
             var company = await _companiesRepository.GetById(companyId);
             string companyName = company?.Name ?? "company";
-            string workEmail = $"{firstName.ToLower()}.{lastName.ToLower()[..2]}{GetRandomDigits(3)}@{companyName}.com";
+
+            string username;
+            bool usernameAlreadyExists;
+
+            do
+            {
+                username = $"{firstName.ToLower()}.{lastName.ToLower()[..2]}{GetRandomDigits(3)}";
+
+                usernameAlreadyExists = await _userRepository.UsernameExists(username);
+
+            } while (usernameAlreadyExists);
+
+            string workEmail = $"{username}@{companyName}.com";
             string phoneNumber = GetRandomDigits(8).ToString();
 
             return new Dictionary<string, string>
             {
                 { "workEmail", workEmail },
-                { "phoneNumber", phoneNumber }
+                { "phoneNumber", phoneNumber },
+                { "username", username }
             };
         }
         private static StringBuilder GetRandomDigits(int length)
