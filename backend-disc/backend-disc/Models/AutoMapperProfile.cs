@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.Companies;
+using backend_disc.Dtos.Employees;
+using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Models.Sql;
 
 namespace backend_disc.Models
@@ -27,6 +29,12 @@ namespace backend_disc.Models
             CreateMap<DiscProfile, DiscProfileDto>().ReverseMap();
             CreateMap<CreateDiscProfileDto, DiscProfile>();
             CreateMap<UpdateDiscProfileDto, DiscProfile>();
+
+            //Employee
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<CreateNewEmployee, AddEmployeeSpParams>().ReverseMap();
+
+
         }
     }
 }

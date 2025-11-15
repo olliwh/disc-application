@@ -71,7 +71,7 @@ builder.Services.AddDbContext<DiscProfileDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(
     cfg => { }, // optional config lambda 
-    typeof(AutoMapperProfile) // where is to find amppers
+    typeof(AutoMapperProfile) // where to find mappers
 );
 
 builder.Services.AddScoped<IGenericService<DepartmentDto, CreateDepartmentDto, UpdateDepartmentDto>,

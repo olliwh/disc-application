@@ -47,12 +47,8 @@ namespace backend_disc.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateNewEmployee dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var employee = await _employeeService.CreateEmployee(dto);
 
-            // You can later map to a ReadEmployee DTO if needed
             return CreatedAtAction(nameof(GetAll), new { id = employee.Id }, employee);
         }
     }

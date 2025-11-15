@@ -14,7 +14,6 @@ namespace backend_disc.Repositories
         }
         public async Task<bool> UsernameExists(string username)
         {
-            // This will use your IX_users_username index
             return await _context.Users.AnyAsync(u => u.Username == username);
         }
     }
