@@ -75,12 +75,18 @@ jobs:
           sleep 2
           # give it some more time to warm up
           sleep 10
-          
+
       - name: Check if API is listening
         run: |
           echo "Checking port 5000..."
           sudo lsof -i -P -n | grep LISTEN || echo "❌ API is NOT listening!"
           curl -v http://localhost:5000 || echo "❌ curl could not reach the API"
+
+      - name: Show API logs
+        if: always()
+        run: |
+          echo "----- API LOG -----"
+          cat api.log || echo "api.log missing"
 
       # -----------------------
       # Run Postman Tests
