@@ -18,9 +18,8 @@ jobs:
       mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
-          ACCEPT_EULA: Y
+          ACCEPT_EULA: "Y"
           SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MSSQL_SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
         options: >-
           --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${{ secrets.DB_PASSWORD }}' -Q 'SELECT 1' -C -b"
           --health-interval=10s
@@ -39,7 +38,8 @@ jobs:
 
       - name: Create .env file
         run: |
-          cat > backend-disc/.env << EOF
+          mkdir -p backend-disc
+          cat > backend-disc/.env <<'EOF'
           DB_USER=sa
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           DB_NAME=${{ secrets.DB_NAME }}
@@ -51,6 +51,7 @@ jobs:
           EOF
 
       - name: Wait for SQL Server
+        shell: bash
         run: |
           for i in {1..30}; do
             /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${{ secrets.DB_PASSWORD }}" -Q "SELECT 1" -C -b && exit 0
@@ -59,7 +60,6 @@ jobs:
           done
           echo "SQL Server failed to start"
           exit 1
-        shell: bash
 
       - name: Restore dependencies
         working-directory: backend-disc
@@ -69,58 +69,55 @@ jobs:
         working-directory: backend-disc
         run: dotnet build --no-restore --configuration Release
 
-      - name: Install EF Core CLI
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Start APICreated
+      - name: Start API
         working-directory: backend-disc
-        run: | 
-          dotnet run --project backend-disc/backend-disc.csproj --configuration Release &
-          sleep 10
-        env:          using Microsoft.EntityFrameworkCore;
+        env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}r=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;";
-          ASPNETCORE_URLS: http://+:5000options = new DbContextOptionsBuilder<DiscProfileDbContext>()
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+          ASPNETCORE_URLS: http://+:5000
           ASPNETCORE_ENVIRONMENT: Development
-ld();
+        run: |
+          dotnet run --project backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
+          sleep 12
+
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Postman testsated();
+      - name: Run Postman tests
         working-directory: backend-disc
-        run: newman run Disc-api-test.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json          EOF
-        continue-on-error: truect backend-disc/backend-disc.csproj --configuration Release -- --migrate-only
+        continue-on-error: true
+        run: |
+          newman run Disc-api-test.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json || true
 
-      - name: Upload test results          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: postman-test-results
-          path: backend-disc/test-results.json          dotnet run --project backend-disc/backend-disc.csproj --configuration Release &
+          path: backend-disc/test-results.json
 
       - name: Comment PR with test results
-        if: github.event_name == 'pull_request' && always()ection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-        uses: actions/github-script@v6_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-        with:5000
-          script: |
-            const fs = require('fs');
-            const results = JSON.parse(fs.readFileSync('./backend-disc/test-results.json', 'utf8'));
-            const passed = results.run.stats.tests.total - results.run.stats.tests.failed;
-            const comment = `## Postman Test Results\n\n✅ Passed: ${passed}\n❌ Failed: ${results.run.stats.tests.failed}\n⏱️ Duration: ${results.run.timings.completed}ms`;
-            github.rest.issues.createComment({ Run Postman tests
-              issue_number: context.issue.number,ectory: backend-disc
-              owner: context.repo.owner,.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json
-              repo: context.repo.repo,
-              body: comment
-            });
         if: github.event_name == 'pull_request' && always()
         uses: actions/github-script@v6
         with:
           script: |
             const fs = require('fs');
-            const results = JSON.parse(fs.readFileSync('./backend-disc/test-results.json', 'utf8'));
-            const passed = results.run.stats.tests.total - results.run.stats.tests.failed;
-            const comment = `## Postman Test Results\n\n✅ Passed: ${passed}\n❌ Failed: ${results.run.stats.tests.failed}\n⏱️ Duration: ${results.run.timings.completed}ms`;
+            const path = './backend-disc/test-results.json';
+            if (!fs.existsSync(path)) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'Postman test results not found.'
+              });
+              return;
+            }
+            const results = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const total = results.run?.stats?.tests?.total ?? 0;
+            const failed = results.run?.stats?.tests?.failed ?? 0;
+            const passed = total - failed;
+            const duration = results.run?.timings?.completed ?? 'n/a';
+            const comment = `## Postman Test Results\n\n✅ Passed: ${passed}\n❌ Failed: ${failed}\n⏱️ Duration: ${duration}ms`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
