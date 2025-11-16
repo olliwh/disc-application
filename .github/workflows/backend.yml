@@ -13,34 +13,33 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          ACCEPT_EULA: "Y"
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        options: >-
-          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${{ secrets.DB_PASSWORD }}' -Q 'SELECT 1' -C -b"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-        ports:
-          - 1433:1433
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "8.0.x"
+      - name: Start SQL Server container (uses repo secret)
+        shell: bash
+        run: |
+          docker run -e 'ACCEPT_EULA=Y' -e "SA_PASSWORD=${{ secrets.DB_PASSWORD }}" -p 1433:1433 --name disc-mssql -d mcr.microsoft.com/mssql/server:2022-latest
+          for i in {1..60}; do
+            if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready for client connections."; then
+              echo "SQL Server ready"; exit 0;
+            fi
+            echo "Waiting for SQL Server... ($i/60)"; sleep 2;
+          done
+          echo "SQL Server failed to start"; docker logs disc-mssql; exit 1
 
       - name: Create .env file
         run: |
           mkdir -p backend-disc
           cat > backend-disc/.env <<'EOF'
           DB_USER=sa
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
           DB_HOST=localhost
           DB_PORT=1433
           ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;
@@ -48,16 +47,10 @@ jobs:
           ASPNETCORE_ENVIRONMENT=Development
           EOF
 
-      - name: Wait for SQL Server
-        shell: bash
-        run: |
-          for i in {1..30}; do
-            /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${{ secrets.DB_PASSWORD }}" -Q "SELECT 1" -C -b && exit 0
-            echo "Waiting for SQL Server... ($i/30)"
-            sleep 2
-          done
-          echo "SQL Server failed to start"
-          exit 1
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
 
       - name: Restore dependencies
         working-directory: backend-disc
