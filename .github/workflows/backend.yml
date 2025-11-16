@@ -19,7 +19,7 @@ jobs:
       API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Start SQL Server container (uses repo secret)
         shell: bash
@@ -80,38 +80,16 @@ jobs:
         run: |
           newman run Disc-api-test.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json || true
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: postman-test-results
-          path: backend-disc/test-results.json
+      - name: Show API logs if tests failed
+        if: failure()
+        run: |
+          echo "=== API Logs ==="
+          cat api.log
 
-      - name: Comment PR with test results
-        if: github.event_name == 'pull_request' && always()
-        uses: actions/github-script@v6
+      - name: Upload Postman results
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          script: |
-            const fs = require('fs');
-            const path = './backend-disc/test-results.json';
-            if (!fs.existsSync(path)) {
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: 'Postman test results not found.'
-              });
-              return;
-            }
-            const results = JSON.parse(fs.readFileSync(path, 'utf8'));
-            const total = results.run?.stats?.tests?.total ?? 0;
-            const failed = results.run?.stats?.tests?.failed ?? 0;
-            const passed = total - failed;
-            const duration = results.run?.timings?.completed ?? 'n/a';
-            const comment = `## Postman Test Results\n\n✅ Passed: ${passed}\n❌ Failed: ${failed}\n⏱️ Duration: ${duration}ms`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+          name: postman-results
+          path: results.xml
+          if-no-files-found: warn
