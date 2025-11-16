@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.Employees;
+using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Models.Sql;
@@ -16,15 +17,16 @@ namespace backend_disc.Services
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private static readonly Random _random = new();
         private readonly IMapper _mapper;
+        private readonly ILogger<EmployeeService> _logger;
 
         public EmployeeService(IEmployeesRepository employeeRepository, IUserRepository userRepository,
-            IGenericRepository<Company> companiesRepository, IMapper mapper)
+            IGenericRepository<Company> companiesRepository, IMapper mapper, ILogger<EmployeeService> logger)
         {
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _companiesRepository = companiesRepository;
             _mapper = mapper;
-
+            _logger = logger;
         }
 
         /// <summary>
@@ -35,18 +37,35 @@ namespace backend_disc.Services
         /// <exception cref="NotImplementedException"></exception>
         public async Task<EmployeeDto?> CreateEmployee(CreateNewEmployee dto)
         {
-            Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName, dto.CompanyId);
+            try
+            {
+                Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName, dto.CompanyId);
 
-            dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
-            dto.WorkPhone= usernameWorkMailAndPhone["phoneNumber"];
-            dto.Username = usernameWorkMailAndPhone["username"];
-            dto.PasswordHash = GeneratePasswordHash("Pass@word1");
-            dto.UserRoleId = 1;
-            dto.ImagePath = DEFAULT_IMAGE_PATH;
-            var employeeSPParams = _mapper.Map<AddEmployeeSpParams?>(dto);
-            var emp = await _employeeRepository.AddEmployeeSPAsync(employeeSPParams);
-
-            return _mapper.Map<EmployeeDto?>(emp);
+                dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
+                dto.WorkPhone = usernameWorkMailAndPhone["phoneNumber"];
+                dto.Username = usernameWorkMailAndPhone["username"];
+                dto.PasswordHash = GeneratePasswordHash("Pass@word1");
+                dto.UserRoleId = 1;
+                dto.ImagePath = DEFAULT_IMAGE_PATH;
+                AddEmployeeSpParams? employeeSPParams = _mapper.Map<AddEmployeeSpParams?>(dto) ?? throw new InvalidOperationException("Failed to map employee data");
+                var employee = await _employeeRepository.AddEmployeeSPAsync(employeeSPParams);
+                return employee == null
+                    ? throw new InvalidOperationException("Failed to create employee - no employee returned from database")
+                    : _mapper.Map<EmployeeDto?>(employee);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in CreateEmployee");
+                throw new InvalidOperationException("An error occurred while creating the employee", ex);
+            }
         }
 
         private static string GeneratePasswordHash(string password)
@@ -68,27 +87,40 @@ namespace backend_disc.Services
         private async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName, int companyId)
         {
             var company = await _companiesRepository.GetById(companyId);
-            string companyName = company?.Name ?? "company";
-
+            if (company == null)
+                { throw new KeyNotFoundException($"Company with ID {companyId} not found"); }
             string username;
             bool usernameAlreadyExists;
+            int attempts = 0;
+            const int maxAttempts = 100;
 
             do
             {
                 username = $"{firstName.ToLower()}.{lastName.ToLower()[..2]}{GetRandomDigits(3)}";
 
                 usernameAlreadyExists = await _userRepository.UsernameExists(username);
+                attempts++;
+                if (attempts >= maxAttempts)
+                {
+                    throw new InvalidOperationException("Failed to generate unique username after multiple attempts");
+                }
 
             } while (usernameAlreadyExists);
 
-            string workEmail = $"{username}@{companyName}.com";
+            string workEmail = $"{username}@{company.Name}.com";
             string phoneNumber;
             bool phoneNumberAlreadyExists;
+            attempts = 0;
             do
             {
                 phoneNumber = GetRandomDigits(8).ToString();
 
                 phoneNumberAlreadyExists = await _employeeRepository.PhoneNumExists(username);
+                attempts++;
+                if (attempts >= maxAttempts)
+                {
+                    throw new InvalidOperationException("Failed to generate unique username after multiple attempts");
+                }
 
             } while (phoneNumberAlreadyExists);
 
@@ -101,27 +133,32 @@ namespace backend_disc.Services
         }
         private static StringBuilder GetRandomDigits(int length)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             for (int i = 0; i < length; i++)
             {
                 stringBuilder.Append(_random.Next(0, 10));
             }
             return stringBuilder;
         }
-        public async Task<List<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<PaginatedList<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
-            if(pageSize > 50)
+            if (pageIndex < 1)
             {
-                pageSize = 50; //max page size
+                pageIndex = 1;
+            }
+
+            if (pageSize < 1)
+            {
+                pageSize = 10;
+            }
+
+            if (pageSize > 50)
+            {
+                pageSize = 50; // max page size
             }
             var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
-            if (employees.TotalCount == 0)
-            {
-                return new List<ReadEmployee>();
-            }
-
-            return employees.Items.Select(e => new ReadEmployee
+            var mapped =  employees.Items.Select(e => new ReadEmployee
             {
                 Id = e.Id,
                 FirstName = e.FirstName,
@@ -134,6 +171,48 @@ namespace backend_disc.Services
                 DepartmentId = e.DepartmentId,
                 DiscProfileId = e.DiscProfileId,
             }).ToList();
+
+
+            return new PaginatedList<ReadEmployee>(mapped, employees.PageIndex, employees.TotalCount, employees.PageSize);
+        }
+        public async Task<List<ReadEmployee>> GetAll2(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        {
+            if (pageIndex < 1)
+            {
+                pageIndex = 1;
+            }
+
+            if (pageSize < 1)
+            {
+                pageSize = 10;
+            }
+
+            if (pageSize > 50)
+            {
+                pageSize = 50; // max page size
+            }
+
+                var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+
+                if (employees.TotalCount == 0)
+                {
+                    return [];
+                }
+
+                return employees.Items.Select(e => new ReadEmployee
+                {
+                    Id = e.Id,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    WorkEmail = e.WorkEmail,
+                    WorkPhone = e.WorkPhone,
+                    DiscProfileColor = e.DiscProfile?.Color,
+                    ImagePath = e.ImagePath,
+                    CompanyId = e.CompanyId,
+                    DepartmentId = e.DepartmentId,
+                    DiscProfileId = e.DiscProfileId,
+                }).ToList();
+
         }
     }
 }

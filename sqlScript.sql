@@ -1,9 +1,6 @@
-DROP DATABASE disc_profile_relational_db;
 
-CREATE DATABASE disc_profile_relational_db;
-GO
 use disc_profile_relational_db;
-
+select * from employees;
 
 drop table if exists employee_private_data;
 drop table if exists project_tasks_employees;
@@ -81,10 +78,9 @@ CREATE TABLE employee_private_data (
     employee_id INT PRIMARY KEY,
     private_email NVARCHAR(255) NOT NULL,
     private_phone VARCHAR(25) NOT NULL,
-    cpr CHAR(10) MASKED WITH (FUNCTION = 'partial(0, "xxxxxxxxxx", 0)') NOT NULL
+    cpr CHAR(10) MASKED WITH (FUNCTION = 'partial(6, "xxxx", 0)') NOT NULL
     FOREIGN KEY (employee_id) REFERENCES employees(id),
 );
-GO
 
 -- No need for salt column because Isopoh.Cryptography.Argon2 automatically generate and embed the salt inside the final hash string
 CREATE TABLE users (
@@ -271,15 +267,19 @@ BEGIN
             (@GeneratedId, @username, @password_hash, 1, @user_role_id);
 
         COMMIT TRANSACTION;
+
+        SELECT @GeneratedId AS employee_id;
     END TRY
     BEGIN CATCH
         ROLLBACK TRANSACTION;
-        SELECT ERROR_NUMBER() AS ErrorNumber,
-        ERROR_MESSAGE() AS ErrorMessage;
+
         THROW;
     END CATCH
 END;
 GO
+
+-- CREATE USER testUser WITHOUT LOGIN;
+GRANT SELECT ON employee_private_data TO testUser;
 
 PRINT 'Database schema created successfully!';
 GO

@@ -1,4 +1,4 @@
-﻿namespace backend_disc.Dtos.Companies
+﻿namespace backend_disc.Dtos.DiscProfiles
 {
     public class DiscProfileDto : BaseDtos.BaseDto
     {

@@ -1,6 +1,7 @@
 ﻿using backend_disc.Dtos.BaseDtos;
 
-namespace backend_disc.Dtos.Companies
+namespace backend_disc.Dtos.Positions
+
 {
     public class CreatePositionDto : ICreateDtoBase
     {

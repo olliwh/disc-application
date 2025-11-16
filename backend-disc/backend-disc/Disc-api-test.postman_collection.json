@@ -1,0 +1,826 @@
+{
+  "info": {
+    "_postman_id": "2e7b1107-35d5-4f81-a839-db729352c1ce",
+    "name": "Disc-api-test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25638427"
+  },
+  "item": [
+    {
+      "name": "Company",
+      "item": [
+        {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/companies",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set(\"company_id\", jsonData.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"string\",\r\n  \"location\": \"string\",\r\n  \"businessField\": \"string\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/companies",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"updated\",\r\n  \"location\": \"string\",\r\n  \"businessField\": \"string\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/companies/{{company_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies", "{{company_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Name is updated\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.name).to.eql(\"updated\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/companies/{{company_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies", "{{company_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/companies/{{company_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies", "{{company_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Department",
+      "item": [
+        {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/departments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set(\"department_id\", jsonData.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"string\",\r\n  \"companyId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/departments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"updated\",\r\n  \"companyId\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/departments/{{department_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments", "{{department_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Name is updated\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.name).to.eql(\"updated\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/departments/{{department_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments", "{{department_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/departments/{{department_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments", "{{department_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "DiscProfile",
+      "item": [
+        {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/DiscProfiles",
+              "host": ["{{BASE_URL}}"],
+              "path": ["DiscProfiles"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set(\"discprofile_id\", jsonData.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"string\",\r\n    \"color\": \"string\",\r\n    \"description\": \"string\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/DiscProfiles",
+              "host": ["{{BASE_URL}}"],
+              "path": ["DiscProfiles"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"updated\",\r\n    \"color\": \"string\",\r\n  \"description\": \"string\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/discprofiles/{{discprofile_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["discprofiles", "{{discprofile_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Name is updated\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.name).to.eql(\"updated\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/discprofiles/{{discprofile_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["discprofiles", "{{discprofile_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/discprofiles/{{discprofile_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["discprofiles", "{{discprofile_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Postition",
+      "item": [
+        {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/positions",
+              "host": ["{{BASE_URL}}"],
+              "path": ["positions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set(\"position_id\", jsonData.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"string\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/positions",
+              "host": ["{{BASE_URL}}"],
+              "path": ["positions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"updated\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/positions/{{position_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["positions", "{{position_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"Name is updated\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData.name).to.eql(\"updated\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/positions/{{position_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["positions", "{{position_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/positions/{{position_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["positions", "{{position_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.environment.set(\"token\", jsonData.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"Pass@word1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/Auth/login",
+              "host": ["{{BASE_URL}}"],
+              "path": ["Auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"privateEmail\": \"strpostf5rmanng\",\r\n  \"privatePhone\": \"str5fig\",\r\n  \"firstName\": \"postm5fa\",\r\n  \"lastName\": \"strf5in\",\r\n  \"companyId\": 2,\r\n  \"departmentId\": 1,\r\n  \"positionId\": 9,\r\n  \"discProfileId\": 1,\r\n  \"cpr\": \"rfai59999999ng\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/Employees",
+              "host": ["{{BASE_URL}}"],
+              "path": ["Employees"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          "pm.test(\"Response time is less than 5000ms\", function () {\r",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+          "});\r",
+          "pm.test(\"Content-Type is application/json\", function () {\r",
+          "    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+          "});\r",
+          "pm.test(\"Response is valid JSON\", function () {\r",
+          "    pm.expect(() => JSON.parse(pm.response.text())).not.to.throw();\r",
+          "});\r",
+          "\t"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL2",
+      "value": ""
+    },
+    {
+      "key": "company_id",
+      "value": ""
+    },
+    {
+      "key": "BASE_URL",
+      "value": ""
+    }
+  ]
+}

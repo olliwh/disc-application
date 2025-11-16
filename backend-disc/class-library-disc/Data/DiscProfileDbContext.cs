@@ -399,9 +399,5 @@ public partial class DiscProfileDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("name");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

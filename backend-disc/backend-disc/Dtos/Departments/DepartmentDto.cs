@@ -1,4 +1,4 @@
-﻿namespace backend_disc.Dtos.Companies
+﻿namespace backend_disc.Dtos.Departments
 {
     public class DepartmentDto : BaseDtos.BaseDto
     {

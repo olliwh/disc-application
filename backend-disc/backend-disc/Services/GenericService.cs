@@ -12,11 +12,14 @@ namespace backend_disc.Services
     {
         private readonly IGenericRepository<TEntity> _repository;
         private readonly IMapper _mapper;
+        private readonly ILogger<EmployeeService> _logger;
 
-        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
+
+        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, ILogger<EmployeeService> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<List<TDto>> GetAllAsync()
@@ -33,9 +36,25 @@ namespace backend_disc.Services
 
         public virtual async Task<TDto> CreateAsync(TCreateDto createDto)
         {
-            var entity = _mapper.Map<TEntity>(createDto);
-            var created = await _repository.Add(entity);
-            return _mapper.Map<TDto>(created);
+            try
+            {
+                var entity = _mapper.Map<TEntity>(createDto);
+                var created = await _repository.Add(entity);
+                return _mapper.Map<TDto>(created);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in CreateAsync");
+                throw new InvalidOperationException("An error occurred while creating the entity", ex);
+            }
         }
 
         public async Task<int?> DeleteAsync(int id)
@@ -46,9 +65,25 @@ namespace backend_disc.Services
 
         public async Task<TDto?> UpdateAsync(int id, TUpdateDto updateDto)
         {
-            var entity = _mapper.Map<TEntity>(updateDto);
-            var updated = await _repository.Update(id, entity);
-            return _mapper.Map<TDto?>(updated); 
+            try
+            {
+                var entity = _mapper.Map<TEntity>(updateDto);
+                var updated = await _repository.Update(id, entity);
+                return _mapper.Map<TDto?>(updated);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in CreateAsync");
+                throw new InvalidOperationException("An error occurred while creating the entity", ex);
+            }
         }
     }
 }

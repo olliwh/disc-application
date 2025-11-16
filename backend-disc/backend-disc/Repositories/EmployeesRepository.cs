@@ -10,10 +10,12 @@ namespace backend_disc.Repositories
     public class EmployeesRepository : IEmployeesRepository
     {
         private readonly DiscProfileDbContext _context;
+        private readonly ILogger<EmployeesRepository> _logger;
 
-        public EmployeesRepository(DiscProfileDbContext context)
+        public EmployeesRepository(DiscProfileDbContext context, ILogger<EmployeesRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
         /// <summary>
         /// check if employee with that work phone number exists
@@ -22,7 +24,8 @@ namespace backend_disc.Repositories
         /// <returns>Task<bool></returns>
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
-            return await _context.Users.AnyAsync(u => u.Username == phoneNumber);
+                return await _context.Users.AnyAsync(u => u.Username == phoneNumber);
+
         }
 
         /// <summary>
@@ -63,12 +66,32 @@ namespace backend_disc.Repositories
                 var employeeId = employeeIds.FirstOrDefault();
 
                 if (employeeId == 0)
+                {
+                    _logger.LogWarning("Stored procedure returned 0 employee ID");
                     return null;
+                }
                 return await _context.Employees.FindAsync(employeeId);
             }
             catch (SqlException ex)
             {
-                throw new InvalidOperationException($"Failed to create employee: {ex.Message}", ex);
+                _logger.LogError(ex, "SQL error creating employee: {Message}", ex.Message);
+
+                // Check for common SQL errors
+                switch (ex.Number)
+                {
+                    case 2627: // Unique constraint violation
+                    case 2601:
+                        throw new InvalidOperationException("A duplicate value exists. Please check email, username, or CPR", ex);
+                    case 547: // Foreign key constraint violation
+                        throw new InvalidOperationException("Invalid reference to company, department, or position", ex);
+                    default:
+                        throw new InvalidOperationException($"Database error: {ex.Message}", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error creating employee");
+                throw new InvalidOperationException("Failed to create employee", ex);
             }
         }
 
@@ -85,34 +108,35 @@ namespace backend_disc.Repositories
         /// <returns>Task<PaginatedList<Employee>></returns>
         public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
-            IQueryable<Employee> query = _context.Employees
-            .AsNoTracking()//because we are only reading
-           .Include(e => e.DiscProfile);
-            if (departmentId.HasValue)
-                query = query.Where(e => e.DepartmentId == departmentId);
+                IQueryable<Employee> query = _context.Employees
+                    .AsNoTracking()//because we are only reading
+                   .Include(e => e.DiscProfile);
 
-            if (discProfileId.HasValue)
-                query = query.Where(e => e.DiscProfileId == discProfileId);
+                if (departmentId.HasValue)
+                    query = query.Where(e => e.DepartmentId == departmentId);
 
-            if (positionId.HasValue)
-                query = query.Where(e => e.PositionId == positionId);
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                string normalizedSearch = search.Trim().ToLower();
-                query = query.Where(e =>
-                    e.FirstName.ToLower().Contains(normalizedSearch) ||
-                    e.LastName.ToLower().Contains(normalizedSearch) ||
-                    (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
-                );
-            }
+                if (discProfileId.HasValue)
+                    query = query.Where(e => e.DiscProfileId == discProfileId);
 
-            var totalCount = await query.CountAsync();
+                if (positionId.HasValue)
+                    query = query.Where(e => e.PositionId == positionId);
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    string normalizedSearch = search.Trim().ToLower();
+                    query = query.Where(e =>
+                        e.FirstName.ToLower().Contains(normalizedSearch) ||
+                        e.LastName.ToLower().Contains(normalizedSearch) ||
+                        (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
+                    );
+                }
 
-            var employees = await query
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            return new PaginatedList<Employee>(employees, pageIndex, totalCount);
+                var totalCount = await query.CountAsync();
+
+                var employees = await query
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+                return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
         }
     }
 }

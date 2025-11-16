@@ -1,4 +1,7 @@
 using backend_disc.Dtos.Companies;
+using backend_disc.Dtos.Departments;
+using backend_disc.Dtos.Positions;
+using backend_disc.Dtos.DiscProfiles;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Services;
@@ -63,7 +66,7 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        {securityScheme, new string[] { }}
+        {securityScheme, Array.Empty<string>()}
     });
 });
 
