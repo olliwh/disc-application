@@ -39,11 +39,11 @@ namespace backend_disc.Services
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
+                Subject = new ClaimsIdentity(
+                [
                 new Claim(ClaimTypes.Name, user.Username), 
                 new Claim("employeeId", user.EmployeeId.ToString()),
-                new Claim(ClaimTypes.Role, user.UserRole?.Name ?? "User")            }),
+                new Claim(ClaimTypes.Role, user.UserRole?.Name ?? "User")            ]),
                 Expires = DateTime.UtcNow.AddMinutes(10),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

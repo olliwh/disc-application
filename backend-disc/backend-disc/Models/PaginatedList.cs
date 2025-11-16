@@ -13,13 +13,12 @@ namespace backend_disc.Models
         // sit return the last employeees even if they dont fill out the entire page
         public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
 
-        public PaginatedList(List<T> items, int pageIndex, int totalCount)
+        public PaginatedList(List<T> items, int pageIndex, int totalCount, int pageSize)
         {
             Items = items;
             PageIndex = pageIndex;
             TotalCount = totalCount;
+            PageSize = pageSize;
         }
-
-
     }
 }

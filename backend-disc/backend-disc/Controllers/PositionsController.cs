@@ -1,8 +1,5 @@
-﻿using backend_disc.Dtos.Companies;
-using backend_disc.Repositories;
+﻿using backend_disc.Dtos.Positions;
 using backend_disc.Services;
-using class_library_disc.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend_disc.Controllers

@@ -1,6 +1,6 @@
 ﻿using backend_disc.Dtos.BaseDtos;
 
-namespace backend_disc.Dtos.Companies
+namespace backend_disc.Dtos.Departments
 {
     public class UpdateDepartmentDto : IUpdateDtoBase
     {
