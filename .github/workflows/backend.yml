@@ -19,7 +19,7 @@ jobs:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: "Y"
-          SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         options: >-
           --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${{ secrets.DB_PASSWORD }}' -Q 'SELECT 1' -C -b"
           --health-interval=10s
@@ -41,8 +41,6 @@ jobs:
           mkdir -p backend-disc
           cat > backend-disc/.env <<'EOF'
           DB_USER=sa
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DB_NAME=${{ secrets.DB_NAME }}
           DB_HOST=localhost
           DB_PORT=1433
           ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;
