@@ -74,7 +74,7 @@ jobs:
 
       - name: Start APICreated
         working-directory: backend-disc
-        run: | |
+        run: | 
           dotnet run --project backend-disc/backend-disc.csproj --configuration Release &
           sleep 10
         env:          using Microsoft.EntityFrameworkCore;
