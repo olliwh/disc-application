@@ -3,39 +3,48 @@ name: Backend CI/CD
 on:
   push:
     branches: [main]
-    # paths:
-    #   - "backend-disc/**"
   pull_request:
     branches: [main]
-    paths:
-      - "backend-disc/**"
+    paths: ["backend-disc/**"]
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     env:
-      SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
       API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-      ConnectionStrings__DefaultConnection: Server=localhost,1433;Database=${DB_NAME};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;
-      ASPNETCORE_ENVIRONMENT: Development
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Start SQL Server container (uses repo secret)
+      # -----------------------
+      # SQL Server Startup
+      # -----------------------
+      - name: Start SQL Server
         shell: bash
         run: |
-          docker run -e 'ACCEPT_EULA=Y' -e "SA_PASSWORD=$SA_PASSWORD" -p 1433:1433 --name disc-mssql -d mcr.microsoft.com/mssql/server:2022-latest
-          for i in {1..60}; do
-            if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready for client connections."; then
-              echo "SQL Server ready"; exit 0;
-            fi
-            echo "Waiting for SQL Server... ($i/60)"; sleep 2;
-          done
-          echo "SQL Server failed to start"; docker logs disc-mssql; exit 1
+          docker run \
+            -e ACCEPT_EULA=Y \
+            -e SA_PASSWORD="$DB_PASSWORD" \
+            -p 1433:1433 \
+            --name disc-mssql \
+            -d mcr.microsoft.com/mssql/server:2022-latest
 
+          echo "Waiting for SQL Server..."
+          for i in {1..60}; do
+            if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready"; then
+              echo "SQL Server ready!"
+              break
+            fi
+            sleep 2
+          done
+
+      # -----------------------
+      # Setup .NET
+      # -----------------------
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -45,37 +54,41 @@ jobs:
         working-directory: backend-disc
         run: dotnet restore
 
-      - name: Build
+      - name: Build API
         working-directory: backend-disc
         run: dotnet build --no-restore --configuration Release
 
+      # -----------------------
+      # Start API
+      # -----------------------
       - name: Start API
         working-directory: backend-disc
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
           API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-          ASPNETCORE_URLS: http://+:5000
+          ASPNETCORE_URLS: http://0.0.0.0:5000
           ASPNETCORE_ENVIRONMENT: Development
         run: |
           dotnet run --project backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
-          sleep 12
+          sleep 15
 
+      # -----------------------
+      # Run Postman Tests
+      # -----------------------
       - name: Install Newman
         run: npm install -g newman
 
       - name: Run Postman tests
         working-directory: backend-disc
-        continue-on-error: true
         run: |
           newman run Disc-api-test.postman_collection.json \
             --environment postman-env.json \
             --reporters cli,json \
-            --reporter-json-export test-results.json || true
+            --reporter-json-export test-results.json
 
       - name: Upload Postman results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: postman-results
-          path: results.xml
-          if-no-files-found: warn
+          path: backend-disc/test-results.json
