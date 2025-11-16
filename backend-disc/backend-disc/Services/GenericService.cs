@@ -12,14 +12,12 @@ namespace backend_disc.Services
     {
         private readonly IGenericRepository<TEntity> _repository;
         private readonly IMapper _mapper;
-        private readonly ILogger<EmployeeService> _logger;
 
 
-        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, ILogger<EmployeeService> logger)
+        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _logger = logger;
         }
 
         public async Task<List<TDto>> GetAllAsync()
@@ -52,7 +50,6 @@ namespace backend_disc.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error in CreateAsync");
                 throw new InvalidOperationException("An error occurred while creating the entity", ex);
             }
         }
@@ -81,7 +78,6 @@ namespace backend_disc.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error in CreateAsync");
                 throw new InvalidOperationException("An error occurred while creating the entity", ex);
             }
         }

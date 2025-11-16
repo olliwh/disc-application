@@ -25,7 +25,6 @@ namespace backend_disc.Repositories
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
                 return await _context.Users.AnyAsync(u => u.Username == phoneNumber);
-
         }
 
         /// <summary>

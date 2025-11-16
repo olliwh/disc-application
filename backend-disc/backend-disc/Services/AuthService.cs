@@ -15,47 +15,90 @@ namespace backend_disc.Services
     {
         private readonly IConfiguration _config;
         private readonly IGenericRepository<User> _userRepository;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IConfiguration config, IGenericRepository<User> userRepository)
+        public AuthService(
+            IConfiguration config,
+            IGenericRepository<User> userRepository,
+            ILogger<AuthService> logger)
         {
             _config = config;
             _userRepository = userRepository;
+            _logger = logger;
         }
+
         public async Task<LoginResponseDto?> Login(LoginDto dto)
         {
-            var user = await _userRepository.Query()
-                .Include(u => u.Employee)
-                .Include(u => u.UserRole)
-                .FirstOrDefaultAsync(u => u.Username == dto.Username);
-
-            if (user == null || !Argon2.Verify(user.PasswordHash, dto.Password))
-                return null;
-
-            // Generate JWT
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var secretKey = _config["API_SECRET_KEY"] ?? throw new InvalidOperationException("API_SECRET_KEY is not configured");
-
-            var key = Encoding.UTF8.GetBytes(secretKey); 
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity(
-                [
-                new Claim(ClaimTypes.Name, user.Username), 
-                new Claim("employeeId", user.EmployeeId.ToString()),
-                new Claim(ClaimTypes.Role, user.UserRole?.Name ?? "User")            ]),
-                Expires = DateTime.UtcNow.AddMinutes(10),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+                var user = await _userRepository.Query()
+                    .Include(u => u.Employee)
+                    .Include(u => u.UserRole)
+                    .FirstOrDefaultAsync(u => u.Username == dto.Username);
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+                if (user == null)
+                {
+                    _logger.LogWarning("Login attempt failed: User not found - {Username}", dto.Username);
+                    return null;
+                }
 
-            return new LoginResponseDto
+                // Verify password - wrap in try-catch as Argon2 can throw on invalid hash format
+                bool isPasswordValid;
+                try
+                {
+                    isPasswordValid = Argon2.Verify(user.PasswordHash, dto.Password);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Password verification failed for user {Username}", dto.Username);
+                    return null; // Treat as invalid login
+                }
+
+                if (!isPasswordValid)
+                {
+                    _logger.LogWarning("Login attempt failed: Invalid password - {Username}", dto.Username);
+                    return null;
+                }
+
+                // Generate JWT
+                var secretKey = _config["API_SECRET_KEY"]
+                    ?? throw new InvalidOperationException("API_SECRET_KEY is not configured");
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(secretKey);
+
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.Name, user.Username),
+                    new Claim("employeeId", user.EmployeeId.ToString()),
+                    new Claim(ClaimTypes.Role, user.UserRole?.Name ?? "User")
+                    ]),
+                    Expires = DateTime.UtcNow.AddMinutes(10),
+                    SigningCredentials = new SigningCredentials(
+                        new SymmetricSecurityKey(key),
+                        SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                return new LoginResponseDto
+                {
+                    Token = tokenHandler.WriteToken(token),
+                    ExpiresAt = tokenDescriptor.Expires!.Value
+                };
+            }
+            catch (InvalidOperationException)
             {
-                Token = tokenHandler.WriteToken(token),
-                ExpiresAt = tokenDescriptor.Expires!.Value
-            };
+                // Re-throw configuration errors (API_SECRET_KEY missing)
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during login for user {Username}", dto.Username);
+                throw; // Let controller handle it
+            }
         }
-
     }
 }
