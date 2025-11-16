@@ -20,7 +20,7 @@ jobs:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: "Y"
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 1433:1433
         options: >-
