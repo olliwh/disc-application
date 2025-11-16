@@ -14,83 +14,77 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${{ secrets.DB_PASSWORD }} -Q 'SELECT 1'" 
+          --health-interval 5s 
+          --health-timeout 5s
+          --health-retries 20
+
     env:
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
       API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+      ASPNETCORE_ENVIRONMENT: Development
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Start SQL Server container (uses repo secret)
-        shell: bash
-        run: |
-          docker run -e 'ACCEPT_EULA=Y' -e "SA_PASSWORD=${{ secrets.DB_PASSWORD }}" -p 1433:1433 --name disc-mssql -d mcr.microsoft.com/mssql/server:2022-latest
-          for i in {1..60}; do
-            if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready for client connections."; then
-              echo "SQL Server ready"; exit 0;
-            fi
-            echo "Waiting for SQL Server... ($i/60)"; sleep 2;
-          done
-          echo "SQL Server failed to start"; docker logs disc-mssql; exit 1
-
-      - name: Create .env file
-        run: |
-          mkdir -p backend-disc
-          cat > backend-disc/.env <<'EOF'
-          DB_USER=sa
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_HOST=localhost
-          DB_PORT=1433
-          ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;
-          API_SECRET_KEY=${{ secrets.API_SECRET_KEY }}
-          ASPNETCORE_ENVIRONMENT=Development
-          EOF
-
+      # Install .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "8.0.x"
 
+      # Build backend
       - name: Restore dependencies
-        working-directory: backend-disc
+        working-directory: backend-disc/backend-disc
         run: dotnet restore
 
-      - name: Build
-        working-directory: backend-disc
-        run: dotnet build --no-restore --configuration Release
+      - name: Build API
+        working-directory: backend-disc/backend-disc
+        run: dotnet build --configuration Release --no-restore
 
+      # Run API in background
       - name: Start API
-        working-directory: backend-disc
-        env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-          ASPNETCORE_URLS: http://+:5000
-          ASPNETCORE_ENVIRONMENT: Development
+        working-directory: backend-disc/backend-disc
         run: |
-          dotnet run --project backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
-          sleep 12
+          dotnet run \
+            --configuration Release \
+            --urls http://0.0.0.0:5000 \
+            > api.log 2>&1 &
+          sleep 15
 
+      # Install newman
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Postman tests
+      # Run Postman tests
+      - name: Run Postman Tests
         working-directory: backend-disc
-        continue-on-error: true
         run: |
-          newman run Disc-api-test.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json || true
+          newman run Disc-api-test.postman_collection.json \
+            --environment postman-env.json \
+            --reporters cli,json \
+            --reporter-json-export postman-report.json
 
-      - name: Show API logs if tests failed
-        if: failure()
-        run: |
-          echo "=== API Logs ==="
-          cat api.log
-
-      - name: Upload Postman results
-        if: always()
+      # Upload Postman results
+      - name: Upload Postman report
         uses: actions/upload-artifact@v4
         with:
-          name: postman-results
-          path: results.xml
-          if-no-files-found: warn
+          name: postman-report
+          path: backend-disc/postman-report.json
+
+      # Show API logs only if something failed
+      - name: Print API logs
+        if: failure()
+        run: |
+          echo "===== API LOGS ====="
+          cat backend-disc/backend-disc/api.log
