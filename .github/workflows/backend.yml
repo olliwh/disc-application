@@ -13,6 +13,7 @@ jobs:
 
     env:
       ASPNETCORE_ENVIRONMENT: Development
+      
 
         steps:
           - name: Checkout code

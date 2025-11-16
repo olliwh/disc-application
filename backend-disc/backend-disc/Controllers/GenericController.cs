@@ -20,10 +20,13 @@ namespace backend_disc.Controllers
         where TUpdateDto : IUpdateDtoBase
     {
         private readonly IGenericService<TDto, TCreateDto, TUpdateDto> _service;
+        private readonly ILogger<EmployeesController> _logger;
 
-        protected GenericController(IGenericService<TDto, TCreateDto, TUpdateDto> service)
+
+        protected GenericController(IGenericService<TDto, TCreateDto, TUpdateDto> service, ILogger<EmployeesController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -49,8 +52,31 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public virtual async Task<IActionResult> Create([FromBody] TCreateDto createDto)
         {
-            var created = await _service.CreateAsync(createDto);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            try
+            {
+                var created = await _service.CreateAsync(createDto);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid input for creating entity");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Resource not found when creating entity");
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Database operation failed when creating entity");
+                return StatusCode(500, new { message = "Failed to create entity due to database error" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error creating entity");
+                return StatusCode(500, new { message = "An unexpected error occurred while creating the entity" });
+            }
         }
 
         [HttpPut("{id}")]
@@ -59,9 +85,32 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual async Task<IActionResult> Update(int id, [FromBody] TUpdateDto updateDto)
         {
-            var updated = await _service.UpdateAsync(id, updateDto);
-            if (updated == null) return NotFound();
-            return Ok(updated);
+            try
+            {
+                var updated = await _service.UpdateAsync(id, updateDto);
+                if (updated == null) return NotFound();
+                return Ok(updated);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid input for creating entity");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Resource not found when creating entity");
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Database operation failed when creating entity");
+                return StatusCode(500, new { message = "Failed to create entity due to database error" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error creating entity");
+                return StatusCode(500, new { message = "An unexpected error occurred while creating the entity" });
+            }
         }
 
         [HttpDelete("{id}")]

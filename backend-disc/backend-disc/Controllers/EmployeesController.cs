@@ -31,17 +31,9 @@ namespace backend_disc.Controllers
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10)
         {
-            try
-            {
-                var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
-                //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
-                return Ok(employees);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving employees");
-                return StatusCode(500, new { message = "An error occurred while retrieving employees" });
-            }
+            var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+            //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
+            return Ok(employees);
         }
         /// <summary>
         /// Creates a new employee only admin users are allowed to create employees
