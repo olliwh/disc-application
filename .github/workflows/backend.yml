@@ -1,0 +1,77 @@
+
+name: Backend CI/CD
+on:
+  push:
+    branches: [main]
+  paths:
+    - 'frontend/**'
+
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v3
+
+          - name: Setup .NET
+            uses: actions/setup-dotnet@v3
+            with:
+              dotnet-version: '8.0.x'  
+
+          - name: Restore dependencies
+            working-directory: ./backend-disc
+            run: dotnet restore backend-disc.sln
+
+          - name: Build backend
+            working-directory: ./backend-disc
+            run: dotnet build backend-disc.sln --configuration Release --no-restore
+
+          - name: Run API in background
+        run: |
+          nohup dotnet run --project ./backend-disc/backend-disc.csproj --urls "http://localhost:5000" > api.log 2>&1 &
+          echo "API started, waiting for it to be ready..."
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:5000/swagger/index.html > /dev/null 2>&1; then
+              echo "API is ready!"
+              exit 0
+            fi
+            echo "Waiting for API... attempt $i/30"
+            sleep 3
+          done
+          echo "API failed to start within 90 seconds"
+          echo "=== API Log ==="
+          cat api.log
+          exit 1
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman tests
+        run: |
+          newman run backend-disc/Disc-api-test.postman_collection \
+            --env-var BASE_URL=http://localhost:5000/api \
+            --reporters cli,junit \
+            --reporter-junit-export results.xml
+        continue-on-error: true
+
+      - name: Show API logs if tests failed
+        if: failure()
+        run: |
+          echo "=== API Logs ==="
+          cat api.log
+
+      - name: Upload Postman results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-results
+          path: results.xml
+          if-no-files-found: warn
