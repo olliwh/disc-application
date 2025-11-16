@@ -18,8 +18,8 @@ jobs:
       SA_PASSWORD=${{ secrets.DB_PASSWORD }}
       DB_NAME=${{ secrets.DB_Name }}
       API_SECRET_KEY=${{ secrets.API_SECRET_KEY }}
-      ConnectionStrings__DefaultConnection: Server=localhost,1433;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=True;
-      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=True;
+      ASPNETCORE_ENVIRONMENT=Development
 
 
 
