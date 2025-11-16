@@ -74,7 +74,7 @@ jobs:
           echo $! > api.pid
           sleep 2
           # give it some more time to warm up
-          sleep 10
+          sleep 140
 
       # -----------------------
       # Run Postman Tests
