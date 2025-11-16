@@ -1,78 +1,129 @@
-
 name: Backend CI/CD
+
 on:
   push:
     branches: [main]
-  paths:
-    - 'frontend/**'
-
+    paths:
+      - "backend-disc/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend-disc/**"
 
 jobs:
-  test-api:
+  test:
     runs-on: ubuntu-latest
 
-    env:
-      ASPNETCORE_ENVIRONMENT: Development
-      
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MSSQL_SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        options: >-
+          --health-cmd="/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${{ secrets.DB_PASSWORD }}' -Q 'SELECT 1' -C -b"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+        ports:
+          - 1433:1433
 
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-          - name: Setup .NET
-            uses: actions/setup-dotnet@v3
-            with:
-              dotnet-version: '8.0.x'  
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
 
-          - name: Restore dependencies
-            working-directory: ./backend-disc
-            run: dotnet restore backend-disc.sln
-
-          - name: Build backend
-            working-directory: ./backend-disc
-            run: dotnet build backend-disc.sln --configuration Release --no-restore
-
-          - name: Run API in background
+      - name: Create .env file
         run: |
-          nohup dotnet run --project ./backend-disc/backend-disc.csproj --urls "http://localhost:5000" > api.log 2>&1 &
-          echo "API started, waiting for it to be ready..."
+          cat > backend-disc/.env << EOF
+          DB_USER=sa
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_HOST=localhost
+          DB_PORT=1433
+          ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;
+          API_SECRET_KEY=${{ secrets.API_SECRET_KEY }}
+          ASPNETCORE_ENVIRONMENT=Development
+          EOF
 
-      - name: Wait for API to be ready
+      - name: Wait for SQL Server
         run: |
           for i in {1..30}; do
-            if curl -f http://localhost:5000/swagger/index.html > /dev/null 2>&1; then
-              echo "API is ready!"
-              exit 0
-            fi
-            echo "Waiting for API... attempt $i/30"
-            sleep 3
+            /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${{ secrets.DB_PASSWORD }}" -Q "SELECT 1" -C -b && exit 0
+            echo "Waiting for SQL Server... ($i/30)"
+            sleep 2
           done
-          echo "API failed to start within 90 seconds"
-          echo "=== API Log ==="
-          cat api.log
+          echo "SQL Server failed to start"
           exit 1
+        shell: bash
 
+      - name: Restore dependencies
+        working-directory: backend-disc
+        run: dotnet restore
+
+      - name: Build
+        working-directory: backend-disc
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Install EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Start APICreated
+        working-directory: backend-disc
+        run: | |
+          dotnet run --project backend-disc/backend-disc.csproj --configuration Release &
+          sleep 10
+        env:          using Microsoft.EntityFrameworkCore;
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}r=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;";
+          ASPNETCORE_URLS: http://+:5000options = new DbContextOptionsBuilder<DiscProfileDbContext>()
+          ASPNETCORE_ENVIRONMENT: Development
+ld();
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Postman tests
-        run: |
-          newman run backend-disc/Disc-api-test.postman_collection \
-            --env-var BASE_URL=http://localhost:5000/api \
-            --reporters cli,junit \
-            --reporter-junit-export results.xml
-        continue-on-error: true
+      - name: Run Postman testsated();
+        working-directory: backend-disc
+        run: newman run Disc-api-test.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json          EOF
+        continue-on-error: truect backend-disc/backend-disc.csproj --configuration Release -- --migrate-only
 
-      - name: Show API logs if tests failed
-        if: failure()
-        run: |
-          echo "=== API Logs ==="
-          cat api.log
-
-      - name: Upload Postman results
+      - name: Upload test results          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: postman-results
-          path: results.xml
-          if-no-files-found: warn
+          name: postman-test-results
+          path: backend-disc/test-results.json          dotnet run --project backend-disc/backend-disc.csproj --configuration Release &
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && always()ection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+        uses: actions/github-script@v6_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+        with:5000
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('./backend-disc/test-results.json', 'utf8'));
+            const passed = results.run.stats.tests.total - results.run.stats.tests.failed;
+            const comment = `## Postman Test Results\n\n✅ Passed: ${passed}\n❌ Failed: ${results.run.stats.tests.failed}\n⏱️ Duration: ${results.run.timings.completed}ms`;
+            github.rest.issues.createComment({ Run Postman tests
+              issue_number: context.issue.number,ectory: backend-disc
+              owner: context.repo.owner,.postman_collection.json --environment postman-env.json --reporters cli,json --reporter-json-export test-results.json
+              repo: context.repo.repo,
+              body: comment
+            });
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('./backend-disc/test-results.json', 'utf8'));
+            const passed = results.run.stats.tests.total - results.run.stats.tests.failed;
+            const comment = `## Postman Test Results\n\n✅ Passed: ${passed}\n❌ Failed: ${results.run.stats.tests.failed}\n⏱️ Duration: ${results.run.timings.completed}ms`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
