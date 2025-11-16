@@ -15,12 +15,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+      API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+      ASPNETCORE_ENVIRONMENT: Development
+
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: "Y"
-          SA_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SA_PASSWORD: $SA_PASSWORD
         ports:
           - 1433:1433
         options: >-
