@@ -42,6 +42,20 @@ jobs:
             sleep 2
           done
 
+      - name: Seed database with initial data
+        shell: bash
+        run: |
+          echo "Copying SQL seed file into container..."
+          docker cp backend-disc/backend-disc/db/init.sql disc-mssql:/init.sql
+
+          echo "Running SQL seed script..."
+          docker exec disc-mssql /opt/mssql-tools/bin/sqlcmd \
+            -S localhost -U sa -P "$DB_PASSWORD" \
+            -d ${DB_NAME} \
+            -i /init.sql
+
+          echo "SQL seed script completed!"
+
       # -----------------------
       # Setup .NET
       # -----------------------
@@ -69,24 +83,10 @@ jobs:
           ASPNETCORE_URLS: http://0.0.0.0:5000
           ASPNETCORE_ENVIRONMENT: Development
         run: |
-          # start API in background, capture stdout/stderr to api.log and save PID
-          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" > api.log 2>&1 &
+          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
           echo $! > api.pid
-          sleep 2
-          # give it some more time to warm up
-          sleep 10
-
-      - name: Check if API is listening
-        run: |
-          echo "Checking port 5000..."
-          sudo lsof -i -P -n | grep LISTEN || echo "❌ API is NOT listening!"
-          curl -v http://localhost:5000 || echo "❌ curl could not reach the API"
-
-      - name: Show API logs
-        if: always()
-        run: |
-          echo "----- API LOG -----"
-          cat api.log || echo "api.log missing"
+          echo "Backend started with PID: $(cat api.pid)"
+          sleep 5
 
       # -----------------------
       # Run Postman Tests
@@ -101,10 +101,3 @@ jobs:
             --environment postman-env.json \
             --reporters cli,json \
             --reporter-json-export test-results.json
-
-      - name: Upload Postman results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: postman-results
-          path: backend-disc/test-results.json
