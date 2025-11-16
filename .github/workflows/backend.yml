@@ -69,8 +69,12 @@ jobs:
           ASPNETCORE_URLS: http://0.0.0.0:5000
           ASPNETCORE_ENVIRONMENT: Development
         run: |
-          dotnet run --project backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
-          sleep 15
+          # start API in background, capture stdout/stderr to api.log and save PID
+          dotnet run --project backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" > api.log 2>&1 &
+          echo $! > api.pid
+          sleep 2
+          # give it some more time to warm up
+          sleep 10
 
       # -----------------------
       # Run Postman Tests
