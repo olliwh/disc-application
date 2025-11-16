@@ -41,20 +41,19 @@ jobs:
             fi
             sleep 2
           done
-
-      - name: Seed database with initial data
-        shell: bash
+      - name: Install SQLCMD tools
         run: |
-          echo "Copying SQL seed file into container..."
-          docker cp backend-disc/backend-disc/db/init.sql disc-mssql:/init.sql
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
+          echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+          export PATH="$PATH:/opt/mssql-tools/bin"
 
-          echo "Running SQL seed script..."
-          docker exec disc-mssql /opt/mssql-tools/bin/sqlcmd \
-            -S localhost -U sa -P "$DB_PASSWORD" \
+      - name: Seed database
+        run: |
+          sqlcmd -S localhost,1433 \
+            -U sa -P "$DB_PASSWORD" \
             -d ${DB_NAME} \
-            -i /init.sql
-
-          echo "SQL seed script completed!"
+            -i backend-disc/backend-disc/db/init.sql
 
       # -----------------------
       # Setup .NET
