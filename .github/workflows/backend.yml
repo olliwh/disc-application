@@ -20,9 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # -----------------------
-      # SQL Server Startup
-      # -----------------------
+
       - name: Start SQL Server
         shell: bash
         run: |
@@ -41,23 +39,8 @@ jobs:
             fi
             sleep 2
           done
-      - name: Install SQLCMD tools
-        run: |
-          sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
-          echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
-          export PATH="$PATH:/opt/mssql-tools/bin"
+      
 
-      - name: Seed database
-        run: |
-          sqlcmd -S localhost,1433 \
-            -U sa -P "$DB_PASSWORD" \
-            -d ${DB_NAME} \
-            -i backend-disc/backend-disc/db/init.sql
-
-      # -----------------------
-      # Setup .NET
-      # -----------------------
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -71,9 +54,7 @@ jobs:
         working-directory: backend-disc
         run: dotnet build --no-restore --configuration Release
 
-      # -----------------------
-      # Start API
-      # -----------------------
+
       - name: Start API
         working-directory: backend-disc
         env:
@@ -87,9 +68,7 @@ jobs:
           echo "Backend started with PID: $(cat api.pid)"
           sleep 5
 
-      # -----------------------
-      # Run Postman Tests
-      # -----------------------
+
       - name: Install Newman
         run: npm install -g newman
 
