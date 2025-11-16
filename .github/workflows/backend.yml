@@ -14,6 +14,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      SA_PASSWORD=${{ secrets.DB_PASSWORD }}
+      DB_NAME=${{ secrets.DB_Name }}
+      API_SECRET_KEY=${{ secrets.API_SECRET_KEY }}
+      ConnectionStrings__DefaultConnection: Server=localhost,1433;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=True;
+      ASPNETCORE_ENVIRONMENT: Development
+
 
 
     steps:
@@ -22,7 +29,7 @@ jobs:
       - name: Start SQL Server container (uses repo secret)
         shell: bash
         run: |
-          docker run -e 'ACCEPT_EULA=Y' -e "SA_PASSWORD=${{ secrets.DB_PASSWORD }}" -p 1433:1433 --name disc-mssql -d mcr.microsoft.com/mssql/server:2022-latest
+          docker run -e 'ACCEPT_EULA=Y' -e "SA_PASSWORD" -p 1433:1433 --name disc-mssql -d mcr.microsoft.com/mssql/server:2022-latest
           for i in {1..60}; do
             if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready for client connections."; then
               echo "SQL Server ready"; exit 0;
@@ -31,18 +38,18 @@ jobs:
           done
           echo "SQL Server failed to start"; docker logs disc-mssql; exit 1
 
-      - name: Create .env file
-        run: |
-          cat > backend-disc/.env <<EOF
-          DB_USER=sa
-          DB_PASSWORD=$DB_PASSWORD
-          DB_NAME=$DB_NAME
-          DB_HOST=localhost
-          DB_PORT=1433
-          ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=True;
-          API_SECRET_KEY=$API_SECRET_KEY
-          ASPNETCORE_ENVIRONMENT=Development
-          EOF
+      # - name: Create .env file
+      #   run: |
+      #     cat > backend-disc/.env <<EOF
+      #     DB_USER=sa
+      #     DB_PASSWORD=$DB_PASSWORD
+      #     DB_NAME=$DB_NAME
+      #     DB_HOST=localhost
+      #     DB_PORT=1433
+      #     ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=$DB_NAME;User Id=sa;Password=$DB_PASSWORD;TrustServerCertificate=True;
+      #     API_SECRET_KEY=$API_SECRET_KEY
+      #     ASPNETCORE_ENVIRONMENT=Development
+      #     EOF
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
