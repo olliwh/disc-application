@@ -105,7 +105,7 @@ namespace backend_disc.Repositories
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns>Task<PaginatedList<Employee>></returns>
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<List<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
                 IQueryable<Employee> query = _context.Employees
                     .AsNoTracking()//because we are only reading
@@ -135,7 +135,7 @@ namespace backend_disc.Repositories
                     .Skip((pageIndex - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
-                return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
+            return employees;
         }
     }
 }

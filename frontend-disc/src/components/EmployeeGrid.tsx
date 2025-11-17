@@ -29,15 +29,15 @@ const EmployeeGrid = ({ employeeQuery }: Props) => {
       >
         {isLoading &&
           skeletons.map((skeleton) => (
-          <EmployeeCardContainer>
-            <EmployeeCardSkeleton key={skeleton} />
+          <EmployeeCardContainer key={skeleton}>
+            <EmployeeCardSkeleton  />
           </EmployeeCardContainer>
           
           ))}
 
         {employees?.map((employee) => (
-          <EmployeeCardContainer>
-            <EmployeeCard employee={employee} key={employee.id} />
+          <EmployeeCardContainer key={employee.id}>
+            <EmployeeCard employee={employee}  />
           </EmployeeCardContainer>
         ))}
       </SimpleGrid>
