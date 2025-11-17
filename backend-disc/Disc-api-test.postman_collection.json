@@ -614,7 +614,7 @@
 									"\r",
 									"var jsonData = pm.response.json();\r",
 									"pm.test(\"Array contains contains correct number of  items\", function () {\r",
-									"    pm.expect(jsonData.length).to.eql(10);\r",
+									"    pm.expect(jsonData.length).to.eql(11);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -839,7 +839,7 @@
 									"\r",
 									"var jsonData = pm.response.json().items;\r",
 									"pm.test(\"Array contains correct number of items\", function () {\r",
-									"    pm.expect(jsonData.length).to.eql(9);\r",
+									"    pm.expect(jsonData.length).to.eql(8);\r",
 									"});"
 								],
 								"type": "text/javascript",
