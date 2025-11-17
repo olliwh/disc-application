@@ -11,11 +11,11 @@ public partial class Project
 
     public string? Description { get; set; }
 
-    public string? Deadline { get; set; }
+    public DateTime? Deadline { get; set; }
 
     public bool Completed { get; set; }
 
-    public int? NumberOfEmployees { get; set; }
+    public int? EmployeesNeeded { get; set; }
 
     public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 

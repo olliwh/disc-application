@@ -15,11 +15,11 @@ public partial class Employee
 
     public string LastName { get; set; } = null!;
 
-    public string? ImagePath { get; set; }
+    public string ImagePath { get; set; } = null!;
 
     public int CompanyId { get; set; }
 
-    public int? DepartmentId { get; set; }
+    public int DepartmentId { get; set; }
 
     public int? PositionId { get; set; }
 
@@ -27,7 +27,7 @@ public partial class Employee
 
     public virtual Company Company { get; set; } = null!;
 
-    public virtual Department? Department { get; set; }
+    public virtual Department Department { get; set; } = null!;
 
     public virtual DiscProfile? DiscProfile { get; set; }
 
