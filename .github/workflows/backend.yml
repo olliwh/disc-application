@@ -2,7 +2,7 @@ name: Backend CI/CD
 
 on:
   push:
-    branches:
+    branches: 
       - main
 
   workflow_dispatch:
@@ -63,6 +63,7 @@ jobs:
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
           sleep 5
+
 
       - name: run seeder
         working-directory: backend-disc/seeder

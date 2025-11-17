@@ -51,6 +51,19 @@ services:
       - /app/node_modules
     depends_on:
       - backend-disc
+  seeder:
+    container_name: disc-seeder
+    build:
+      context: .
+      dockerfile: /backend-disc/seeder/Dockerfile
+    depends_on:
+      mssql:
+        condition: service_healthy
+    env_file:
+      - .env
+    deploy:
+      replicas: 0    # prevents seeder from starting automatically
+# to run with seeder: docker compose up -d --build --scale seeder=1
 
 volumes:
   mssql-data:
