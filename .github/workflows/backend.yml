@@ -2,7 +2,9 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: 
+      - main
+      - seeder
   pull_request:
     branches: [main]
     paths: ["backend-disc/**"]
@@ -64,6 +66,20 @@ jobs:
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
           sleep 5
+
+
+      - name: run seeder
+        working-directory: backend-disc/seeder
+        env:
+          DB_HOST: "localhost"
+          DB_PORT: "1433"
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: "sa"
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          echo "Running seeder..."
+          dotnet run --configuration Release
+          echo "Seeder completed!"
 
       - name: Install Newman
         run: npm install -g newman
