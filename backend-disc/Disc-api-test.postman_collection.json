@@ -10,6 +10,55 @@
       "name": "Company",
       "item": [
         {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.environment.set(\"company_id\", jsonData.id);\r",
+                  "\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"HP\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"HP\",\r\n  \"location\": \"USA\",\r\n  \"businessField\": \"Technology\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/companies",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies"]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "getAll",
           "event": [
             {
@@ -18,7 +67,12 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
-                  "});"
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has one item\"), function () {\r",
+                  "    pm.expect(pm.response.json().length).to.eql(1);\r",
+                  "}\r",
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -38,46 +92,6 @@
           "response": []
         },
         {
-          "name": "create",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {\r",
-                  "    pm.response.to.have.status(201);\r",
-                  "});\r",
-                  "var jsonData = pm.response.json();\r",
-                  "\r",
-                  "pm.environment.set(\"company_id\", jsonData.id);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"string\",\r\n  \"location\": \"string\",\r\n  \"businessField\": \"string\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{BASE_URL}}/companies",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies"]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "update",
           "event": [
             {
@@ -86,6 +100,15 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"updated\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -145,68 +168,12 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "delete",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/companies/{{company_id}}",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies", "{{company_id}}"]
-            }
-          },
-          "response": []
         }
       ]
     },
     {
       "name": "Department",
       "item": [
-        {
-          "name": "getAll",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/departments",
-              "host": ["{{BASE_URL}}"],
-              "path": ["departments"]
-            }
-          },
-          "response": []
-        },
         {
           "name": "create",
           "event": [
@@ -219,7 +186,15 @@
                   "});\r",
                   "var jsonData = pm.response.json();\r",
                   "\r",
-                  "pm.environment.set(\"department_id\", jsonData.id);"
+                  "pm.environment.set(\"department_id\", jsonData.id);\r",
+                  "\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"string\");\r",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -248,6 +223,38 @@
           "response": []
         },
         {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has one item\"), function () {\r",
+                  "    pm.expect(pm.response.json().length).to.eql(1);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/departments",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments"]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "update",
           "event": [
             {
@@ -256,6 +263,15 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"updated\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -315,68 +331,12 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "delete",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/departments/{{department_id}}",
-              "host": ["{{BASE_URL}}"],
-              "path": ["departments", "{{department_id}}"]
-            }
-          },
-          "response": []
         }
       ]
     },
     {
       "name": "DiscProfile",
       "item": [
-        {
-          "name": "getAll",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/DiscProfiles",
-              "host": ["{{BASE_URL}}"],
-              "path": ["DiscProfiles"]
-            }
-          },
-          "response": []
-        },
         {
           "name": "create",
           "event": [
@@ -418,6 +378,38 @@
           "response": []
         },
         {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has one item\"), function () {\r",
+                  "    pm.expect(pm.response.json().length).to.eql(1);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/DiscProfiles",
+              "host": ["{{BASE_URL}}"],
+              "path": ["DiscProfiles"]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "update",
           "event": [
             {
@@ -426,6 +418,15 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"updated\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -485,68 +486,12 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "delete",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/discprofiles/{{discprofile_id}}",
-              "host": ["{{BASE_URL}}"],
-              "path": ["discprofiles", "{{discprofile_id}}"]
-            }
-          },
-          "response": []
         }
       ]
     },
     {
       "name": "Postition",
       "item": [
-        {
-          "name": "getAll",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/positions",
-              "host": ["{{BASE_URL}}"],
-              "path": ["positions"]
-            }
-          },
-          "response": []
-        },
         {
           "name": "create",
           "event": [
@@ -559,7 +504,15 @@
                   "});\r",
                   "var jsonData = pm.response.json();\r",
                   "\r",
-                  "pm.environment.set(\"position_id\", jsonData.id);"
+                  "pm.environment.set(\"position_id\", jsonData.id);\r",
+                  "\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"string\");\r",
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -588,6 +541,38 @@
           "response": []
         },
         {
+          "name": "getAll",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has one item\"), function () {\r",
+                  "    pm.expect(pm.response.json().length).to.eql(1);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/positions",
+              "host": ["{{BASE_URL}}"],
+              "path": ["positions"]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "update",
           "event": [
             {
@@ -596,6 +581,15 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.test(\"Response has name property\", function () {\r",
+                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Body matches string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"updated\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -655,6 +649,49 @@
             }
           },
           "response": []
+        }
+      ]
+    },
+
+    {
+      "name": "deletes",
+      "item": [
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var id = pm.environment.get(\"department_id\");\r",
+                  "pm.test(\"Deleted id matches\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.eql(id);\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/departments/{{department_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["departments", "{{department_id}}"]
+            }
+          },
+          "response": []
         },
         {
           "name": "delete",
@@ -665,6 +702,12 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {\r",
                   "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var id = pm.environment.get(\"position_id\");\r",
+                  "pm.test(\"Deleted id matches\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.eql(id);\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -680,6 +723,74 @@
               "raw": "{{BASE_URL}}/positions/{{position_id}}",
               "host": ["{{BASE_URL}}"],
               "path": ["positions", "{{position_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var id = pm.environment.get(\"discprofile_id\");\r",
+                  "pm.test(\"Deleted id matches\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.eql(id);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/discprofiles/{{discprofile_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["discprofiles", "{{discprofile_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "var id = pm.environment.get(\"company_id\");\r",
+                  "pm.test(\"Deleted id matches\", function () {\r",
+                  "    var jsonData = pm.response.json();\r",
+                  "    pm.expect(jsonData).to.eql(id);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/companies/{{company_id}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["companies", "{{company_id}}"]
             }
           },
           "response": []
