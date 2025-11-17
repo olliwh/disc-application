@@ -12,7 +12,7 @@ class Program
         string DB_USER = "sa";
         string DB_PASSWORD = "Pass@word1";
         string DB_NAME = "disc_profile_relational_db";
-        string DB_HOST = "localhost";
+        string DB_HOST = "mssql";//change to localhost
         int DB_PORT = 1433;
         string connectionString = $"Server={DB_HOST},{DB_PORT};Database={DB_NAME};User Id={DB_USER};Password={DB_PASSWORD};TrustServerCertificate=True;";
 
