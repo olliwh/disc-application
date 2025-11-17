@@ -7,9 +7,9 @@ public partial class EmployeePrivateData
 {
     public int EmployeeId { get; set; }
 
-    public string? PrivateEmail { get; set; }
+    public string PrivateEmail { get; set; } = null!;
 
-    public string? PrivatePhone { get; set; }
+    public string PrivatePhone { get; set; } = null!;
 
     public string Cpr { get; set; } = null!;
 
