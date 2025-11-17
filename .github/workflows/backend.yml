@@ -71,7 +71,7 @@ jobs:
       - name: Run Postman tests
         working-directory: backend-disc
         run: |
-          newman run Disc-api-test CI-CD.postman_collection.json \
+          newman run Disc-api-test-CI-CD.postman_collection.json \
             --environment postman-env.json \
             --reporters cli,json \
             --reporter-json-export test-results.json

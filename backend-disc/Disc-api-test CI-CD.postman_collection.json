@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "178cd2ab-8576-4518-90b9-3a32f5698737",
-    "name": "Disc-api-test CI/CD",
+    "name": "Disc-api-test-CI/CD",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "25638427"
   },
@@ -831,16 +831,8 @@
   ],
   "variable": [
     {
-      "key": "BASE_URL2",
-      "value": ""
-    },
-    {
-      "key": "company_id",
-      "value": ""
-    },
-    {
       "key": "BASE_URL",
-      "value": ""
+      "value": "http://localhost:5000/api"
     }
   ]
 }
