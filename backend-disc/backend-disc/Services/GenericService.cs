@@ -1,6 +1,7 @@
-﻿using backend_disc.Repositories;
-using AutoMapper;
+﻿using AutoMapper;
 using backend_disc.Dtos.BaseDtos;
+using backend_disc.Models;
+using backend_disc.Repositories;
 
 namespace backend_disc.Services
 {
@@ -20,7 +21,28 @@ namespace backend_disc.Services
             _mapper = mapper;
         }
 
-        public async Task<List<TDto>> GetAllAsync()
+        public async Task<PaginatedList<TDto>> GetAllAsync(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        {
+            if (pageIndex < 1)
+            {
+                pageIndex = 1;
+            }
+
+            if (pageSize < 1)
+            {
+                pageSize = 10;
+            }
+
+            if (pageSize > 50)
+            {
+                pageSize = 50; // max page size
+            }
+            var entities = await _repository.GetAll();
+            var mapped = _mapper.Map<List<TDto>>(entities);
+            return new PaginatedList<TDto>(mapped, pageIndex, entities.Count, pageSize);
+        }
+
+        public async Task<List<TDto>> GetAllAsync2()
         {
             var entities = await _repository.GetAll();
             return _mapper.Map<List<TDto>>(entities);

@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { type AxiosRequestConfig, CanceledError } from "axios";
 
 import apiClient from "../services/api-client";
-
+export interface Response<T> {
+  totalCount: number;
+  next: string | null;
+  items: T[];
+}
 const useData = <T>(
   endpoint: string,
   requestConfig?: AxiosRequestConfig,
@@ -18,16 +22,14 @@ const useData = <T>(
       setLoading(true);
 
       apiClient
-        .get<T[]>(endpoint, {
+        .get<Response<T>>(endpoint, {
           signal: controller.signal,
           ...requestConfig,
         })
         .then((res) => {
-          console.log(endpoint)
-          console.log(res.data)
-          console.log(import.meta.env["VITE_API_URL"])
+          console.log(res.data.items);
           
-          setData(res.data);
+          setData(res.data.items);
           setLoading(false);
         })
         .catch((err) => {

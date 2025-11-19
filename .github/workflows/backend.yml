@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+      - seeder
   pull_request:
     branches:
       - main
     paths: ["backend-disc/**"]
+
   workflow_dispatch:
 
 jobs:

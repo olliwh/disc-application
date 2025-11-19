@@ -25,7 +25,7 @@ const CustomList = <T extends { id: number; name: string }>({
 }: CustomListProps<T>) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: items, error, isLoading } = useDataHook();
-  const displayedItems = isExpanded ? items : items.slice(0, 5);
+  const displayedItems = isExpanded ? items : (items ?? []).slice(0, 5);
   if (error) return <p>Error: {error}</p>;
   if (isLoading) return <Spinner />;
   return (
