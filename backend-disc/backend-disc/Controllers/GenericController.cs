@@ -70,11 +70,11 @@ namespace backend_disc.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return StatusCode(500, new { message = "Failed to create entity due to database error" });
+                return StatusCode(500, new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred while creating the entity" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -100,11 +100,11 @@ namespace backend_disc.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return StatusCode(500, new { message = "Failed to create entity due to database error" });
+                return StatusCode(500, new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred while creating the entity" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 

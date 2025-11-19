@@ -12,19 +12,17 @@ class Program
         string DB_USER = "sa";
         string DB_PASSWORD = "Pass@word1";
         string DB_NAME = "disc_profile_relational_db";
-        string DB_HOST = "localhost";//change to localhost when github actione Chnges to mssql when rebuildng developer enviroment
+        string DB_HOST = "localhost";
         int DB_PORT = 1433;
         string connectionString = $"Server={DB_HOST},{DB_PORT};Database={DB_NAME};User Id={DB_USER};Password={DB_PASSWORD};TrustServerCertificate=True;";
 
-        string sqlCreateStoredProc = File.ReadAllText("createStoredProc.sql");
-        string sqlInsertData = File.ReadAllText("insertDataQuery.sql");
+        string sqlCreateStoredProc = await File.ReadAllTextAsync("createStoredProc.sql");
+        string sqlInsertData = await File.ReadAllTextAsync("insertDataQuery.sql");
 
         try
         {
-            // Run the stored procedure creation FIRST
             await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
 
-            // Run the insert/other operations NEXT
             await ExecuteNonQuery(connectionString, sqlInsertData);
 
             Console.WriteLine("Both queries executed successfully.");

@@ -129,7 +129,6 @@ namespace backend_disc.Repositories
                     );
                 }
 
-                var totalCount = await query.CountAsync();
 
                 var employees = await query
                     .Skip((pageIndex - 1) * pageSize)

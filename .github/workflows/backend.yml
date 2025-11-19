@@ -6,8 +6,12 @@ on:
       - main
       - seeder
   pull_request:
-    branches: [main]
+    branches:
+      - main
     paths: ["backend-disc/**"]
+
+  workflow_dispatch:
+
   workflow_dispatch:
 
 jobs:
