@@ -29,9 +29,14 @@ namespace backend_disc.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public virtual async Task<IActionResult> GetAll()
+        public virtual async Task<IActionResult> GetAll([FromQuery] int? departmentId = null,
+            [FromQuery] int? discProfileId = null,
+            [FromQuery] int? positionId = null,
+            [FromQuery] string? search = null,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var entities = await _service.GetAllAsync();
+            var entities = await _service.GetAllAsync(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
             return Ok(entities);
         }
 
@@ -65,11 +70,11 @@ namespace backend_disc.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return StatusCode(500, new { message = "Failed to create entity due to database error" });
+                return StatusCode(500, new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred while creating the entity" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 
@@ -95,11 +100,11 @@ namespace backend_disc.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return StatusCode(500, new { message = "Failed to create entity due to database error" });
+                return StatusCode(500, new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred while creating the entity" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
 

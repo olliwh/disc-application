@@ -118,19 +118,6 @@ CREATE TABLE task_complete_intervals (
 );
 GO
 
-CREATE TABLE project_tasks (
-    id INT PRIMARY KEY IDENTITY(1,1),
-    name NVARCHAR(255) NOT NULL,
-    completed BIT NOT NULL,
-    time_of_completion DATETIME,
-    time_to_complete INT,
-    evaluation NVARCHAR(255),
-    project_id INT NOT NULL,
-    FOREIGN KEY (project_id) REFERENCES projects(id),
-    FOREIGN KEY (time_to_complete) REFERENCES task_complete_intervals(id)
-);
-GO
-
 CREATE TABLE stress_measures (
     id INT PRIMARY KEY IDENTITY(1,1),
     description NVARCHAR(255),
@@ -161,13 +148,6 @@ CREATE TABLE employees_projects (
 );
 GO
 
--- Indexes
-CREATE INDEX IX_employees_department_id ON employees(department_id);
-CREATE INDEX IX_employees_discProfile_id ON employees(disc_profile_id);
-CREATE INDEX IX_employees_position_id ON employees(position_id);
-CREATE INDEX IX_users_username ON users(username);
-CREATE INDEX IX_employees_phone ON employees(work_phone);
-
 -- Table needs own PK because composite would not be unique
 CREATE TABLE projects_disc_profiles (
     id INT PRIMARY KEY IDENTITY(1,1),
@@ -177,6 +157,28 @@ CREATE TABLE projects_disc_profiles (
     FOREIGN KEY (disc_profile_id) REFERENCES disc_profiles(id)
 );
 GO
+
+CREATE TABLE project_tasks (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    name NVARCHAR(255) NOT NULL,
+    completed BIT NOT NULL,
+    time_of_completion DATETIME,
+    time_to_complete INT,
+    evaluation NVARCHAR(255),
+    project_id INT NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects(id),
+    FOREIGN KEY (time_to_complete) REFERENCES task_complete_intervals(id)
+);
+GO
+
+-- Indexes
+CREATE INDEX IX_employees_department_id ON employees(department_id);
+CREATE INDEX IX_employees_discProfile_id ON employees(disc_profile_id);
+CREATE INDEX IX_employees_position_id ON employees(position_id);
+CREATE INDEX IX_users_username ON users(username);
+CREATE INDEX IX_employees_phone ON employees(work_phone);
+
+
 
 CREATE OR ALTER TRIGGER add_to_project_audit_table ON projects
 AFTER INSERT
@@ -188,23 +190,7 @@ BEGIN
 END;
 GO
 
--- Create trigger that marks task as completed with time of completion when time_to_finish has been set
-CREATE OR ALTER TRIGGER task_is_complete ON project_tasks
-    AFTER INSERT
-    AS
-    BEGIN
-        -- we don't want to see (1 row(s) effected):
-        SET NOCOUNT ON;
-        UPDATE t
-        SET
-            completed = 1,
-            time_of_completion = getdate()
-        FROM project_tasks t
-        INNER JOIN inserted i ON t.id = i.id
-        WHERE i.time_of_completion IS NOT NULL
-        AND (t.completed = 0);
-    END;
-go
+
 
 CREATE OR ALTER VIEW employees_own_profile
 AS
@@ -233,6 +219,28 @@ AS
         INNER JOIN users u ON e.id = u.employee_id
 GO
 
+-- Stored function
+DROP FUNCTION  IF EXISTS ProjectEmployeeStatus;
+GO
+CREATE FUNCTION dbo.ProjectEmployeeStatus()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT
+        p.id AS project_id,
+        p.name,
+        p.employees_needed,
+        COUNT(ep.employee_id) AS employees_assigned,
+        CASE
+            WHEN COUNT(ep.employee_id) >= p.employees_needed THEN 1
+            ELSE 0
+        END AS has_enough
+    FROM projects p
+    LEFT JOIN employees_projects ep ON p.id = ep.project_id
+    GROUP BY p.id, p.name, p.employees_needed
+);
+GO
 -- Stored procesdure
 DROP PROCEDURE IF EXISTS sp_AddEmployee;
 GO
@@ -279,6 +287,7 @@ END;
 GO
 
 -- CREATE USER testUser WITHOUT LOGIN;
+--CREATE USER testUser WITHOUT LOGIN;
 GRANT SELECT ON employee_private_data TO testUser;
 
 PRINT 'Database schema created successfully!';
@@ -326,6 +335,8 @@ INSERT INTO user_roles(id, name, description) VALUES
 (3,'Employee', 'Basic access, view and update own data'),
 (4,'ReadOnly', 'Can view data but not modify it');
 
+
+--    first_name  last_name work_email work_phone image_path, company_id department_id position_id disc_profile_id cpr CHAR(10) private_email private_phone username password_hash user_role_id INT
 EXEC sp_AddEmployee 'Admin', 'Admin', 'Admin@techcorp.com', '88888927', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png', 1, 1, 1, 1, '1704867890', 'admin@mail.com', '12345678', 'admin', '$argon2id$v=19$m=65536,t=3,p=1$uclpX8S5LhZgLBTruwFXmQ$UQZjeO+ziT58SUvHLie5SLZVI5h9jPqUM+BxXvIzlfA', 1;
 GO
 

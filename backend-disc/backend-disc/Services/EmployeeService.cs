@@ -158,7 +158,7 @@ namespace backend_disc.Services
             }
             var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
-            var mapped =  employees.Items.Select(e => new ReadEmployee
+            var mapped =  employees.Select(e => new ReadEmployee
             {
                 Id = e.Id,
                 FirstName = e.FirstName,
@@ -173,7 +173,7 @@ namespace backend_disc.Services
             }).ToList();
 
 
-            return new PaginatedList<ReadEmployee>(mapped, employees.PageIndex, employees.TotalCount, employees.PageSize);
+            return new PaginatedList<ReadEmployee>(mapped, pageIndex, employees.Count, pageSize);
         }
         public async Task<List<ReadEmployee>> GetAll2(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
@@ -194,12 +194,12 @@ namespace backend_disc.Services
 
                 var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
-                if (employees.TotalCount == 0)
+                if (employees.Count == 0)
                 {
                     return [];
                 }
 
-                return employees.Items.Select(e => new ReadEmployee
+                return employees.Select(e => new ReadEmployee
                 {
                     Id = e.Id,
                     FirstName = e.FirstName,
