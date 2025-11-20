@@ -441,7 +441,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"updated\"\r\n}",
+              "raw": "{\r\n  \"name\": \"updated\",\r\n  \"description\": \"string\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
