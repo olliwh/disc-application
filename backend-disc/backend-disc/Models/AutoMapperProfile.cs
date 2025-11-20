@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using backend_disc.Dtos.Companies;
 using backend_disc.Dtos.Departments;
 using backend_disc.Dtos.Positions;
 using backend_disc.Dtos.DiscProfiles;
@@ -13,11 +12,6 @@ namespace backend_disc.Models
     {
         public AutoMapperProfile()
         {
-            //company
-            CreateMap<Company, CompanyDto>().ReverseMap();
-            CreateMap<CreateCompanyDto, Company>();
-            CreateMap<UpdateCompanyDto, Company>();
-
             //company
             CreateMap<Position, PositionDto>().ReverseMap();
             CreateMap<CreatePositionDto, Position>();

@@ -1,9 +1,0 @@
-﻿namespace backend_disc.Dtos.Companies
-{
-    public class CompanyDto : BaseDtos.BaseDto
-    {
-        public required string Name { get; set; }
-        public string? Location { get; set; }
-        public string? BusinessField { get; set; }
-    }
-}

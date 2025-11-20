@@ -17,9 +17,9 @@ public partial class Project
 
     public int? EmployeesNeeded { get; set; }
 
+    public virtual ICollection<EmployeesProject> EmployeesProjects { get; set; } = new List<EmployeesProject>();
+
     public virtual ICollection<ProjectTask> ProjectTasks { get; set; } = new List<ProjectTask>();
 
     public virtual ICollection<ProjectsDiscProfile> ProjectsDiscProfiles { get; set; } = new List<ProjectsDiscProfile>();
-
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }

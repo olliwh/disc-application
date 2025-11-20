@@ -17,29 +17,25 @@ public partial class Employee
 
     public string ImagePath { get; set; } = null!;
 
-    public int CompanyId { get; set; }
-
     public int DepartmentId { get; set; }
 
     public int? PositionId { get; set; }
 
     public int? DiscProfileId { get; set; }
 
-    public virtual Company Company { get; set; } = null!;
-
     public virtual Department Department { get; set; } = null!;
 
     public virtual DiscProfile? DiscProfile { get; set; }
 
-    public virtual EmployeePrivateData? EmployeePrivateDatum { get; set; }
+    public virtual EmployeePrivateDatum? EmployeePrivateDatum { get; set; }
+
+    public virtual ICollection<EmployeesProject> EmployeesProjects { get; set; } = new List<EmployeesProject>();
 
     public virtual Position? Position { get; set; }
+
+    public virtual ICollection<ProjectTasksEmployee> ProjectTasksEmployees { get; set; } = new List<ProjectTasksEmployee>();
 
     public virtual ICollection<StressMeasure> StressMeasures { get; set; } = new List<StressMeasure>();
 
     public virtual User? User { get; set; }
-
-    public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
-
-    public virtual ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
 }

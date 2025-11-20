@@ -3,7 +3,7 @@
     public class DepartmentDto : BaseDtos.BaseDto
     {
         public required string Name { get; set; }
-        public required int CompanyId { get; set; }
+        public string? Description { get; set; }
 
     }
 }

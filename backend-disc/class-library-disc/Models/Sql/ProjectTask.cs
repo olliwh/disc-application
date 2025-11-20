@@ -13,7 +13,7 @@ public partial class ProjectTask
 
     public DateTime? TimeOfCompletion { get; set; }
 
-    public int? TimeToComplete { get; set; }
+    public int? TimeToCompleteId { get; set; }
 
     public string? Evaluation { get; set; }
 
@@ -21,9 +21,9 @@ public partial class ProjectTask
 
     public virtual Project Project { get; set; } = null!;
 
+    public virtual ICollection<ProjectTasksEmployee> ProjectTasksEmployees { get; set; } = new List<ProjectTasksEmployee>();
+
     public virtual ICollection<StressMeasure> StressMeasures { get; set; } = new List<StressMeasure>();
 
-    public virtual TaskCompleteInterval? TimeToCompleteNavigation { get; set; }
-
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+    public virtual CompletionInterval? TimeToComplete { get; set; }
 }
