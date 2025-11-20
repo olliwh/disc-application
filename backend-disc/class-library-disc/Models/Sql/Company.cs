@@ -12,8 +12,4 @@ public partial class Company
     public string? Location { get; set; }
 
     public string? BusinessField { get; set; }
-
-    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
-
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 }

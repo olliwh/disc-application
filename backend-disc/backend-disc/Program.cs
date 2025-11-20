@@ -1,4 +1,3 @@
-using backend_disc.Dtos.Companies;
 using backend_disc.Dtos.Departments;
 using backend_disc.Dtos.Positions;
 using backend_disc.Dtos.DiscProfiles;
@@ -83,8 +82,6 @@ builder.Services.AddScoped<IGenericService<DiscProfileDto, CreateDiscProfileDto,
     GenericService<DiscProfile, DiscProfileDto, CreateDiscProfileDto, UpdateDiscProfileDto>>();
 builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, UpdatePositionDto>,
     GenericService<Position, PositionDto, CreatePositionDto, UpdatePositionDto>>();
-builder.Services.AddScoped<IGenericService<CompanyDto, CreateCompanyDto, UpdateCompanyDto>,
-    GenericService<Company, CompanyDto, CreateCompanyDto, UpdateCompanyDto>>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();

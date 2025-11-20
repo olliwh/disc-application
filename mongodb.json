@@ -1,0 +1,52 @@
+{
+  "_id": 1,
+  "first_name": "admin",
+  "last_name": "admin",
+  "work_email": "admin@h.ok",
+  "work_phone": "88888888",
+  "image_path": "default_img",
+  "user_account": {
+    "username": "admin",
+    "requires_reset": false,
+    "user_role_id": 1
+  },
+  "private_data": {
+    "private_email": "user@mail.com",
+    "private_phone": "11112222"
+  },
+  "department": {
+    "_id": 1,
+    "name": "IT",
+    "description": "Provides software solutions and support to enable efficient business operations and innovation."
+  },
+  "position": {
+    "_id": 1,
+    "name": "Software Engineer",
+    "description": "Designs, develops, tests, and maintains software applications."
+  },
+  "disc_profile": {
+    "_id": 1,
+    "name": "Dominance",
+    "color": "008000",
+    "description": "Results-oriented, strong-willed"
+  },
+  "previous_projects": [
+    {
+      "_id": 1,
+      "name": "Fitness tracker browser App"
+    },
+    {
+      "_id": 2,
+      "name": "Fitness tracker adroid App"
+    }    
+  ],
+  "current_project" : {
+		"_id": 2,
+    "name": "Fitness tracker IOS App",
+    "description": "Develop fitnes tracker for phones with IOS",
+    "deadline": "2026-02-01", 
+    "completed": false,
+    "emolyees_needed": 2,
+    "task_ids": [1, 2, 4, 7]
+  }
+}

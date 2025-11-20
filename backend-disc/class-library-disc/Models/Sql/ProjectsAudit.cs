@@ -11,7 +11,7 @@ public partial class ProjectsAudit
 
     public string ActionType { get; set; } = null!;
 
-    public DateTime ActionTimestamp { get; set; }
+    public DateTime Timestamp { get; set; }
 
     public string ActionBy { get; set; } = null!;
 }

@@ -167,7 +167,6 @@ namespace backend_disc.Services
                 WorkPhone = e.WorkPhone,
                 DiscProfileColor = e.DiscProfile?.Color,
                 ImagePath = e.ImagePath,
-                CompanyId = e.CompanyId,
                 DepartmentId = e.DepartmentId,
                 DiscProfileId = e.DiscProfileId,
             }).ToList();
@@ -208,7 +207,6 @@ namespace backend_disc.Services
                     WorkPhone = e.WorkPhone,
                     DiscProfileColor = e.DiscProfile?.Color,
                     ImagePath = e.ImagePath,
-                    CompanyId = e.CompanyId,
                     DepartmentId = e.DepartmentId,
                     DiscProfileId = e.DiscProfileId,
                 }).ToList();

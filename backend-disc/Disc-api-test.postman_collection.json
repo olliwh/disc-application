@@ -7,172 +7,6 @@
   },
   "item": [
     {
-      "name": "Company",
-      "item": [
-        {
-          "name": "create",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {\r",
-                  "\r",
-                  "    pm.response.to.have.status(201);\r",
-                  "});\r",
-                  "var jsonData = pm.response.json();\r",
-                  "\r",
-                  "pm.environment.set(\"company_id\", jsonData.id);\r",
-                  "\r",
-                  "pm.test(\"Response has name property\", function () {\r",
-                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Body matches string\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"HP\");\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"HP\",\r\n  \"location\": \"USA\",\r\n  \"businessField\": \"Technology\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{BASE_URL}}/companies",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "getAll",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "\r",
-                  "var jsonData = pm.response.json().items;\r",
-                  "pm.test(\"Array contains contains correct number of items\", function () {\r",
-                  "    pm.expect(jsonData.length).to.eql(4);\r",
-                  "});\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/companies",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "update",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "var jsonData = pm.response.json();\r",
-                  "\r",
-                  "pm.test(\"Response has name property\", function () {\r",
-                  "    pm.expect(jsonData).to.have.property(\"name\");\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Body matches string\", function () {\r",
-                  "    pm.expect(pm.response.text()).to.include(\"updated\");\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"updated\",\r\n  \"location\": \"string\",\r\n  \"businessField\": \"string\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{BASE_URL}}/companies/{{company_id}}",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies", "{{company_id}}"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "getById",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "pm.test(\"Name is updated\", function () {\r",
-                  "    var jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.name).to.eql(\"updated\");\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/companies/{{company_id}}",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies", "{{company_id}}"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "Department",
       "item": [
         {
@@ -208,7 +42,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"string\",\r\n  \"companyId\": 1\r\n}",
+              "raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -287,7 +121,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"updated\",\r\n  \"companyId\": 1\r\n}",
+              "raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -730,7 +564,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"privateEmail\": \"strpostf5rmanng\",\r\n  \"privatePhone\": \"str5fig\",\r\n  \"firstName\": \"postm5fa\",\r\n  \"lastName\": \"strf5in\",\r\n  \"companyId\": 2,\r\n  \"departmentId\": 1,\r\n  \"positionId\": 9,\r\n  \"discProfileId\": 1,\r\n  \"cpr\": \"rfai59999999ng\"\r\n}\r\n",
+              "raw": "{\r\n  \"privateEmail\": \"strpostf5rmanng\",\r\n  \"privatePhone\": \"str5fig\",\r\n  \"firstName\": \"postm5fa\",\r\n  \"lastName\": \"strf5in\",\r\n  \"departmentId\": 1,\r\n  \"positionId\": 9,\r\n  \"discProfileId\": 1,\r\n  \"cpr\": \"rfai59999999ng\"\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -887,40 +721,6 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "delete",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "var id = pm.environment.get(\"company_id\");\r",
-                  "pm.test(\"Deleted id matches\", function () {\r",
-                  "    var jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData).to.eql(id);\r",
-                  "});\r",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{BASE_URL}}/companies/{{company_id}}",
-              "host": ["{{BASE_URL}}"],
-              "path": ["companies", "{{company_id}}"]
-            }
-          },
-          "response": []
         }
       ]
     }
@@ -957,10 +757,6 @@
     }
   ],
   "variable": [
-    {
-      "key": "company_id",
-      "value": ""
-    },
     {
       "key": "BASE_URL",
       "value": ""
