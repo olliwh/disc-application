@@ -14,8 +14,6 @@
 
         public string? ImagePath { get; set; }
 
-        public int CompanyId { get; set; }
-
         public int? DepartmentId { get; set; }
 
         public int? PositionId { get; set; }

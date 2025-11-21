@@ -73,12 +73,12 @@ namespace backend_disc.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex, "Database operation failed when creating employee");
-                return StatusCode(500, new { message = "Failed to create employee due to database error" });
+                return StatusCode(500, new { message = ex.Message});
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error creating employee");
-                return StatusCode(500, new { message = "An unexpected error occurred while creating the employee" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

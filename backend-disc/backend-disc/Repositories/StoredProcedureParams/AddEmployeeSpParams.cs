@@ -7,7 +7,6 @@
         public required string WorkEmail { get; set; }
         public required string WorkPhone { get; set; }
         public required string ImagePath { get; set; }
-        public required int CompanyId { get; set; }
         public required int DepartmentId { get; set; }
         public int? PositionId { get; set; }
         public int? DiscProfileId { get; set; }

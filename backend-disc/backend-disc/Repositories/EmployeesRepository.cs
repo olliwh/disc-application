@@ -42,7 +42,6 @@ namespace backend_disc.Repositories
                 new SqlParameter("@work_email", p.WorkEmail),
                 new SqlParameter("@work_phone", (object?)p.WorkPhone  ?? DBNull.Value),
                 new SqlParameter("@image_path", p.ImagePath),
-                new SqlParameter("@company_id", p.CompanyId),
                 new SqlParameter("@department_id", p.DepartmentId),
                 new SqlParameter("@position_id", (object?)p.PositionId ?? DBNull.Value),
                 new SqlParameter("@disc_profile_id", (object?)p.DiscProfileId ?? DBNull.Value),
@@ -58,7 +57,7 @@ namespace backend_disc.Repositories
             {
                 var employeeIds = await _context.Database
                     .SqlQueryRaw<int>(
-                        "EXEC sp_AddEmployee @first_name, @last_name, @work_email, @work_phone, @image_path, @company_id, @department_id, @position_id, @disc_profile_id, @cpr, @private_email, @private_phone, @username, @password_hash, @user_role_id",
+                        "EXEC sp_AddEmployee @first_name, @last_name, @work_email, @work_phone, @image_path, @department_id, @position_id, @disc_profile_id, @cpr, @private_email, @private_phone, @username, @password_hash, @user_role_id",
                         parameters)
                     .ToListAsync();
 
@@ -82,7 +81,7 @@ namespace backend_disc.Repositories
                     case 2601:
                         throw new InvalidOperationException("A duplicate value exists. Please check email, username, or CPR", ex);
                     case 547: // Foreign key constraint violation
-                        throw new InvalidOperationException("Invalid reference to company, department, or position", ex);
+                        throw new InvalidOperationException("Invalid reference to department, or position", ex);
                     default:
                         throw new InvalidOperationException($"Database error: {ex.Message}", ex);
                 }

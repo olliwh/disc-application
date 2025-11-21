@@ -39,7 +39,7 @@ namespace backend_disc.Services
         {
             try
             {
-                Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName, dto.CompanyId);
+                Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName);
 
                 dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
                 dto.WorkPhone = usernameWorkMailAndPhone["phoneNumber"];
@@ -82,13 +82,12 @@ namespace backend_disc.Services
         /// </summary>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        /// <param name="companyId"></param>
         /// <returns>Dictionary<string, string></returns>
-        private async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName, int companyId)
+        private async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName)
         {
-            var company = await _companiesRepository.GetById(companyId);
+            var company = await _companiesRepository.GetById(1);
             if (company == null)
-                { throw new KeyNotFoundException($"Company with ID {companyId} not found"); }
+                { throw new KeyNotFoundException($"Company with ID {1} not found"); }
             string username;
             bool usernameAlreadyExists;
             int attempts = 0;
