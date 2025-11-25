@@ -327,9 +327,9 @@ CREATE
     (u2)-[:HAS_PERMISSION_AS]->(ur2),
 
     (u3:User {
-        id: 3,
-        username: 'bjohnson',
-        password_hash: '$argon2id$v=19$m=65536,t=3,p=1$f201xQT3xRHIp5QqJvaqxQ$eywjPktRcgz/3vPnaEtExqLcFcKAcOiszNJ25ZHBFK0',
+        id: 2,
+        username: 'jsmith',
+        password_hash: '$argon2id$v=19$m=65536,t=3,p=1$zVsAlsVfeej7fZEgGVfZzQ$GDFpz9W5dn6ZPqotzLWvtX28p/XhVWTlexPrQTL+vUI',
         requires_reset: false
     }),
     (e3)-[:IS_A]->(u3),
@@ -656,12 +656,31 @@ FOR (sm:StressMeasure) REQUIRE sm.measure IS NOT NULL;
 // INDEXES
 CREATE FULLTEXT INDEX employee_search FOR (e:Employees) ON EACH [e.first_name, e.last_name, e.work_email];
 
+//BACKGROUND JOB
+CALL apoc.periodic.repeat(
+  'deleteOldProjects',
+  '
+  MATCH (p:Project)
+  WHERE p.deadline < datetime() - duration({days: 365})
+  DETACH DELETE p
+  ',
+  86400, //24 hours
+  {}
+)
 
-
-//to test trigger
-MATCH (pt:ProjectTasks {id: '2bb8b840-fe51-4c3f-9d45-15e3c2ca5a42:29'}), (c:CompletionIntervals {id:2bb8b840-fe51-4c3f-9d45-15e3c2ca5a42:20'})
-CREATE (pt)-[:FINNISHED_IN]->(c);
-
-MATCH (task:ProjectTask {id: "4:2bb8b840-fe51-4c3f-9d45-15e3c2ca5a42:29"})
-MATCH (interval:CompletionInterval {id: "4:2bb8b840-fe51-4c3f-9d45-15e3c2ca5a42:20"})
-CREATE (task)-[:FINNISHED_IN]->(interval)
+// TRIGGER (must be created in system database)
+CALL apoc.trigger.install(
+  'discprofilegraphdb',
+  'autoCompleteTask',
+  '
+  UNWIND $createdRelationships AS rel
+  WITH rel
+  WHERE type(rel) = "FINNISHED_IN"
+  WITH startNode(rel) AS task
+  SET task.completed = true,
+      task.time_of_completion = datetime()
+  ',
+  {phase: 'after'}
+)
+//TO TRIGGER TRIGGER
+MATCH (task:ProjectTask {id: 1}) MATCH (interval:CompletionInterval {id: 3}) CREATE (task)-[:FINNISHED_IN]->(interval)
