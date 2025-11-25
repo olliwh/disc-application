@@ -280,7 +280,7 @@ CREATE
         id: 1,
         private_email: 'john.doe@personal.com',
         private_phone: '+45-98765432',
-        cpr: '123456xxxx'
+        cpr: '1234561111'
     }),
     (e1)-[:HAS]->(ep1),
 
@@ -288,7 +288,7 @@ CREATE
         id: 2,
         private_email: 'jane.smith@personal.com',
         private_phone: '+45-87654321',
-        cpr: '234567xxxx'
+        cpr: '2345672222'
     }),
     (e2)-[:HAS]->(ep2),
 
@@ -296,7 +296,7 @@ CREATE
         id: 3,
         private_email: 'bob.johnson@personal.com',
         private_phone: '+45-76543210',
-        cpr: '345678xxxx'
+        cpr: '3456783333'
     }),
     (e3)-[:HAS]->(ep3),
 
@@ -304,7 +304,7 @@ CREATE
         id: 4,
         private_email: 'alice.williams@personal.com',
         private_phone: '+45-65432109',
-        cpr: '456789xxxx'
+        cpr: '4567894444'
     }),
     (e4)-[:HAS]->(ep4),
 
@@ -327,9 +327,9 @@ CREATE
     (u2)-[:HAS_PERMISSION_AS]->(ur2),
 
     (u3:User {
-        id: 2,
-        username: 'jsmith',
-        password_hash: '$argon2id$v=19$m=65536,t=3,p=1$zVsAlsVfeej7fZEgGVfZzQ$GDFpz9W5dn6ZPqotzLWvtX28p/XhVWTlexPrQTL+vUI',
+        id: 3,
+        username: 'bobby',
+        password_hash: '$argon2id$v=19$m=65536,t=3,p=1$f201xQT3xRHIp5QqJvaqxQ$eywjPktRcgz/3vPnaEtExqLcFcKAcOiszNJ25ZHBFK0',
         requires_reset: false
     }),
     (e3)-[:IS_A]->(u3),
