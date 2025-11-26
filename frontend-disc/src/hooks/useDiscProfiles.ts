@@ -1,6 +1,7 @@
 import apiClient from "../services/api-client";
 import { useQuery } from "@tanstack/react-query";
-import type { Response } from "./useData";
+import type { Response } from "../services/api-client";
+
 import discprofiles from "../data/discprofiles";
 
 export interface DiscProfile {

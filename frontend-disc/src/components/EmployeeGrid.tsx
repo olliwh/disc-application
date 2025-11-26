@@ -12,7 +12,7 @@ interface Props {
 
 const EmployeeGrid = ({ employeeQuery }: Props) => {
   const {
-    data: employees,
+    data,
     error,
     isLoading,
   } = useEmployees(employeeQuery);
@@ -21,7 +21,7 @@ const EmployeeGrid = ({ employeeQuery }: Props) => {
 
   return (
     <div>
-      {error && <Text color="tomato">{error}</Text>}
+      {error && <Text color="tomato">{error.message}</Text>}
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 5 }}
         spacing={10} //space between cards
@@ -35,7 +35,7 @@ const EmployeeGrid = ({ employeeQuery }: Props) => {
           
           ))}
 
-        {employees?.map((employee) => (
+        {data?.items.map((employee) => (
           <EmployeeCardContainer key={employee.id}>
             <EmployeeCard employee={employee}  />
           </EmployeeCardContainer>

@@ -1,5 +1,8 @@
 import type { EmployeeQuery } from "../App";
-import useData from "./useData";
+import apiClient from "../services/api-client";
+import { useQuery } from "@tanstack/react-query";
+import type { Response } from "../services/api-client";
+
 
 export interface Employee {
   id: number;
@@ -14,16 +17,32 @@ export interface Employee {
 }
 
 const useEmployees = (employeeQuery: EmployeeQuery) =>
-  useData<Employee>(
-    "/employees",
-    {
-      params: {
+  useQuery<Response<Employee>, Error>({
+
+    queryKey: ["employees", employeeQuery],
+    queryFn: () =>
+      apiClient.get<Response<Employee>>("/employees", {
+        params: {
         departmentId: employeeQuery.department?.id,
         positionId: employeeQuery.position?.id,
         discProfileId: employeeQuery.discProfile?.id,
         search: employeeQuery.searchText,
-      },
-    },
-    [employeeQuery],
-  );
+      }
+    }).then((res) => res.data),
+
+
+
+  });
+  // useData<Employee>(
+  //   "/employees",
+  //   {
+  //     params: {
+  //       departmentId: employeeQuery.department?.id,
+  //       positionId: employeeQuery.position?.id,
+  //       discProfileId: employeeQuery.discProfile?.id,
+  //       search: employeeQuery.searchText,
+  //     },
+  //   },
+  //   [employeeQuery],
+  // );
 export default useEmployees;

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { type AxiosRequestConfig, CanceledError } from "axios";
 
 import apiClient from "../services/api-client";
-export interface Response<T> {
+ interface Response<T> {
   totalCount: number;
   next: string | null;
   items: T[];
