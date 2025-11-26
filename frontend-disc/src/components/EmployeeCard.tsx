@@ -8,8 +8,6 @@ interface Props {
 
 const EmployeeCard = ({ employee }: Props) => {
   const color = "#" + employee.discProfileColor;
-  console.log(employee);
-  console.log(color);
 
   return (
     <Card height="100%">
