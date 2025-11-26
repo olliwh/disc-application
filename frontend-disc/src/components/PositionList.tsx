@@ -1,17 +1,17 @@
-import type { Position } from "../hooks/usePositions";
 import usePositions from "../hooks/usePositions";
+import useEmployeeQueryStore from "../store";
 import CustomList from "./reusableComponents/CustomAsideList";
 
-interface Props {
-  onSelectPosition: (position: Position | null) => void;
-  selectedPosition: Position | null;
-}
-const PositionList = ({ onSelectPosition, selectedPosition }: Props) => {
+const PositionList = () => {
+  const selectedPosition = useEmployeeQueryStore(
+    (s) => s.employeeQuery.position,
+  );
+  const setPosition = useEmployeeQueryStore((s) => s.setPosition);
   return (
     <CustomList
       title="Positions"
       useDataHook={usePositions}
-      onSelectItem={onSelectPosition}
+      onSelectItem={setPosition}
       selectedItem={selectedPosition}
     />
   );

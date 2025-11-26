@@ -17,8 +17,8 @@ import {
 interface CustomListProps<T> {
   title: string;
   useDataHook: () => UseQueryResult<Response<T>, Error>;
-  selectedItem: T | null;
-  onSelectItem: (item: T) => void;
+  selectedItem?: T | null;
+  onSelectItem: (item?: T) => void;
 }
 const CustomList = <T extends { id: number; name: string }>({
   title,
