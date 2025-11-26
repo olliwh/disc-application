@@ -73,6 +73,11 @@ namespace backend_disc.Services
             string hash = Argon2.Hash(password);
             return hash;
         }
+        public async Task<EmployeeOwnProfileDto?> GetByIdAsync(int id)
+        {
+            var entity = await _employeeRepository.GetById(id);
+            return _mapper.Map<EmployeeOwnProfileDto?>(entity);
+        }
 
         /// <summary>
         /// lastName.ToLower()[..2] is the same as lastName.ToLower().Substring(0, 2)

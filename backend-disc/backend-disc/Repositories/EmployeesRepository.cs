@@ -135,7 +135,10 @@ namespace backend_disc.Repositories
                     .ToListAsync();
             return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
         }
-
+        public async Task<EmployeesOwnProfile?> GetById(int id)
+        {
+            return await _context.EmployeesOwnProfiles.FirstOrDefaultAsync(e => e.Id == id);
+        }
         public async Task<int?> Delete(int id)
         {
             var entity = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);

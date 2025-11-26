@@ -10,5 +10,6 @@ namespace backend_disc.Repositories
         Task<bool> PhoneNumExists(string phoneNumber);
         Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p);
         Task<int?> Delete(int id);
+        Task<EmployeesOwnProfile?> GetById(int id);
     }
 }
