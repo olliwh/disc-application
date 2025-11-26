@@ -104,35 +104,66 @@ namespace backend_disc.Repositories
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns>Task<PaginatedList<Employee>></returns>
-        public async Task<List<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
-                IQueryable<Employee> query = _context.Employees
-                    .AsNoTracking()//because we are only reading
-                   .Include(e => e.DiscProfile);
+            IQueryable<Employee> query = _context.Employees
+                .AsNoTracking()//because we are only reading
+                .Include(e => e.DiscProfile);
 
-                if (departmentId.HasValue)
-                    query = query.Where(e => e.DepartmentId == departmentId);
+            if (departmentId.HasValue)
+                query = query.Where(e => e.DepartmentId == departmentId);
 
-                if (discProfileId.HasValue)
-                    query = query.Where(e => e.DiscProfileId == discProfileId);
+            if (discProfileId.HasValue)
+                query = query.Where(e => e.DiscProfileId == discProfileId);
 
-                if (positionId.HasValue)
-                    query = query.Where(e => e.PositionId == positionId);
-                if (!string.IsNullOrWhiteSpace(search))
-                {
-                    string normalizedSearch = search.Trim().ToLower();
-                    query = query.Where(e =>
-                        e.FirstName.ToLower().Contains(normalizedSearch) ||
-                        e.LastName.ToLower().Contains(normalizedSearch) ||
-                        (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
-                    );
-                }
+            if (positionId.HasValue)
+                query = query.Where(e => e.PositionId == positionId);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizedSearch = search.Trim().ToLower();
+                query = query.Where(e =>
+                    e.FirstName.ToLower().Contains(normalizedSearch) ||
+                    e.LastName.ToLower().Contains(normalizedSearch) ||
+                    (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
+                );
+            }
+            int totalCount = await query.CountAsync();
 
-
-                var employees = await query
+            var employees = await query
                     .Skip((pageIndex - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
+            return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
+        }
+        public async Task<List<Employee>> GetAll2(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        {
+            IQueryable<Employee> query = _context.Employees
+                .AsNoTracking()//because we are only reading
+               .Include(e => e.DiscProfile);
+
+            if (departmentId.HasValue)
+                query = query.Where(e => e.DepartmentId == departmentId);
+
+            if (discProfileId.HasValue)
+                query = query.Where(e => e.DiscProfileId == discProfileId);
+
+            if (positionId.HasValue)
+                query = query.Where(e => e.PositionId == positionId);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizedSearch = search.Trim().ToLower();
+                query = query.Where(e =>
+                    e.FirstName.ToLower().Contains(normalizedSearch) ||
+                    e.LastName.ToLower().Contains(normalizedSearch) ||
+                    (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
+                );
+            }
+
+
+            var employees = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
             return employees;
         }
     }

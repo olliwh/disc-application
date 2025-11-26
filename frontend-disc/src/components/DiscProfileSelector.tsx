@@ -12,7 +12,7 @@ const DiscProfileSelector = ({
   onSelectDiscProfile,
   selectedDiscProfile,
 }: Props) => {
-  const { data: discProfiles, error } = useDiscProfiles();
+  const { data, error } = useDiscProfiles();
   if (error) return null;
 
   return (
@@ -28,7 +28,7 @@ const DiscProfileSelector = ({
         >
           Clear
         </MenuItem>
-        {discProfiles?.map((discProfile) => (
+        {data?.items.map((discProfile) => (
           <MenuItem
             key={discProfile.id}
             onClick={() => onSelectDiscProfile(discProfile)}

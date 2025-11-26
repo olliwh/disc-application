@@ -148,7 +148,7 @@ namespace backend_disc.Services
 
             if (pageSize < 1)
             {
-                pageSize = 10;
+                pageSize = 12;
             }
 
             if (pageSize > 50)
@@ -157,7 +157,7 @@ namespace backend_disc.Services
             }
             var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
-            var mapped =  employees.Select(e => new ReadEmployee
+            var mapped =  employees.Items.Select(e => new ReadEmployee
             {
                 Id = e.Id,
                 FirstName = e.FirstName,
@@ -166,50 +166,14 @@ namespace backend_disc.Services
                 WorkPhone = e.WorkPhone,
                 DiscProfileColor = e.DiscProfile?.Color,
                 ImagePath = e.ImagePath,
+                PositionId = e.PositionId,
                 DepartmentId = e.DepartmentId,
                 DiscProfileId = e.DiscProfileId,
             }).ToList();
 
 
-            return new PaginatedList<ReadEmployee>(mapped, pageIndex, employees.Count, pageSize);
+            return new PaginatedList<ReadEmployee>(mapped, employees.PageIndex, employees.TotalCount, employees.PageSize);
         }
-        public async Task<List<ReadEmployee>> GetAll2(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
-        {
-            if (pageIndex < 1)
-            {
-                pageIndex = 1;
-            }
 
-            if (pageSize < 1)
-            {
-                pageSize = 10;
-            }
-
-            if (pageSize > 50)
-            {
-                pageSize = 50; // max page size
-            }
-
-                var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
-
-                if (employees.Count == 0)
-                {
-                    return [];
-                }
-
-                return employees.Select(e => new ReadEmployee
-                {
-                    Id = e.Id,
-                    FirstName = e.FirstName,
-                    LastName = e.LastName,
-                    WorkEmail = e.WorkEmail,
-                    WorkPhone = e.WorkPhone,
-                    DiscProfileColor = e.DiscProfile?.Color,
-                    ImagePath = e.ImagePath,
-                    DepartmentId = e.DepartmentId,
-                    DiscProfileId = e.DiscProfileId,
-                }).ToList();
-
-        }
     }
 }

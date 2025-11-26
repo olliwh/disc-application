@@ -29,7 +29,7 @@ namespace backend_disc.Controllers
             [FromQuery] int? positionId = null,
             [FromQuery] string? search = null,
             [FromQuery] int pageIndex = 1,
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 12)
         {
             var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
             //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
