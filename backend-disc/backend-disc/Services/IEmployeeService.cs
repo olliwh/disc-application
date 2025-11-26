@@ -9,7 +9,6 @@ namespace backend_disc.Services
     {
         Task<EmployeeDto?> CreateEmployee(CreateNewEmployee dto);
         Task<PaginatedList<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize);
-
-
+        Task<int?> DeleteAsync(int id);
     }
 }

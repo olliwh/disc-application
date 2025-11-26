@@ -81,5 +81,14 @@ namespace backend_disc.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public virtual async Task<IActionResult> Delete(int id)
+        {
+            var deleted = await _employeeService.DeleteAsync(id);
+            if (deleted == null) return NotFound();
+            return Ok(deleted);
+        }
     }
 }

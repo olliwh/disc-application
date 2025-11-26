@@ -174,6 +174,11 @@ namespace backend_disc.Services
 
             return new PaginatedList<ReadEmployee>(mapped, employees.PageIndex, employees.TotalCount, employees.PageSize);
         }
+        public async Task<int?> DeleteAsync(int id)
+        {
+            var deleted = await _employeeRepository.Delete(id);
+            return deleted;
+        }
 
     }
 }
