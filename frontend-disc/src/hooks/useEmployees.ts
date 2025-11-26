@@ -1,48 +1,51 @@
+import { useInfiniteQuery } from "@tanstack/react-query";
 import type { EmployeeQuery } from "../App";
-import apiClient from "../services/api-client";
-import { useQuery } from "@tanstack/react-query";
 import type { Response } from "../services/api-client";
+import ApiClient from "../services/api-client";
 
+const apiClient = new ApiClient<Employee>("/employees");
 
 export interface Employee {
   id: number;
-  email: string;
-  phone: string;
+  workEmail: string;
+  workPhone: string;
   firstName: string;
   lastName: string;
-  experience: number;
   imagePath: string;
-  companyId: number;
+  departmentId: number;
+  positionId: number | null;
+  discProfileId: number;
   discProfileColor: string;
 }
 
-const useEmployees = (employeeQuery: EmployeeQuery) =>
-  useQuery<Response<Employee>, Error>({
-
+const useEmployees = (employeeQuery: EmployeeQuery) => {
+  console.log(employeeQuery.department)
+  return useInfiniteQuery<Response<Employee>, Error>({
     queryKey: ["employees", employeeQuery],
-    queryFn: () =>
-      apiClient.get<Response<Employee>>("/employees", {
+
+    initialPageParam: 1,
+
+    queryFn: ({ pageParam = 1 }) => {
+      console.log("🟦 Fetching employees with page:", pageParam);
+
+      return apiClient.getAll({
         params: {
-        departmentId: employeeQuery.department?.id,
-        positionId: employeeQuery.position?.id,
-        discProfileId: employeeQuery.discProfile?.id,
-        search: employeeQuery.searchText,
-      }
-    }).then((res) => res.data),
+          departmentId: employeeQuery.department?.id,
+          positionId: employeeQuery.position?.id,
+          discProfileId: employeeQuery.discProfile?.id,
+          search: employeeQuery.searchText,
+          page_size: employeeQuery.pageSize,
+          pageIndex: pageParam,
+        },
+      });
+    },
 
-
-
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasNextPage
+        ? lastPage.pageIndex + 1
+        : undefined;
+    },
   });
-  // useData<Employee>(
-  //   "/employees",
-  //   {
-  //     params: {
-  //       departmentId: employeeQuery.department?.id,
-  //       positionId: employeeQuery.position?.id,
-  //       discProfileId: employeeQuery.discProfile?.id,
-  //       search: employeeQuery.searchText,
-  //     },
-  //   },
-  //   [employeeQuery],
-  // );
+};
+
 export default useEmployees;

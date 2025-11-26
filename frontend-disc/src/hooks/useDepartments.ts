@@ -1,8 +1,10 @@
-import apiClient from "../services/api-client";
+import ApiClient from "../services/api-client";
 import { useQuery } from "@tanstack/react-query";
 import type { Response } from "../services/api-client";
 
 import departments from "../data/departments";
+
+const apiClient = new ApiClient<Department>("/departments");
 
 
 export interface Department {
@@ -14,7 +16,7 @@ const useDepartments = () =>
   useQuery<Response<Department>, Error>({
     queryKey: ["departments"],
     queryFn: () =>
-      apiClient.get<Response<Department>>("/departments").then((res) => res.data),
+      apiClient.getAll(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     initialData: departments
 });

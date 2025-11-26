@@ -1,13 +1,27 @@
-import axios from "axios";
+import axios, { type AxiosRequestConfig } from "axios";
 
 export interface Response<T> {
-  totalCount: number;
-  next: string | null;
   items: T[];
+  totalCount: number;
+  pageIndex: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
-const apiClient = axios.create({
+const axiosInstance = axios.create({
   baseURL: import.meta.env["VITE_API_URL"],
-
-
 });
-export default apiClient;
+class ApiClient<T> {
+  endpoint: string;
+  constructor(endpoint: string) {
+    this.endpoint = endpoint;
+  }
+  getAll(config?: AxiosRequestConfig) {
+    return axiosInstance
+      .get<Response<T>>(this.endpoint, config)
+      .then((res) => res.data);
+  }
+}
+
+export default ApiClient;

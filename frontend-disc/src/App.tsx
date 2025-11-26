@@ -16,6 +16,7 @@ export interface EmployeeQuery {
   position: Position | null;
   discProfile: DiscProfile | null;
   searchText: string | null;
+  pageSize: number | null;
 }
 
 function App() {
