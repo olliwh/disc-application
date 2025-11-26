@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardBody, HStack, Heading, Image } from "@chakra-ui/react";
 
-import type { Employee } from "../hooks/useEmployees";
-import useDeleteGame from "../hooks/useDeleteGame";
+import useDeleteGame from "../hooks/useDeleteEmployee";
+import type { Employee } from "../services/employeeService";
 
 interface Props {
   employee: Employee;

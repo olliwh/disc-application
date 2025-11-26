@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import ApiClient from "../services/api-client";
+import employeeService from "../services/employeeService";
 
-const apiClient = new ApiClient("/employees");
 
 const useDeleteEmployee = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (employeeId: number) => apiClient.delete(employeeId),
+    mutationFn: (employeeId: number) => employeeService.delete(employeeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },

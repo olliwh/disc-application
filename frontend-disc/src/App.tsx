@@ -7,9 +7,10 @@ import DiscProfileSelector from "./components/DiscProfileSelector";
 import EmployeeGrid from "./components/EmployeeGrid";
 import { NavBar } from "./components/NavBar";
 import PositionList from "./components/PositionList";
-import type { Department } from "./hooks/useDepartments";
-import type { DiscProfile } from "./hooks/useDiscProfiles";
-import type { Position } from "./hooks/usePositions";
+import type { Department } from "./services/departmentService";
+import type { Position } from "./services/positionService";
+import type { DiscProfile } from "./services/discProfileService";
+
 
 export interface EmployeeQuery {
   department: Department | null;

@@ -1,21 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Response } from "../services/api-client";
-import ApiClient from "../services/api-client";
-
-
 import positions from "../data/positions";
-
-const apiClient = new ApiClient<Position>("/positions");
-export interface Position {
-  id: number;
-  name: string;
-}
+import type { Position } from "../services/positionService";
+import positionService from "../services/positionService";
 
 const usePositions = () => 
   useQuery<Response<Position>, Error>({
     queryKey: ["positions"],
     queryFn: () =>
-      apiClient.getAll(),
+      positionService.getAll(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     initialData: positions
 });
