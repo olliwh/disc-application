@@ -1,10 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { EmployeeQuery } from "../App";
 import type { Response } from "../services/api-client";
 import type { Employee } from "../services/employeeService";
 import employeeService from "../services/employeeService";
+import useEmployeeQueryStore from "../store";
 
-const useEmployees = (employeeQuery: EmployeeQuery) => {
+const useEmployees = () => {
+  const employeeQuery = useEmployeeQueryStore((s) => s.employeeQuery)
   console.log(employeeQuery.department)
   return useInfiniteQuery<Response<Employee>, Error>({
     queryKey: ["employees", employeeQuery],

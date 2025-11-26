@@ -1,17 +1,16 @@
-import type { Department } from "../hooks/useDepartments";
 import useDepartments from "../hooks/useDepartments";
+import useEmployeeQueryStore from "../store";
 import CustomList from "./reusableComponents/CustomAsideList";
 
-interface Props {
-  onSelectDepartment: (department: Department | null) => void;
-  selectedDepartment: Department | null;
-}
-const DepartmentList = ({ onSelectDepartment, selectedDepartment }: Props) => {
+
+const DepartmentList = () => {
+  const selectedDepartment = useEmployeeQueryStore((s)=> s.employeeQuery.department);
+  const setDepartment = useEmployeeQueryStore((s)=> s.setDepartment);
   return (
     <CustomList
       title="Departments"
       useDataHook={useDepartments}
-      onSelectItem={onSelectDepartment}
+      onSelectItem={setDepartment}
       selectedItem={selectedDepartment}
     />
   );

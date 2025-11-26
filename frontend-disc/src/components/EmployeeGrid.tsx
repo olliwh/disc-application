@@ -3,22 +3,19 @@ import React from "react";
 import useEmployees from "../hooks/useEmployees";
 import EmployeeCard from "./EmployeeCard";
 import EmployeeCardSkeleton from "./EmployeeCardSkeleton";
-import type { EmployeeQuery } from "../App";
 import EmployeeCardContainer from "./reusableComponents/EmployeeCardContainer";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-interface Props {
-  employeeQuery: EmployeeQuery;
-}
 
-const EmployeeGrid = ({ employeeQuery }: Props) => {
+
+const EmployeeGrid = () => {
   const {
     data,
     error,
     isLoading,
     fetchNextPage, 
     hasNextPage
-  } = useEmployees(employeeQuery);
+  } = useEmployees();
 
   const skeletons = [...Array(12).keys()];
     const fetchedEmployeesCount = data?.pages.reduce((total, page) => total + page.items.length, 0) || 0;
