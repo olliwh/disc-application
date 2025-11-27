@@ -46,7 +46,10 @@ const EmployeeProfile = () => {
   };
 
   if (isLoading) return <Spinner />;
-  if (error) return <Text>Error loading employee profile</Text>;
+
+  if (error) {
+    return <Text>Error loading employee profile</Text>;
+  }
   if (!employee) return <Text>Employee not found</Text>;
 
   return (

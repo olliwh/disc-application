@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
+
 import employeeService from "../services/employeeService";
 
 const useEmployee = (id: string) => {
   return useQuery({
-    queryKey: ["employees", id],
+    queryKey: ["employee", id],
     queryFn: () => employeeService.getById(parseInt(id)),
     enabled: !!id,
+    retry: false,
+    throwOnError: true,
   });
 };
 

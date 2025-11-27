@@ -38,8 +38,27 @@ namespace backend_disc.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize]
         public virtual async Task<IActionResult> GetById(int id)
         {
+            // Get employeeId from token
+            var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
+            if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
+            {
+                _logger.LogWarning("Invalid or missing employeeId in token");
+                return Unauthorized(new { message = "Invalid token" });
+            }
+
+            // Check if requested ID matches token ID (unless user is Admin)
+            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            if (userRole != "Admin" && id != tokenEmployeeId)
+            {
+                _logger.LogWarning($"User {tokenEmployeeId} attempted to access employee {id}");
+                return Forbid();
+            }
+
             var view = await _employeeService.GetByIdAsync(id);
             if (view == null) return NotFound();
             return Ok(view);
