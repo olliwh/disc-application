@@ -80,7 +80,7 @@ jobs:
           dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
-          sleep 5
+          sleep 20
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -104,24 +104,23 @@ jobs:
           echo "📍 Starting wait loop..."
           for i in {1..30}; do
             echo "Attempt $i/30..."
-            if curl -v http://localhost:3000 > /dev/null 2>&1; then
+            if curl -s http://localhost:3000 | grep -q "<!DOCTYPE\|<html"; then
               echo "✅ Frontend is ready!"
               break
             fi
             echo "⏳ Waiting for frontend... ($i/30)"
-            sleep 2
+            sleep 20
           done
 
-      - name: Check frontend logs
-        if: always()
-        working-directory: frontend-disc
+      - name: Verify frontend is accessible
         run: |
-          echo "=== Frontend logs ===" 
-          cat frontend.log || echo "No log file found"
-          echo "=== Process check ===" 
-          ps aux | grep -E "(node|npm)" || echo "No node processes"
-          echo "=== Port check ===" 
-          netstat -tlnp | grep 3000 || echo "Port 3000 not listening"
+          echo "Testing frontend accessibility..."
+          curl -v http://localhost:3000 2>&1 | head -20
+
+      - name: Check if port 3000 is listening
+        run: |
+          sleep 20
+          netstat -tlnp 2>/dev/null | grep 3000 || ss -tlnp 2>/dev/null | grep 3000 || echo "Checking with lsof..." && lsof -i :3000 || echo "Port check failed"
 
       - name: Check backend health
         run: |
