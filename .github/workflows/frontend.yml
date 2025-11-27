@@ -80,7 +80,7 @@ jobs:
           dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
-          sleep 20
+          sleep 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -109,7 +109,7 @@ jobs:
               break
             fi
             echo "⏳ Waiting for frontend... ($i/30)"
-            sleep 20
+            sleep 2
           done
 
       - name: Verify frontend is accessible
