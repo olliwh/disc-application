@@ -1,4 +1,12 @@
-import { Box, Button, Card, CardBody, HStack, Heading, Image } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Card,
+  CardBody,
+  HStack,
+  Heading,
+  Image,
+} from "@chakra-ui/react";
 
 import useDeleteGame from "../hooks/useDeleteEmployee";
 import type { Employee } from "../services/employeeService";
@@ -9,7 +17,6 @@ interface Props {
 
 const EmployeeCard = ({ employee }: Props) => {
   const { mutate, isPending } = useDeleteGame();
-  const color =  employee.discProfileColor;
 
   return (
     <Card height="100%">
@@ -22,25 +29,27 @@ const EmployeeCard = ({ employee }: Props) => {
         objectPosition="center top"
       />
       <CardBody>
-        <HStack spacing={3}  height="100%">
+        <HStack spacing={3} height="100%">
           <Button
             colorScheme="red"
             size="sm"
             isLoading={isPending}
             onClick={() => mutate(employee.id)}
-            >
+          >
             Delete
-            </Button>
+          </Button>
           <Heading size="md" flex="1" isTruncated>
             {employee.firstName} {employee.lastName}
           </Heading>
-          <Box
-            borderRadius="50%"
-            backgroundColor={color}
-            width="22px"     
-            height="22px" 
-            flexShrink={0}
-          />
+          {employee.discProfileColor && (
+            <Box
+              borderRadius="50%"
+              backgroundColor={employee.discProfileColor}
+              width="22px"
+              height="22px"
+              flexShrink={0}
+            />
+          )}
         </HStack>
       </CardBody>
     </Card>
