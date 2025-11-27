@@ -8,8 +8,10 @@ import {
   Image,
 } from "@chakra-ui/react";
 
+import useAuthStore from "../authStore";
 import useDeleteGame from "../hooks/useDeleteEmployee";
 import type { Employee } from "../services/employeeService";
+import loginService from "../services/loginService";
 
 interface Props {
   employee: Employee;
@@ -17,6 +19,9 @@ interface Props {
 
 const EmployeeCard = ({ employee }: Props) => {
   const { mutate, isPending } = useDeleteGame();
+  const { token } = useAuthStore();
+
+  const isAdmin = token && loginService.getRoleFromToken() === "Admin";
 
   return (
     <Card height="100%">
@@ -30,14 +35,16 @@ const EmployeeCard = ({ employee }: Props) => {
       />
       <CardBody>
         <HStack spacing={3} height="100%">
-          <Button
-            colorScheme="red"
-            size="sm"
-            isLoading={isPending}
-            onClick={() => mutate(employee.id)}
-          >
-            Delete
-          </Button>
+          {isAdmin && (
+            <Button
+              colorScheme="red"
+              size="sm"
+              isLoading={isPending}
+              onClick={() => mutate(employee.id)}
+            >
+              Delete
+            </Button>
+          )}
           <Heading size="md" flex="1" isTruncated>
             {employee.firstName} {employee.lastName}
           </Heading>

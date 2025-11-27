@@ -18,11 +18,32 @@ import {
 } from "@chakra-ui/react";
 
 import useEmployee from "../hooks/useEmployee";
+import useUpdateEmployee from "../hooks/useUpdateEmployee";
 
 const EmployeeProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: employee, isLoading, error } = useEmployee(id || "");
   const [isEditMode, setIsEditMode] = useState(false);
+  const [privateEmail, setPrivateEmail] = useState(
+    employee?.privateEmail || "",
+  );
+  const [privatePhone, setPrivatePhone] = useState(
+    employee?.privatePhone || "",
+  );
+  const updateMutation = useUpdateEmployee();
+
+  const handleSave = async () => {
+    if (!id) return;
+
+    updateMutation.mutate(
+      { id: parseInt(id), data: { privateEmail, privatePhone } },
+      {
+        onSuccess: () => {
+          setIsEditMode(false);
+        },
+      },
+    );
+  };
 
   if (isLoading) return <Spinner />;
   if (error) return <Text>Error loading employee profile</Text>;
@@ -69,38 +90,38 @@ const EmployeeProfile = () => {
           </Button>
         </GridItem>
 
-                    <GridItem>
-              <Text>
-                <Text as="span" fontWeight="bold">
-                  Work Email:
-                </Text>{" "}
-                {employee.workEmail}
-              </Text>
-            </GridItem>
-            <GridItem>
-              <Text>
-                <Text as="span" fontWeight="bold">
-                  Work Phone:
-                </Text>{" "}
-                {employee.workPhone}
-              </Text>
-            </GridItem>
-            <GridItem>
-              <Text>
-                <Text as="span" fontWeight="bold">
-                  Disc Profile:
-                </Text>{" "}
-                {employee.discProfileName}
-              </Text>
-            </GridItem>
-            <GridItem>
-              <Text>
-                <Text as="span" fontWeight="bold">
-                  Username:
-                </Text>{" "}
-                {employee.username}
-              </Text>
-            </GridItem>
+        <GridItem>
+          <Text>
+            <Text as="span" fontWeight="bold">
+              Work Email:
+            </Text>{" "}
+            {employee.workEmail}
+          </Text>
+        </GridItem>
+        <GridItem>
+          <Text>
+            <Text as="span" fontWeight="bold">
+              Work Phone:
+            </Text>{" "}
+            {employee.workPhone}
+          </Text>
+        </GridItem>
+        <GridItem>
+          <Text>
+            <Text as="span" fontWeight="bold">
+              Disc Profile:
+            </Text>{" "}
+            {employee.discProfileName}
+          </Text>
+        </GridItem>
+        <GridItem>
+          <Text>
+            <Text as="span" fontWeight="bold">
+              Username:
+            </Text>{" "}
+            {employee.username}
+          </Text>
+        </GridItem>
 
         {isEditMode ? (
           <>
@@ -108,18 +129,39 @@ const EmployeeProfile = () => {
               <Text fontWeight="bold" mb={2}>
                 Private Email:
               </Text>
-              <Input defaultValue={employee.privateEmail} />
+              <Input
+                placeholder={employee.privateEmail}
+                value={privateEmail}
+                onChange={(e) => setPrivateEmail(e.target.value)}
+              />
             </GridItem>
             <GridItem>
               <Text fontWeight="bold" mb={2}>
                 Private Phone:
               </Text>
-              <Input defaultValue={employee.privatePhone} />
+              <Input
+                placeholder={employee.privatePhone}
+                value={privatePhone}
+                onChange={(e) => setPrivatePhone(e.target.value)}
+              />
             </GridItem>
             <GridItem colSpan={{ base: 1, md: 2 }}>
               <HStack spacing={4}>
-                <Button colorScheme="green">Save</Button>
-                <Button variant="outline" onClick={() => setIsEditMode(false)}>
+                <Button
+                  colorScheme="green"
+                  isLoading={updateMutation.isPending}
+                  onClick={handleSave}
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditMode(false);
+                    setPrivateEmail(employee.privateEmail);
+                    setPrivatePhone(employee.privatePhone);
+                  }}
+                >
                   Cancel
                 </Button>
               </HStack>

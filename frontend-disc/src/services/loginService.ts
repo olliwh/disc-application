@@ -59,6 +59,22 @@ const loginService = {
       return null;
     }
   },
+
+  /**
+   * Get the user role from the JWT token payload.
+   * @returns The role string, or null if the token is invalid.
+   */
+  getRoleFromToken: (): string | null => {
+    const token = loginService.getToken();
+    if (!token) return null;
+    try {
+      const [, payloadBase64] = token.split(".");
+      const payload = JSON.parse(atob(payloadBase64));
+      return payload.role || null;
+    } catch {
+      return null;
+    }
+  },
 };
 
 export default loginService;
