@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-    paths: ["backend-disc/**", ".github/workflows/backend.yml"]
+    paths: ["backend-disc/**"]
   pull_request:
     branches:
       - main
-    paths: ["backend-disc/**", ".github/workflows/backend.yml"]
-
+    paths: ["backend-disc/**"]
   workflow_dispatch:
 
 jobs:

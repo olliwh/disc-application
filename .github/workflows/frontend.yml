@@ -5,13 +5,11 @@ on:
     branches:
       - main
       - playwright-tests
-    paths:
-      ["frontend-disc/**", "e2e-tests/**", ".github/workflows/frontend.yml"]
+    paths: ["frontend-disc/**", "e2e-tests/**"]
   pull_request:
     branches:
       - main
-    paths:
-      ["frontend-disc/**", "e2e-tests/**", ".github/workflows/frontend.yml"]
+    paths: ["frontend-disc/**", "e2e-tests/**"]
   workflow_dispatch:
 
 jobs:
@@ -100,7 +98,7 @@ jobs:
       - name: Start frontend dev server
         working-directory: frontend-disc
         run: npm run dev &
-        
+
       - name: Wait for frontend to be ready
         run: |
           for i in {1..30}; do
