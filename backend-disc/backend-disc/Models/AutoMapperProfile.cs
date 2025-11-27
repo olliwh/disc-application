@@ -30,6 +30,7 @@ namespace backend_disc.Models
             //Employee
             CreateMap<Employee, EmployeeDto>().ReverseMap();
             CreateMap<CreateNewEmployee, AddEmployeeSpParams>().ReverseMap();
+            CreateMap<EmployeesOwnProfile, EmployeeOwnProfileDto>().ReverseMap();
 
 
         }

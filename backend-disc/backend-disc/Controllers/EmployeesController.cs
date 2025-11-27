@@ -35,6 +35,15 @@ namespace backend_disc.Controllers
             //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
             return Ok(employees);
         }
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public virtual async Task<IActionResult> GetById(int id)
+        {
+            var view = await _employeeService.GetByIdAsync(id);
+            if (view == null) return NotFound();
+            return Ok(view);
+        }
         /// <summary>
         /// Creates a new employee only admin users are allowed to create employees
         /// </summary>
