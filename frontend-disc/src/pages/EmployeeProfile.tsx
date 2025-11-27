@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GrEdit } from "react-icons/gr";
 import { useParams } from "react-router-dom";
 
@@ -24,13 +24,16 @@ const EmployeeProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: employee, isLoading, error } = useEmployee(id || "");
   const [isEditMode, setIsEditMode] = useState(false);
-  const [privateEmail, setPrivateEmail] = useState(
-    employee?.privateEmail || "",
-  );
-  const [privatePhone, setPrivatePhone] = useState(
-    employee?.privatePhone || "",
-  );
+  const [privateEmail, setPrivateEmail] = useState("");
+  const [privatePhone, setPrivatePhone] = useState("");
   const updateMutation = useUpdateEmployee();
+
+  useEffect(() => {
+    if (employee) {
+      setPrivateEmail(employee.privateEmail || "");
+      setPrivatePhone(employee.privatePhone || "");
+    }
+  }, [employee]);
 
   const handleSave = async () => {
     if (!id) return;
@@ -133,7 +136,6 @@ const EmployeeProfile = () => {
                 Private Email:
               </Text>
               <Input
-                placeholder={employee.privateEmail}
                 value={privateEmail}
                 onChange={(e) => setPrivateEmail(e.target.value)}
               />
@@ -143,7 +145,6 @@ const EmployeeProfile = () => {
                 Private Phone:
               </Text>
               <Input
-                placeholder={employee.privatePhone}
                 value={privatePhone}
                 onChange={(e) => setPrivatePhone(e.target.value)}
               />
