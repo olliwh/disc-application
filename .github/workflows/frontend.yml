@@ -1,15 +1,14 @@
-name: Backend CI/CD
+name: Frontend CI/CD
 
 on:
   push:
     branches:
       - main
-      - seeder
+      - playwright-tests
   pull_request:
     branches:
       - main
-    paths: ["backend-disc/**"]
-
+    paths: ["frontend-disc/**"]
   workflow_dispatch:
 
 jobs:
@@ -48,28 +47,15 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Restore dependencies
+      - name: Restore backend dependencies
         working-directory: backend-disc
         run: dotnet restore
 
-      - name: Build API
+      - name: Build backend
         working-directory: backend-disc
         run: dotnet build --no-restore --configuration Release
 
-      - name: Start API
-        working-directory: backend-disc
-        env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-          ASPNETCORE_URLS: http://0.0.0.0:5000
-          ASPNETCORE_ENVIRONMENT: Development
-        run: |
-          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
-          echo $! > api.pid
-          echo "Backend started with PID: $(cat api.pid)"
-          sleep 5
-
-      - name: run seeder
+      - name: Run seeder
         working-directory: backend-disc/seeder
         env:
           DB_HOST: "localhost"
@@ -82,13 +68,44 @@ jobs:
           dotnet run --configuration Release
           echo "Seeder completed!"
 
-      - name: Install Newman
-        run: npm install -g newman
-
-      - name: Run Postman tests
+      - name: Start backend API
         working-directory: backend-disc
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+          ASPNETCORE_URLS: http://0.0.0.0:5000
+          ASPNETCORE_ENVIRONMENT: Development
         run: |
-          newman run Disc-api-test.postman_collection.json \
-            --environment postman-env.json \
-            --reporters cli,json \
-            --reporter-json-export test-results.json
+          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
+          echo $! > api.pid
+          echo "Backend started with PID: $(cat api.pid)"
+          sleep 5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install frontend dependencies
+        working-directory: frontend-disc
+        run: npm install
+
+      - name: Build frontend
+        working-directory: frontend-disc
+        run: npm run build
+
+      - name: Install Playwright
+        working-directory: e2e-tests
+        run: npm install
+
+      - name: Run e2e tests
+        working-directory: e2e-tests
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e-tests/playwright-report/
+          retention-days: 7
