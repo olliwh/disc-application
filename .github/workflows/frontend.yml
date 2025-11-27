@@ -125,22 +125,9 @@ jobs:
 
       - name: Check backend health
         run: |
-          echo "=== Backend health check ===" 
-          echo "Checking if backend is listening on port 5000..."
-          netstat -tlnp | grep 5000 || echo "Port 5000 not listening"
-          echo ""
-          echo "Checking backend process..."
-          ps aux | grep -E "dotnet.*backend" || echo "No backend process found"
-          echo ""
-          echo "Attempting curl to backend..."
-          curl -v http://localhost:5000 || echo "Backend curl failed"
-          curl -v http://localhost:5000/api/health || echo "Health endpoint failed"
-          echo ""
-          echo "Checking backend logs..."
-          if [ -f backend-disc/api.pid ]; then
-            PID=$(cat backend-disc/api.pid)
-            echo "Backend PID: $PID"
-          fi
+          echo "=== Testing Backend API ===" 
+          curl -v http://localhost:5000/api/positions || echo "Positions endpoint failed"
+          curl -v http://localhost:5000/api/departments || echo "Departments endpoint failed"
 
       - name: Install Playwright
         working-directory: e2e-tests
