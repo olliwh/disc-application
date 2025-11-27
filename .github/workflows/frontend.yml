@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-    paths: ["frontend-disc/**"]
+    # paths: ["frontend-disc/**"]
   workflow_dispatch:
 
 jobs:
@@ -97,6 +97,10 @@ jobs:
       - name: Install Playwright
         working-directory: e2e-tests
         run: npm install
+
+      - name: Install Playwright browsers
+        working-directory: e2e-tests
+        run: npx playwright install --with-deps
 
       - name: Run e2e tests
         working-directory: e2e-tests
