@@ -185,5 +185,13 @@ namespace backend_disc.Services
             return deleted;
         }
 
+        public async Task<int?> UpdatePrivateDataAsync(int id, UpdatePrivateDataDto updateDto)
+        {
+            if (string.IsNullOrWhiteSpace(updateDto.PrivateEmail) || string.IsNullOrWhiteSpace(updateDto.PrivatePhone))
+                throw new ArgumentException("Private email and phone cannot be empty");
+
+            return await _employeeRepository.UpdatePrivateData(id, updateDto.PrivateEmail, updateDto.PrivatePhone);
+        }
+
     }
 }

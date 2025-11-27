@@ -56,7 +56,7 @@ namespace backend_disc.Services
 
                 if (!isPasswordValid)
                 {
-                    _logger.LogWarning("Login attempt failed: Invalid password - {Username}", dto.Username);
+                    _logger.LogWarning("Login attempt failed: Invalid password - {Username} pa - {Password}", dto.Username, dto.Password);
                     return null;
                 }
 

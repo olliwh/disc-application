@@ -1,5 +1,7 @@
 import axios, { type AxiosRequestConfig } from "axios";
 
+import loginService from "./loginService";
+
 export interface Response<T> {
   items: T[];
   totalCount: number;
@@ -12,6 +14,16 @@ export interface Response<T> {
 const axiosInstance = axios.create({
   baseURL: import.meta.env["VITE_API_URL"],
 });
+
+// Add token to requests
+axiosInstance.interceptors.request.use((config) => {
+  const token = loginService.getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 class ApiClient<T> {
   endpoint: string;
   constructor(endpoint: string) {

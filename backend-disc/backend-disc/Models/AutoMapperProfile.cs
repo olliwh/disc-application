@@ -33,6 +33,10 @@ namespace backend_disc.Models
             CreateMap<EmployeesOwnProfile, EmployeeOwnProfileDto>().ReverseMap();
 
 
+   
+
+
+
         }
     }
 }
