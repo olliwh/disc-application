@@ -12,5 +12,7 @@ namespace backend_disc.Services
         Task<int?> DeleteAsync(int id);
         Task<EmployeeOwnProfileDto?> GetByIdAsync(int id);
 
+        Task<int?> UpdatePrivateDataAsync(int id, UpdatePrivateDataDto updateDto);
+
     }
 }

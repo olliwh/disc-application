@@ -147,5 +147,39 @@ namespace backend_disc.Repositories
             await _context.SaveChangesAsync();
             return id;
         }
+
+        public async Task<int?> UpdatePrivateData(int id, string mail, string phone)
+        {
+            var parameters = new[]
+            {
+        new SqlParameter("@id", id),
+        new SqlParameter("@private_email", mail),
+        new SqlParameter("@private_phone", phone)
+    };
+
+            try
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC sp_UpdatePrivateInfo @id, @private_email, @private_phone",
+                    parameters);
+
+                return id;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "SQL error updating data: {Message}", ex.Message);
+                
+                if (ex.Number == 50001) // Your custom error number
+                    throw new KeyNotFoundException("Employee not found", ex);
+                
+                throw new InvalidOperationException($"Database error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error updating data");
+                throw new InvalidOperationException("Failed to update employee data", ex);
+            }
+        }
+
     }
 }

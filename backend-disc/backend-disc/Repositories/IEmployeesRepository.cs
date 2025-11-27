@@ -11,5 +11,6 @@ namespace backend_disc.Repositories
         Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p);
         Task<int?> Delete(int id);
         Task<EmployeesOwnProfile?> GetById(int id);
+        Task<int?> UpdatePrivateData(int id, string mail, string phone);
     }
 }

@@ -99,5 +99,39 @@ namespace backend_disc.Controllers
             if (deleted == null) return NotFound();
             return Ok(deleted);
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public virtual async Task<IActionResult> Update(int id, [FromBody] UpdatePrivateDataDto updateDto)
+        {
+            try
+            {
+                var updated = await _employeeService.UpdatePrivateDataAsync(id, updateDto);
+                return Ok(new { id = updated });
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid input for updating employee");
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Employee not found");
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Database operation failed");
+                return StatusCode(500, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error updating employee");
+                return StatusCode(500, new { message = "An unexpected error occurred" });
+            }
+        }
     }
 }

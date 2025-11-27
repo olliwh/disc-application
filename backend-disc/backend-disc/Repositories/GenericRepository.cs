@@ -52,7 +52,7 @@ namespace backend_disc.Repositories
             var existing = await _dbSet.FindAsync(id);
             if (existing == null) return null;
 
-            //when AutoMapper maps UpdateCompanyDto to Company, it creates a new Company object 
+            //when AutoMapper maps UpdateCompanyDto to Company, it creates a new object 
             // When mapper creates entity, the Id will be 0 so we have to set it here
             var idProperty = entity.GetType().GetProperty("Id");
             if (idProperty != null && idProperty.CanWrite)
