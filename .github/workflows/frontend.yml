@@ -140,7 +140,7 @@ jobs:
         working-directory: e2e-tests
         env:
           DEBUG: pw:api
-        run: npx playwright test --debug
+        run: npx playwright test --headed=false
 
       - name: Upload Playwright report
         if: always()
