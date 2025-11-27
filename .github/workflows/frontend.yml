@@ -5,10 +5,13 @@ on:
     branches:
       - main
       - playwright-tests
+    paths:
+      ["frontend-disc/**", "e2e-tests/**", ".github/workflows/frontend.yml"]
   pull_request:
     branches:
       - main
-    # paths: ["frontend-disc/**"]
+    paths:
+      ["frontend-disc/**", "e2e-tests/**", ".github/workflows/frontend.yml"]
   workflow_dispatch:
 
 jobs:
@@ -93,6 +96,21 @@ jobs:
       - name: Build frontend
         working-directory: frontend-disc
         run: npm run build
+
+      - name: Start frontend dev server
+        working-directory: frontend-disc
+        run: npm run dev &
+        
+      - name: Wait for frontend to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              echo "Frontend is ready!"
+              break
+            fi
+            echo "Waiting for frontend... ($i/30)"
+            sleep 2
+          done
 
       - name: Install Playwright
         working-directory: e2e-tests
