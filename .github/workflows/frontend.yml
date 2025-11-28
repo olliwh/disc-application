@@ -139,6 +139,7 @@ jobs:
           echo "=== Testing Backend API ===" 
           curl -v http://localhost:5000/api/positions || echo "Positions endpoint failed"
           curl -v http://localhost:5000/api/departments || echo "Departments endpoint failed"
+          curl -v http://localhost:5000/api/employees || echo "Employees endpoint failed"
 
       - name: Install Playwright
         working-directory: e2e-tests
