@@ -34,8 +34,7 @@ export default defineConfig({
     headless: true,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    ignoreHTTPSErrors: true,
-    viewport: { width: 1920, height: 1080 }, // Add this
+    ignoreHTTPSErrors: true, // Add this
   },
 
   /* Configure projects for major browsers */
