@@ -43,6 +43,18 @@ jobs:
             sleep 2
           done
 
+      - name: Verify SQL Server connection
+        run: |
+          echo "Testing SQL Server connection..."
+          for i in {1..30}; do
+            if sqlcmd -S localhost -U sa -P "${{ secrets.DB_PASSWORD }}" -Q "SELECT 1" 2>/dev/null; then
+              echo "✅ SQL Server is accessible!"
+              break
+            fi
+            echo "⏳ Attempt $i/30: SQL Server not ready yet..."
+            sleep 2
+          done
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
