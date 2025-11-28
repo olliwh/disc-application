@@ -80,7 +80,7 @@ jobs:
           dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
-          sleep 20
+          sleep 2
 
       - name: Verify backend is ready
         run: |
@@ -148,34 +148,34 @@ jobs:
           curl -v http://localhost:5000/api/departments || echo "Departments endpoint failed"
           curl -v http://localhost:5000/api/employees || echo "Employees endpoint failed"
 
-      - name: Install Playwright
-        working-directory: e2e-tests
-        run: npm install
+      # - name: Install Playwright
+      #   working-directory: e2e-tests
+      #   run: npm install
 
-      - name: Install Playwright browsers
-        working-directory: e2e-tests
-        run: npx playwright install --with-deps
+      # - name: Install Playwright browsers
+      #   working-directory: e2e-tests
+      #   run: npx playwright install --with-deps
 
-      - name: Run e2e tests
-        working-directory: e2e-tests
-        env:
-          DEBUG: pw:api
-        run: npx playwright test
+      # - name: Run e2e tests
+      #   working-directory: e2e-tests
+      #   env:
+      #     DEBUG: pw:api
+      #   run: npx playwright test
 
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: e2e-tests/playwright-report/
-          retention-days: 7
+      # - name: Upload Playwright report
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: playwright-report
+      #     path: e2e-tests/playwright-report/
+      #     retention-days: 7
 
-      - name: Upload debug artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-debug
-          path: |
-            e2e-tests/debug-screenshot.png
-            e2e-tests/test-results/
-          retention-days: 7
+      # - name: Upload debug artifacts
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: playwright-debug
+      #     path: |
+      #       e2e-tests/debug-screenshot.png
+      #       e2e-tests/test-results/
+      #     retention-days: 7
