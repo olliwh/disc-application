@@ -17,11 +17,13 @@ class Program
         string connectionString = $"Server={DB_HOST},{DB_PORT};Database={DB_NAME};User Id={DB_USER};Password={DB_PASSWORD};TrustServerCertificate=True;";
 
         string sqlCreateStoredProc = await File.ReadAllTextAsync("createStoredProc.sql");
+        string sqlCreateStoredProcEdit = await File.ReadAllTextAsync("createStoredProcEdit.sql");
         string sqlInsertData = await File.ReadAllTextAsync("insertDataQuery.sql");
 
         try
         {
             await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
+            await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
 
             await ExecuteNonQuery(connectionString, sqlInsertData);
 

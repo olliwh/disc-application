@@ -14,6 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="createStoredProcEdit.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="createStoredProc.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

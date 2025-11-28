@@ -95,6 +95,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               width="full"
               mb={2}
               isLoading={isLoading}
+              id="loginBtnModal"
             >
               Login
             </Button>

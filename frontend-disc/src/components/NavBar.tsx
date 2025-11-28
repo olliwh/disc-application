@@ -41,7 +41,7 @@ export const NavBar = () => {
       <SearchInput />
       {!isAuthenticated ? (
         <>
-          <Button colorScheme="teal" variant="outline" onClick={onLoginOpen}>
+          <Button id="loginBtnNavbar" colorScheme="teal" variant="outline" onClick={onLoginOpen}>
             Login
           </Button>
           <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
@@ -52,6 +52,7 @@ export const NavBar = () => {
             size={24}
             onClick={handleUserIconClick}
             style={{ cursor: "pointer" }}
+            id="toProfileBtn"
           />
           <Button colorScheme="teal" variant="outline" onClick={handleLogout}>
             Logout

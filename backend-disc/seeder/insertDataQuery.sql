@@ -59,6 +59,65 @@ EXEC sp_AddEmployee 'Jonas', 'Pedersen', 'jonas@techcorp.com', '88885678', 'http
 EXEC sp_AddEmployee 'Clara', 'Hansen', 'clara@techcorp.com', '88882345', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png', 2, 3, 4, 1, '1123456790', 'clara@mail.com', '11234567', 'clara', '$argon2id$v=19$m=65536,t=3,p=1$D7OPcfW1hQRmlXBpE69RrQ$dDrVkd4e2WrBYcoAFc9WLPlyHNl/1xUc2oTxDAzzKHw', 3;
 
 EXEC sp_AddEmployee 'Adminn', 'Adminn', 'Adminn@techcorp.com', '88888917', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png', 1, 1, 1, 1, '1704867890', 'adminn@mail.com', '12345678', 'adminn', '$argon2id$v=19$m=65536,t=3,p=1$uclpX8S5LhZgLBTruwFXmQ$UQZjeO+ziT58SUvHLie5SLZVI5h9jPqUM+BxXvIzlfA', 1;
+EXEC sp_AddEmployee 'Oliver', 'Skov', 'oliver.skov@techcorp.com', '77770001',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500011', 'oliver@mail.com', '70010001', 'olivers',
+'$argon2id$v=19$m=65536,t=3,p=1$example1$hash1', 2;
+GO
+
+EXEC sp_AddEmployee 'Laura', 'Hvid', 'laura.hvid@techcorp.com', '77770002',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500022', 'laura@mail.com', '70020002', 'laurah',
+'$argon2id$v=19$m=65536,t=3,p=1$example2$hash2', 2;
+GO
+
+EXEC sp_AddEmployee 'Tobias', 'Lund', 'tobias.lund@techcorp.com', '77770003',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500033', 'tobias@mail.com', '70030003', 'tobiasl',
+'$argon2id$v=19$m=65536,t=3,p=1$example3$hash3', 2;
+GO
+
+EXEC sp_AddEmployee 'Sara', 'Dam', 'sara.dam@techcorp.com', '77770004',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500044', 'sara@mail.com', '70040004', 'sarad',
+'$argon2id$v=19$m=65536,t=3,p=1$example4$hash4', 2;
+GO
+
+EXEC sp_AddEmployee 'Victor', 'Holm', 'victor.holm@techcorp.com', '77770005',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500055', 'victor@mail.com', '70050005', 'victorh',
+'$argon2id$v=19$m=65536,t=3,p=1$example5$hash5', 2;
+GO
+
+EXEC sp_AddEmployee 'Julie', 'Møller', 'julie.moller@techcorp.com', '77770006',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500066', 'julie@mail.com', '70060006', 'juliem',
+'$argon2id$v=19$m=65536,t=3,p=1$example6$hash6', 2;
+GO
+
+EXEC sp_AddEmployee 'Anders', 'Bro', 'anders.bro@techcorp.com', '77770007',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500077', 'anders@mail.com', '70070007', 'andersb',
+'$argon2id$v=19$m=65536,t=3,p=1$example7$hash7', 2;
+GO
+
+EXEC sp_AddEmployee 'Maja', 'Frisk', 'maja.frisk@techcorp.com', '77770008',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500088', 'maja@mail.com', '70080008', 'majaf',
+'$argon2id$v=19$m=65536,t=3,p=1$example8$hash8', 2;
+GO
+
+EXEC sp_AddEmployee 'Sebastian', 'Krag', 'sebastian.krag@techcorp.com', '77770009',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500099', 'sebastian@mail.com', '70090009', 'sebastiank',
+'$argon2id$v=19$m=65536,t=3,p=1$example9$hash9', 2;
+GO
+
+EXEC sp_AddEmployee 'Nanna', 'Poulsen', 'nanna.poulsen@techcorp.com', '77770010',
+'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+2, 2, 2, '1234500100', 'nanna@mail.com', '70100010', 'nannap',
+'$argon2id$v=19$m=65536,t=3,p=1$example10$hash10', 2;
+GO
 
 
 INSERT INTO projects (name, description, deadline, completed, employees_needed) VALUES

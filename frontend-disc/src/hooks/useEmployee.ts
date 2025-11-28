@@ -9,6 +9,7 @@ const useEmployee = (id: string) => {
     enabled: !!id,
     retry: false,
     throwOnError: true,
+    staleTime: 0, 
   });
 };
 
