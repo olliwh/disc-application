@@ -13,6 +13,7 @@ export interface Response<T> {
 }
 const axiosInstance = axios.create({
   baseURL: import.meta.env["VITE_API_URL"],
+  withCredentials: true, //cant use allow all must specify localhost:3000
 });
 
 // Add token to requests

@@ -91,6 +91,7 @@ const EmployeeProfile = () => {
             colorScheme="teal"
             variant="outline"
             onClick={() => setIsEditMode(!isEditMode)}
+            id="editProfileBtn"
           >
             {isEditMode ? "Cancel" : "Edit"}
           </Button>
@@ -136,6 +137,7 @@ const EmployeeProfile = () => {
                 Private Email:
               </Text>
               <Input
+              id="email-input"
                 value={privateEmail}
                 onChange={(e) => setPrivateEmail(e.target.value)}
               />
@@ -145,6 +147,7 @@ const EmployeeProfile = () => {
                 Private Phone:
               </Text>
               <Input
+              id="phone-input"
                 value={privatePhone}
                 onChange={(e) => setPrivatePhone(e.target.value)}
               />

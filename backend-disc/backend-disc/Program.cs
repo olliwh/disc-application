@@ -30,10 +30,14 @@ startupLogger.LogInformation("Connection string: {ConnectionString}", builder.Co
 //Cors
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "AllowAll",
+    options.AddPolicy(name: "AllowFrontend",
                               policy =>
                               {
-                                  policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                                  policy
+            .WithOrigins("http://localhost:3000")   // your frontend
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
 
                               });
     options.AddPolicy(name: "OnlyGET",
@@ -123,7 +127,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 //cors
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 using (var scope = app.Services.CreateScope())
