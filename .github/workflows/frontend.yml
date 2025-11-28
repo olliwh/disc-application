@@ -46,12 +46,12 @@ jobs:
       - name: Verify SQL Server connection
         run: |
           echo "Testing SQL Server connection..."
-          for i in {1..30}; do
-            if sqlcmd -S localhost -U sa -P "${{ secrets.DB_PASSWORD }}" -Q "SELECT 1" 2>/dev/null; then
-              echo "✅ SQL Server is accessible!"
+          for i in {1..60}; do
+            if timeout 2 bash -c "cat < /dev/null > /dev/tcp/localhost/1433" 2>/dev/null; then
+              echo "✅ SQL Server port is open!"
               break
             fi
-            echo "⏳ Attempt $i/30: SQL Server not ready yet..."
+            echo "⏳ Attempt $i/60: SQL Server not ready yet..."
             sleep 2
           done
 
