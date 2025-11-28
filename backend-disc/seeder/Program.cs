@@ -22,21 +22,19 @@ class Program
             // Read SQL files
             string sqlCreateStoredProc = await ReadSqlFile("createStoredProc.sql");
             string sqlCreateStoredProcEdit = await ReadSqlFile("createStoredProcEdit.sql");
+            string sqlCreateView = await ReadSqlFile("createView.sql");
             string sqlInsertData = await ReadSqlFile("insertDataQuery.sql");
 
             // Execute scripts
-            Console.WriteLine("🔨 Creating stored procedures...");
             await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
             await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
-
-            Console.WriteLine("📝 Inserting data...");
+            await ExecuteNonQuery(connectionString, sqlCreateView);
             await ExecuteNonQuery(connectionString, sqlInsertData);
 
-            Console.WriteLine("✅ Seeder completed successfully!");
+            Console.WriteLine("Seeder completed successfully!");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Error: {ex.Message}");
             Console.WriteLine($"Stack trace: {ex.StackTrace}");
             Environment.Exit(1);
         }
