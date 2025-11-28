@@ -23,7 +23,6 @@ class Program
         try
         {
             await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
-            await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
 
             await ExecuteNonQuery(connectionString, sqlInsertData);
 

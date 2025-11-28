@@ -94,6 +94,13 @@ jobs:
             sleep 2
           done
 
+      - name: Test backend login endpoint
+        run: |
+          echo "Testing login endpoint..."
+          curl -v -X POST http://localhost:5000/api/Auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"username":"alice","password":"Pass@word1"}' || echo "Login test failed"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
