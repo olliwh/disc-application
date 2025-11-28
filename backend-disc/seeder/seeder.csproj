@@ -20,6 +20,9 @@
     <None Update="createStoredProc.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="createView.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="insertDataQuery.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
