@@ -89,21 +89,21 @@ jobs:
         working-directory: e2e-tests
         run: npx playwright test tests/api.spec.ts
 
-      - name: Print backend logs
-        if: always()
-        run: |
-          echo "=== Backend Logs ==="
-          if [ -f backend.log ]; then
-            cat backend.log
-          else
-            echo "No backend log found"
-            ls -la
-          fi
+      # - name: Print backend logs
+      #   if: always()
+      #   run: |
+      #     echo "=== Backend Logs ==="
+      #     if [ -f backend.log ]; then
+      #       cat backend.log
+      #     else
+      #       echo "No backend log found"
+      #       ls -la
+      #     fi
 
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-api-report
-          path: e2e-tests/playwright-report/
-          retention-days: 7
+      # - name: Upload Playwright report
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: playwright-api-report
+      #     path: e2e-tests/playwright-report/
+      #     retention-days: 7

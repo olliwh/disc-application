@@ -58,8 +58,6 @@ async function testUpdateEndpoint(
   description: string,
   id: number
 ) {
-  console.log(`Updating ${endpoint} with id ${id}`);
-  console.log(`New name: ${name}, New description: ${description}`);
   const createResponse = await request.put(`${BASE_URL}/${endpoint}/${id}`, {
     data: {
       name: name,
