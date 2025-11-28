@@ -84,6 +84,17 @@ export class PageModel {
       console.log("✅ Logout button visible - Login successful!");
     } catch (error) {
       console.error("❌ Logout button not visible after login");
+      
+      // Check if there's an error message on the page
+      const errorAlert = await this.page.getByRole("alert").textContent();
+      console.error("Alert text:", errorAlert);
+      
+      // Check page content
+      const pageContent = await this.page.content();
+      if (pageContent?.includes("Ooops")) {
+        console.error("❌ Page shows error state - likely API issue");
+      }
+      
       // Take screenshot to debug
       await this.page.screenshot({ path: "logout-btn-missing.png" });
       throw error;
