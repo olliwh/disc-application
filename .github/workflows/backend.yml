@@ -63,7 +63,7 @@ jobs:
           ASPNETCORE_URLS: http://0.0.0.0:5000
           ASPNETCORE_ENVIRONMENT: Development
         run: |
-          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
+          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" > backend.log 2>&1 &
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
           sleep 5
@@ -85,13 +85,15 @@ jobs:
         working-directory: e2e-tests
         run: npm install
 
-      - name: Install Playwright browsers
-        working-directory: e2e-tests
-        run: npx playwright install --with-deps
-
       - name: Run API tests
         working-directory: e2e-tests
         run: npx playwright test tests/api.spec.ts
+
+      - name: Print backend logs
+        if: always()
+        run: |
+          echo "=== Backend Logs ==="
+          cat backend.log || echo "No backend log found"
 
       - name: Upload Playwright report
         if: always()

@@ -44,13 +44,10 @@ namespace backend_disc.Controllers
         {
             // Get employeeId from token
             var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
-            _logger.LogWarning($"🔍 GetById - employeeIdFromToken: {employeeIdFromToken}");
-            _logger.LogWarning($"🔍 GetById - All claims: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
-            
             if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
             {
                 _logger.LogWarning("Invalid or missing employeeId in token");
-                return Unauthorized(new { message = "Invalid token - missing employeeId claim" });
+                return Unauthorized(new { message = "Invalid token" });
             }
 
             // Check if requested ID matches token ID (unless user is Admin)
