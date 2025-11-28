@@ -32,7 +32,6 @@ namespace backend_disc.Controllers
             [FromQuery] int pageSize = 12)
         {
             var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
-            //await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2));
             return Ok(employees);
         }
         [HttpGet("{id}")]
@@ -52,8 +51,7 @@ namespace backend_disc.Controllers
             }
 
             // Check if requested ID matches token ID (unless user is Admin)
-            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-            if (userRole != "Admin" && id != tokenEmployeeId)
+            if (id != tokenEmployeeId)
             {
                 _logger.LogWarning($"User {tokenEmployeeId} attempted to access employee {id}");
                 return Forbid();
@@ -123,9 +121,25 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [Authorize]
         public virtual async Task<IActionResult> Update(int id, [FromBody] UpdatePrivateDataDto updateDto)
         {
+            // Get employeeId from token
+            var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
+            if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
+            {
+                _logger.LogWarning("Invalid or missing employeeId in token");
+                return Unauthorized(new { message = "Invalid token" });
+            }
+
+            if (id != tokenEmployeeId)
+            {
+                _logger.LogWarning($"User {tokenEmployeeId} attempted to update employee {id}");
+                return Forbid();
+            }
+
             try
             {
                 var updated = await _employeeService.UpdatePrivateDataAsync(id, updateDto);

@@ -43,62 +43,17 @@ export class PageModel {
   }
 
   async login(username: string, password: string) {
-    console.log(`🔐 Attempting login for: ${username}`);
-
     await this.loginBtnNavBar.click();
     await this.usernameInput.fill(username);
     await this.pswInput.fill(password);
-
-    // Wait for any network activity before clicking
-    await this.page.waitForLoadState("networkidle");
-    await this.page.waitForTimeout(500);
-
     await this.loginBtnModal.click();
-    console.log("✓ Login button clicked");
 
-    // Wait for modal to close (indicates successful login)
-    try {
-      await this.page
-        .locator('div[role="dialog"]')
-        .waitFor({ state: "hidden", timeout: 10000 });
-      console.log("✓ Login modal closed");
-    } catch (error) {
-      console.error("❌ Login modal did not close - login likely failed");
-      // Take screenshot to debug
-      await this.page.screenshot({ path: "login-failed.png" });
-      throw error;
-    }
-
-    // Wait for page to stabilize
-    await this.page.waitForLoadState("networkidle");
-    console.log("✓ Page network idle");
-
-    // Wait for logout button to appear
+    // Wait for login to complete
     await this.waitForUserLoggedIn();
   }
 
   private async waitForUserLoggedIn() {
-    console.log("⏳ Waiting for logout button...");
-    try {
-      await this.logoutBtn.waitFor({ state: "visible", timeout: 15000 });
-      console.log("✅ Logout button visible - Login successful!");
-    } catch (error) {
-      console.error("❌ Logout button not visible after login");
-
-      // Check if there's an error message on the page
-      const errorAlert = await this.page.getByRole("alert").textContent();
-      console.error("Alert text:", errorAlert);
-
-      // Check page content
-      const pageContent = await this.page.content();
-      if (pageContent?.includes("Ooops")) {
-        console.error("❌ Page shows error state - likely API issue");
-      }
-
-      // Take screenshot to debug
-      await this.page.screenshot({ path: "logout-btn-missing.png" });
-      throw error;
-    }
+    await this.logoutBtn.waitFor({ state: "visible", timeout: 15000 });
   }
 
   async goToProfile() {

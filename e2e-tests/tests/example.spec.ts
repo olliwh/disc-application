@@ -18,8 +18,8 @@ test.describe("Disc application e2e tests", () => {
     const browserName = testInfo.project?.name || "chromium";
     const employeeName = EMPLOYEE_NAMES[browserName];
     const newEmail = "aliiiiice@@ok.dk";
-    // await expect(discPage.positionheading).toBeVisible();
-    // await expect(discPage.departmentheading).toBeVisible();
+    await expect(discPage.positionheading).toBeVisible();
+    await expect(discPage.departmentheading).toBeVisible();
 
     // Login as alice
     await discPage.login("alice", "Pass@word1");

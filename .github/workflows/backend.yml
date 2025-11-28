@@ -81,13 +81,22 @@ jobs:
           dotnet run --configuration Release
           echo "Seeder completed!"
 
-      - name: Install Newman
-        run: npm install -g newman
+      - name: Install Playwright
+        working-directory: e2e-tests
+        run: npm install
 
-      - name: Run Postman tests
-        working-directory: backend-disc
-        run: |
-          newman run Disc-api-test.postman_collection.json \
-            --environment postman-env.json \
-            --reporters cli,json \
-            --reporter-json-export test-results.json
+      - name: Install Playwright browsers
+        working-directory: e2e-tests
+        run: npx playwright install --with-deps
+
+      - name: Run API tests
+        working-directory: e2e-tests
+        run: npx playwright test tests/api.spec.ts
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-api-report
+          path: e2e-tests/playwright-report/
+          retention-days: 7

@@ -13,11 +13,6 @@ import SearchInput from "./SearchInput ";
 export const NavBar = () => {
   const { token, logout } = useAuthStore();
   const isAuthenticated = !!token;
-
-  // Debug logging
-  console.log("🔍 NavBar render - isAuthenticated:", isAuthenticated);
-  console.log("🔍 NavBar render - token:", token ? "exists" : "null");
-
   const navigate = useNavigate();
   const {
     isOpen: isLoginOpen,
