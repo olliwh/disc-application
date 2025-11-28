@@ -80,7 +80,19 @@ jobs:
           dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
           echo $! > api.pid
           echo "Backend started with PID: $(cat api.pid)"
-          sleep 2
+          sleep 20
+
+      - name: Verify backend is ready
+        run: |
+          echo "Waiting for backend API to be ready..."
+          for i in {1..30}; do
+            if curl -f http://localhost:5000/api/positions 2>/dev/null; then
+              echo "✅ Backend is ready!"
+              break
+            fi
+            echo "⏳ Attempt $i/30: Backend not ready yet..."
+            sleep 2
+          done
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -140,7 +152,7 @@ jobs:
         working-directory: e2e-tests
         env:
           DEBUG: pw:api
-        run: npx playwright test 
+        run: npx playwright test
 
       - name: Upload Playwright report
         if: always()
