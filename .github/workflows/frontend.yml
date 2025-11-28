@@ -55,6 +55,11 @@ jobs:
             sleep 2
           done
 
+      - name: Create database
+        run: |
+          echo "Creating database..."
+          docker exec disc-mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${{ secrets.DB_PASSWORD }}" -Q "CREATE DATABASE ${{ secrets.DB_NAME }};" || echo "Database might already exist"
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
