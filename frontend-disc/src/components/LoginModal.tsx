@@ -37,21 +37,33 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
+    console.log("📝 Login form submitted for:", username);
     try {
       const response = await loginService.login(username, password);
+      console.log("✅ Login API response:", response);
+      console.log(
+        "📝 Setting token:",
+        response.token ? "token received" : "no token",
+      );
+
       setToken(response.token);
+      console.log("✅ Token set in store");
 
       // Extract user data from token
       const employeeId = loginService.getEmployeeIdFromToken();
+      console.log("📝 Employee ID from token:", employeeId);
+
       setUser({
         id: employeeId || 0,
         username: username,
         role: "User", // Parse from token if available
       });
+      console.log("✅ User data set in store");
 
       toast({ status: "success", title: "Login successful" });
       onClose();
     } catch (err) {
+      console.error("❌ Login error:", err);
       const axiosError = err as AxiosError<{ message?: string }>;
       setError(axiosError.response?.data?.message || "Login failed");
     } finally {
