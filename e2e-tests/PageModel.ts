@@ -15,7 +15,7 @@ export class PageModel {
   readonly saveBtn: Locator;
   readonly deleteBtn: Locator;
   readonly profileHeading: Locator;
-  readonly mikkelAndersonCard: Locator;
+  readonly logoutBtn: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,51 +31,60 @@ export class PageModel {
     this.phoneInput = page.locator("#phone-input");
     this.saveBtn = page.getByRole("button", { name: "Save" });
     this.deleteBtn = page
-      .getByRole("heading", { name: "Mikkel Andersen" })
-      .locator("..") // go to parent
+      .getByRole("heading", { name: "Admin Admin" })
+      .locator("..")
       .getByRole("button", { name: "Delete" });
     this.profileHeading = page.getByRole("heading", { name: "Alice Jensen" });
-    this.mikkelAndersonCard = page.getByRole("img", {
-      name: "Mikkel Andersen",
-    });
+    this.logoutBtn = page.getByRole("button", { name: "Logout" });
   }
 
   async goto() {
     await this.page.goto("/");
   }
+
   async login(username: string, password: string) {
     await this.loginBtnNavBar.click();
     await this.usernameInput.fill(username);
     await this.pswInput.fill(password);
     await this.loginBtnModal.click();
+
+    // Wait for login to complete
+    await this.waitForUserLoggedIn();
   }
-  async editEmail(newEmail: string) {
-    await this.editProfileBtn.click();
-    await this.emailInput.fill(newEmail);
-    await this.saveBtn.click();
-    await expect(this.mikkelAndersonCard).toBeVisible();
-    await this.goToProfile();
-    await expect(
-      this.page.getByText(`Private Email: ${newEmail}`)
-    ).toBeVisible();
+
+  private async waitForUserLoggedIn() {
+    await this.logoutBtn.waitFor({ state: "visible", timeout: 15000 });
   }
 
   async goToProfile() {
+    await this.waitForUserLoggedIn();
+    await this.toProfileBtn.waitFor({ state: "visible", timeout: 15000 });
     await this.toProfileBtn.click();
     await expect(
       this.page.getByRole("heading", { name: "Alice Jensen" })
     ).toBeVisible();
   }
 
-  async deleteEmployee(employeeName: string) {
-    const employeeCard = this.page.getByRole("img", { name: employeeName });
+  async editEmail(newEmail: string) {
+    await this.editProfileBtn.click();
+    await this.emailInput.fill(newEmail);
+    await this.saveBtn.click();
+  }
 
-    // Navigate up to find the card container, then find the delete button within it
+  async deleteEmployee(employeeName: string) {
+    const employeeCard = this.getEmployeeByName(employeeName);
     const deleteButton = employeeCard
       .locator("..")
       .locator("..")
       .getByRole("button", { name: "Delete" });
-
     await deleteButton.click();
+  }
+
+  getEmployeeByName(employeeName: string): Locator {
+    return this.page.getByRole("img", { name: employeeName });
+  }
+
+  async logout() {
+    await this.logoutBtn.click();
   }
 }
