@@ -43,17 +43,51 @@ export class PageModel {
   }
 
   async login(username: string, password: string) {
+    console.log(`🔐 Attempting login for: ${username}`);
+
     await this.loginBtnNavBar.click();
     await this.usernameInput.fill(username);
     await this.pswInput.fill(password);
-    await this.loginBtnModal.click();
 
-    // Wait for login to complete
+    // Wait for any network activity before clicking
+    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForTimeout(500);
+
+    await this.loginBtnModal.click();
+    console.log("✓ Login button clicked");
+
+    // Wait for modal to close (indicates successful login)
+    try {
+      await this.page
+        .locator('div[role="dialog"]')
+        .waitFor({ state: "hidden", timeout: 10000 });
+      console.log("✓ Login modal closed");
+    } catch (error) {
+      console.error("❌ Login modal did not close - login likely failed");
+      // Take screenshot to debug
+      await this.page.screenshot({ path: "login-failed.png" });
+      throw error;
+    }
+
+    // Wait for page to stabilize
+    await this.page.waitForLoadState("networkidle");
+    console.log("✓ Page network idle");
+
+    // Wait for logout button to appear
     await this.waitForUserLoggedIn();
   }
 
   private async waitForUserLoggedIn() {
-    await this.logoutBtn.waitFor({ state: "visible", timeout: 15000 });
+    console.log("⏳ Waiting for logout button...");
+    try {
+      await this.logoutBtn.waitFor({ state: "visible", timeout: 15000 });
+      console.log("✅ Logout button visible - Login successful!");
+    } catch (error) {
+      console.error("❌ Logout button not visible after login");
+      // Take screenshot to debug
+      await this.page.screenshot({ path: "logout-btn-missing.png" });
+      throw error;
+    }
   }
 
   async goToProfile() {
