@@ -1,13 +1,9 @@
-﻿using backend_disc.Dtos.Employees;
-using backend_disc.Models;
-using backend_disc.Repositories;
+﻿using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Data;
-using class_library_disc.Models.Sql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Numerics;
 
 
 namespace backend_discTests
@@ -15,9 +11,9 @@ namespace backend_discTests
     [TestClass]
     public sealed class IntegrationTestsDb
     {
-        private DiscProfileDbContext _context;
-        private EmployeesRepository _repository;
-        private IConfiguration _configuration;
+        private DiscProfileDbContext _context = null!;
+        private EmployeesRepository _repository = null!;
+        private IConfiguration _configuration = null!;
         private int createdEmployee;
         // Valid Values for adding an employee
         private const string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";

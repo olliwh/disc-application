@@ -96,7 +96,7 @@ namespace backend_disc.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error during login for user {Username}", dto.Username);
-                throw; 
+                return null;
             }
         }
     }

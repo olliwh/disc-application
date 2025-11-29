@@ -55,7 +55,7 @@ namespace backend_disc.Controllers
             // Check if requested ID matches token ID (unless user is Admin)
             if (id != tokenEmployeeId)
             {
-                _logger.LogWarning($"User {tokenEmployeeId} attempted to access employee {id}");
+                _logger.LogWarning("User {TokenEmployeeId} attempted to access employee {EmployeeId}", tokenEmployeeId, id);
                 return Forbid();
             }
 
@@ -138,7 +138,7 @@ namespace backend_disc.Controllers
 
             if (id != tokenEmployeeId)
             {
-                _logger.LogWarning($"User {tokenEmployeeId} attempted to update employee {id}");
+                _logger.LogWarning("User {TokenEmployeeId} attempted to update employee {EmployeeId}", tokenEmployeeId, id);
                 return Forbid();
             }
 
