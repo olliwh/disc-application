@@ -1,5 +1,3 @@
-
-
 services:
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -22,10 +20,11 @@ services:
     container_name: backend-disc
     build:
       context: .               
-      dockerfile: backend-disc/backend-disc/Dockerfile
+      dockerfile: backend-disc/backend-disc/Dockerfile.dev
     env_file:
       - .env  
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - API_SECRET_KEY=${API_SECRET_KEY}  
     ports:
       - "5000:5000"
@@ -33,8 +32,18 @@ services:
       mssql:
         condition: service_healthy
     volumes:
-      - ./backend-disc:/src/backend-disc
-      - ./backend-disc/class-library-disc:/src/class-library-disc
+      - ./backend-disc:/src
+      - /src/backend-disc/bin
+      - /src/backend-disc/obj
+      - /src/class-library-disc/bin
+      - /src/class-library-disc/obj
+    user: root
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   frontend-disc:
     container_name: frontend-disc
@@ -43,6 +52,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - VITE_API_URL=http://localhost:5000/api
+      - VITE_HMR_HOST=localhost
+      - VITE_HMR_PORT=3000
       - CHOKIDAR_USEPOLLING=true
     ports:
       - "3000:3000"
@@ -62,7 +73,7 @@ services:
     env_file:
       - .env
     deploy:
-      replicas: 0    # prevents seeder from starting automatically
+      replicas: 1    # prevents seeder from starting automatically
 # to run with seeder: docker compose up -d --build --scale seeder=1
 
 volumes:

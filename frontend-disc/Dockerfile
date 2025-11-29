@@ -10,4 +10,7 @@ COPY . .
 
 EXPOSE 3000
 
+ENV VITE_HMR_HOST=localhost
+ENV VITE_HMR_PORT=3000
+
 CMD ["npm","run", "dev"]
