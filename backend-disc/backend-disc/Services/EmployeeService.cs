@@ -16,6 +16,7 @@ namespace backend_disc.Services
         private readonly IGenericRepository<Company> _companiesRepository;
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private static readonly Random _random = new();
+        private static readonly object _randomLock = new();
         private readonly IMapper _mapper;
         private readonly ILogger<EmployeeService> _logger;
 
@@ -39,6 +40,9 @@ namespace backend_disc.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
+                    throw new ArgumentException("First name and last name are required");
+
                 Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName);
 
                 dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
@@ -117,13 +121,13 @@ namespace backend_disc.Services
             attempts = 0;
             do
             {
-                phoneNumber = GetRandomDigits(8).ToString();
+                phoneNumber = GetRandomDigits(8);
 
-                phoneNumberAlreadyExists = await _employeeRepository.PhoneNumExists(username);
+                phoneNumberAlreadyExists = await _employeeRepository.PhoneNumExists(phoneNumber);
                 attempts++;
                 if (attempts >= maxAttempts)
                 {
-                    throw new InvalidOperationException("Failed to generate unique username after multiple attempts");
+                    throw new InvalidOperationException("Failed to generate unique phone number after multiple attempts");
                 }
 
             } while (phoneNumberAlreadyExists);
@@ -135,14 +139,18 @@ namespace backend_disc.Services
                 { "username", username }
             };
         }
-        private static StringBuilder GetRandomDigits(int length)
+
+        private static string GetRandomDigits(int length)
         {
             StringBuilder stringBuilder = new();
-            for (int i = 0; i < length; i++)
+            lock (_randomLock)
             {
-                stringBuilder.Append(_random.Next(0, 10));
+                for (int i = 0; i < length; i++)
+                {
+                    stringBuilder.Append(_random.Next(0, 10));
+                }
             }
-            return stringBuilder;
+            return stringBuilder.ToString();
         }
         public async Task<PaginatedList<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {

@@ -44,8 +44,7 @@ namespace backend_disc.Controllers
         {
             // Get employeeId from token
             var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
-            _logger.LogWarning($"🔍 GetById - employeeIdFromToken: {employeeIdFromToken}");
-            _logger.LogWarning($"🔍 GetById - All claims: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+
             
             if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
             {

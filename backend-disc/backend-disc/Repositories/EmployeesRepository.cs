@@ -24,7 +24,7 @@ namespace backend_disc.Repositories
         /// <returns>Task<bool></returns>
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
-                return await _context.Users.AnyAsync(u => u.Username == phoneNumber);
+                return await _context.Employees.AnyAsync(e => e.WorkPhone == phoneNumber);
         }
 
         /// <summary>
@@ -35,6 +35,15 @@ namespace backend_disc.Repositories
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
+            if (string.IsNullOrWhiteSpace(p.FirstName) || string.IsNullOrWhiteSpace(p.LastName) ||
+                string.IsNullOrWhiteSpace(p.WorkEmail) || string.IsNullOrWhiteSpace(p.ImagePath) ||
+                string.IsNullOrWhiteSpace(p.CPR) || string.IsNullOrWhiteSpace(p.PrivateEmail) ||
+                string.IsNullOrWhiteSpace(p.PrivatePhone) || string.IsNullOrWhiteSpace(p.Username) ||
+                string.IsNullOrWhiteSpace(p.PasswordHash) || p.DiscProfileId <= 0 || p.PositionId <= 0 ||
+                string.IsNullOrWhiteSpace(p.WorkPhone) || p.DepartmentId <= 0 || p.UserRoleId <= 0)
+            {
+                throw new ArgumentException("Required fields cannot be null or empty");
+            }
             var parameters = new[]
             {
                 new SqlParameter("@first_name", p.FirstName),
@@ -78,10 +87,25 @@ namespace backend_disc.Repositories
                 switch (ex.Number)
                 {
                     case 2627: // Unique constraint violation
-                    case 2601:
+                        if (ex.Message.Contains("work_phone"))
+                            throw new InvalidOperationException("Work phone number already exists", ex);
+                        if (ex.Message.Contains("work_email"))
+                            throw new InvalidOperationException("Work email already exists", ex);
+                        if (ex.Message.Contains("username"))
+                            throw new InvalidOperationException("Username already exists", ex);
+                        if (ex.Message.Contains("cpr"))
+                            throw new InvalidOperationException("CPR already exists", ex);
                         throw new InvalidOperationException("A duplicate value exists. Please check email, username, or CPR", ex);
                     case 547: // Foreign key constraint violation
-                        throw new InvalidOperationException("Invalid reference to department, or position", ex);
+                        if (ex.Message.Contains("user_role"))
+                            throw new KeyNotFoundException("Invalid user role ID", ex);
+                        if (ex.Message.Contains("department"))
+                            throw new KeyNotFoundException("Invalid department ID", ex);
+                        if (ex.Message.Contains("position"))
+                            throw new KeyNotFoundException("Invalid position ID", ex);
+                        if (ex.Message.Contains("disc_profile"))
+                            throw new KeyNotFoundException("Invalid disc profile ID", ex);
+                        throw new KeyNotFoundException("Invalid reference to related entity", ex);
                     default:
                         throw new InvalidOperationException($"Database error: {ex.Message}", ex);
                 }
@@ -150,6 +174,9 @@ namespace backend_disc.Repositories
 
         public async Task<int?> UpdatePrivateData(int id, string mail, string phone)
         {
+            if (string.IsNullOrWhiteSpace(mail) || string.IsNullOrWhiteSpace(phone))
+                throw new ArgumentException("Email and phone cannot be null or empty");
+
             var parameters = new[]
             {
         new SqlParameter("@id", id),
@@ -169,7 +196,7 @@ namespace backend_disc.Repositories
             {
                 _logger.LogError(ex, "SQL error updating data: {Message}", ex.Message);
                 
-                if (ex.Number == 50001) // Your custom error number
+                if (ex.Number == 50001) 
                     throw new KeyNotFoundException("Employee not found", ex);
                 
                 throw new InvalidOperationException($"Database error: {ex.Message}", ex);

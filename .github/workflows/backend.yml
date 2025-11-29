@@ -81,6 +81,20 @@ jobs:
           dotnet run --configuration Release
           echo "Seeder completed!"
 
+      - name: Run .NET tests
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+        working-directory: backend-disc
+        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --verbosity normal
+
+      - name: Upload .NET test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: "**/test-results.trx"
+          if-no-files-found: warn
+
       - name: Install Newman
         run: npm install -g newman
 
