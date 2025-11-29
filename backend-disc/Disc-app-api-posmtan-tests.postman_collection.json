@@ -505,8 +505,48 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 404 Not Found\", function () {\r",
-									"    pm.response.to.have.status(404);\r",
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Specific data validation\r",
+									"pm.test(\"Marketing department data is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.equal(2);\r",
+									"    pm.expect(jsonData.name).to.equal(\"Marketing\");\r",
+									"    pm.expect(jsonData.description).to.equal(\"Drives business growth through brand development, advertising, and market engagement strategies.\");\r",
+									"});\r",
+									"\r",
+									"// Non-empty validation\r",
+									"pm.test(\"Name and description are not empty\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.not.be.empty;\r",
+									"    pm.expect(jsonData.description).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID in URL matches response\r",
+									"pm.test(\"Response ID matches requested ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const url = pm.request.url.toString();\r",
+									"    const urlId = parseInt(url.split('/').pop());\r",
+									"    pm.expect(jsonData.id).to.equal(urlId);\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -519,13 +559,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/2",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
-								"{{department_id}}"
+								"2"
 							]
 						}
 					},
