@@ -24,7 +24,8 @@ namespace backend_disc.Repositories
         /// <returns>Task<bool></returns>
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
-                return await _context.Employees.AnyAsync(e => e.WorkPhone == phoneNumber);
+            //Consider calling ConfigureAwait on the awaited task
+            return await _context.Employees.AnyAsync(e => e.WorkPhone == phoneNumber);
         }
 
         /// <summary>
@@ -144,11 +145,11 @@ namespace backend_disc.Repositories
                 query = query.Where(e => e.PositionId == positionId);
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string normalizedSearch = search.Trim().ToLower();
+                string normalizedSearch = search.Trim();
                 query = query.Where(e =>
-                    e.FirstName.ToLower().Contains(normalizedSearch) ||
-                    e.LastName.ToLower().Contains(normalizedSearch) ||
-                    (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch)
+                    e.FirstName.Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase) ||
+                    e.LastName.Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase) ||
+                    (e.FirstName + " " + e.LastName).Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase)
                 );
             }
             int totalCount = await query.CountAsync();

@@ -13,7 +13,7 @@ using System.Numerics;
 namespace backend_discTests
 {
     [TestClass]
-    public sealed class EmployeesRepositoryTests
+    public sealed class IntegrationTestsDb
     {
         private DiscProfileDbContext _context;
         private EmployeesRepository _repository;
@@ -50,7 +50,7 @@ namespace backend_discTests
                 .Build();
 
             var connectionString = _configuration.GetConnectionString("DefaultConnection");
-            
+
             var options = new DbContextOptionsBuilder<DiscProfileDbContext>()
                 .UseSqlServer(connectionString)
                 .Options;
@@ -67,7 +67,7 @@ namespace backend_discTests
         [TestCleanup]
         public async Task Cleanup()
         {
-            _context.Dispose();
+            await _context.DisposeAsync();
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace backend_discTests
         {
             var result = await _repository.UpdatePrivateData(id, mail, phone);
 
-   
+
             Assert.AreEqual(id, result);
             var updated = await _context.EmployeePrivateData.FirstOrDefaultAsync(e => e.EmployeeId == id);
             Assert.IsNotNull(updated);
@@ -107,8 +107,8 @@ namespace backend_discTests
         }
 
         [TestMethod]
-        [DataRow(1, "  ", "99995678")] 
-        [DataRow(1, "test@email.com", "  ")] 
+        [DataRow(1, "  ", "99995678")]
+        [DataRow(1, "test@email.com", "  ")]
         public async Task UpdatePrivateData_WithWhitespaceValues_UpdateFails(int id, string mail, string phone)
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
@@ -148,10 +148,10 @@ namespace backend_discTests
             Assert.AreEqual(lastName, result.LastName);
             Assert.AreEqual(workEmail, result.WorkEmail);
             Assert.AreEqual(workPhone, result.WorkPhone);
-            Assert.AreEqual(imagePath, result.ImagePath);   
-            Assert.AreEqual(deptId, result.DepartmentId);   
-            Assert.AreEqual(discId, result.DiscProfileId);   
-            Assert.AreEqual(posId, result.PositionId);   
+            Assert.AreEqual(imagePath, result.ImagePath);
+            Assert.AreEqual(deptId, result.DepartmentId);
+            Assert.AreEqual(discId, result.DiscProfileId);
+            Assert.AreEqual(posId, result.PositionId);
 
             // Cleanup created employee
             await CleanupCreatedEmployee();
@@ -171,7 +171,7 @@ namespace backend_discTests
 
         [TestMethod]
         [DataRow(
-            VALID_CPR, 999999, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, VALID_USER_ROLE_ID, 
+            VALID_CPR, 999999, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, VALID_USER_ROLE_ID,
             VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE
         )]
         [DataRow(
@@ -186,7 +186,7 @@ namespace backend_discTests
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, 999999999,
             VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE
         )]
-        public async Task AddEmployeeSPAsync_InValidForeignKeys(string cpr, int deptId, int discId, int posId, int userRoleId, string firstName, string lastName,  string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone)
+        public async Task AddEmployeeSPAsync_InValidForeignKeys(string cpr, int deptId, int discId, int posId, int userRoleId, string firstName, string lastName, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone)
         {
             AddEmployeeSpParams p = new AddEmployeeSpParams
             {
@@ -216,11 +216,11 @@ namespace backend_discTests
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, VALID_USER_ROLE_ID,
             VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, NON_UNIQUE_WORK_EMAIL, VALID_WORK_PHONE
         )]
-                [DataRow(
+        [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, VALID_USER_ROLE_ID,
             VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, NON_UNIQUE_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE
         )]
-                [DataRow(
+        [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, VALID_USER_ROLE_ID,
             VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, NON_UNIQUE_WORK_PHONE
         )]
@@ -255,36 +255,121 @@ namespace backend_discTests
         )]
         [DataRow(
             VALID_CPR, null, VALID_DISC_PROFILE_ID, null, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]    
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, null, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]  
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, null, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]  
+        )]
 
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, null, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )] 
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, null, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )] 
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, null, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )] 
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, null, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )] 
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, null, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )] 
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, null
-        )] 
+        )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, null, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )] 
-        public async Task AddEmployeeSPAsync_WithNullRequiredFields_ThrowsException(string cpr, int deptId, int discId, string firstName, string lastName, int posId, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone, int userRoleId)
+        )]
+        [DataRow(
+    " ", VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, 0, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, 0, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, " ", VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, " ",
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    0, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, " ", PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, " ", VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, " ",
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    " ", VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, " ", VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, " ", VALID_WORK_PHONE,
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, " ",
+    VALID_USER_ROLE_ID
+)]
+        [DataRow(
+    VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME,
+    VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME,
+    VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE,
+    0
+)]
+
+        public async Task AddEmployeeSPAsync_WithNullZeroWhitespaceRequiredFields_ThrowsException(string cpr, int deptId, int discId, string firstName, string lastName, int posId, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone, int userRoleId)
         {
             AddEmployeeSpParams p = new AddEmployeeSpParams
             {
@@ -309,70 +394,7 @@ namespace backend_discTests
             );
         }
 
-        [TestMethod]
-        [DataRow(
-            " ", VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, 0, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, 0, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, " ", VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, " ", VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, 0, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, " ", PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, " ", VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, " ", VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, " ", VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, " ", VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, " ", VALID_WORK_PHONE, VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, " ", VALID_USER_ROLE_ID
-        )]
-        [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, 0
-        )]
-        public async Task AddEmployeeSPAsync_whitespaceOrZero(string cpr, int deptId, int discId, string firstName, string lastName, int posId, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone, int userRoleId)
-        {
-            AddEmployeeSpParams p = new AddEmployeeSpParams
-            {
-                CPR = cpr,
-                DepartmentId = deptId,
-                DiscProfileId = discId,
-                FirstName = firstName,
-                LastName = lastName,
-                PositionId = posId,
-                ImagePath = imagePath,
-                PasswordHash = pwHash,
-                PrivateEmail = privateEmail,
-                PrivatePhone = privatePhone,
-                Username = username,
-                WorkEmail = workEmail,
-                WorkPhone = workPhone,
-                UserRoleId = userRoleId
-            };
 
 
-        }
     }
 }
