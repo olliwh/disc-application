@@ -26,7 +26,7 @@ namespace backend_discTests
         private const int VALID_POSITION_ID = 1;
         private const string VALID_USERNAME = "test.user";
         private const string VALID_WORK_EMAIL = "work@test.com";
-        private const string VALID_WORK_PHONE = "87654321";
+        private const string VALID_WORK_PHONE = "8765454321";
         private const string VALID_PRIVATE_EMAIL = "private@test.com";
         private const string VALID_PRIVATE_PHONE = "12345678";
         private const int VALID_USER_ROLE_ID = 1;
@@ -117,7 +117,7 @@ namespace backend_discTests
 
         [TestMethod]
         [DataRow(
-            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, VALID_WORK_PHONE, VALID_USER_ROLE_ID
+            VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_FIRST_NAME, VALID_LAST_NAME, VALID_POSITION_ID, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, "73549274", VALID_WORK_EMAIL, "45294737", VALID_USER_ROLE_ID
         )]
         public async Task AddEmployeeSPAsync_Success(string cpr, int deptId, int discId, string firstName, string lastName, int posId, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone, int userRoleId)
         {
