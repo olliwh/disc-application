@@ -4,6 +4,7 @@ using class_library_disc.Data;
 using class_library_disc.Models.Sql;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace backend_disc.Repositories
 {
@@ -29,28 +30,30 @@ namespace backend_disc.Repositories
         }
 
         /// <summary>
-        /// public SqlParameter(string parameterName, object value)
+        /// Adds a new employee via stored procedure with validation and error handling
         /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <param name="p">Employee parameters</param>
+        /// <returns>Created Employee or null if failed</returns>
+        /// <exception cref="ArgumentException">When validation fails</exception>
+        /// <exception cref="KeyNotFoundException">When foreign key references are invalid</exception>
+        /// <exception cref="InvalidOperationException">When database constraints are violated</exception>
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
-            if (string.IsNullOrWhiteSpace(p.FirstName) || string.IsNullOrWhiteSpace(p.LastName) ||
-                string.IsNullOrWhiteSpace(p.WorkEmail) || string.IsNullOrWhiteSpace(p.ImagePath) ||
-                string.IsNullOrWhiteSpace(p.CPR) || string.IsNullOrWhiteSpace(p.PrivateEmail) ||
-                string.IsNullOrWhiteSpace(p.PrivatePhone) || string.IsNullOrWhiteSpace(p.Username) ||
-                string.IsNullOrWhiteSpace(p.PasswordHash) || p.DiscProfileId <= 0 || p.PositionId <= 0 ||
-                string.IsNullOrWhiteSpace(p.WorkPhone) || p.DepartmentId <= 0 || p.UserRoleId <= 0)
-            {
-                throw new ArgumentException("Required fields cannot be null or empty");
-            }
+            //check values set be service
+            if (string.IsNullOrWhiteSpace(p.WorkPhone) || string.IsNullOrWhiteSpace(p.WorkEmail) ||
+                string.IsNullOrWhiteSpace(p.Username) || string.IsNullOrWhiteSpace(p.ImagePath) ||
+                string.IsNullOrWhiteSpace(p.PasswordHash))
+                throw new ArgumentException("required values are not set");
+
+            if (p.DepartmentId <= 0 || p.PositionId <= 0 || p.DiscProfileId <= 0 || p.UserRoleId <= 0)
+                throw new ArgumentException("ID must be positive int");
+
             var parameters = new[]
             {
                 new SqlParameter("@first_name", p.FirstName),
                 new SqlParameter("@last_name", p.LastName),
                 new SqlParameter("@work_email", p.WorkEmail),
-                new SqlParameter("@work_phone", (object?)p.WorkPhone  ?? DBNull.Value),
+                new SqlParameter("@work_phone", (object?)p.WorkPhone ?? DBNull.Value),
                 new SqlParameter("@image_path", p.ImagePath),
                 new SqlParameter("@department_id", p.DepartmentId),
                 new SqlParameter("@position_id", (object?)p.PositionId ?? DBNull.Value),
@@ -78,44 +81,36 @@ namespace backend_disc.Repositories
                     _logger.LogWarning("Stored procedure returned 0 employee ID");
                     return null;
                 }
+
                 return await _context.Employees.FindAsync(employeeId);
             }
-            catch (SqlException ex)
+            catch (SqlException ex) when (ex.Number == 547)
             {
-                _logger.LogError(ex, "SQL error creating employee: {Message}", ex.Message);
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Number);
 
-                // Check for common SQL errors
-                switch (ex.Number)
-                {
-                    case 2627: // Unique constraint violation
-                        if (ex.Message.Contains("work_phone"))
-                            throw new InvalidOperationException("Work phone number already exists", ex);
-                        if (ex.Message.Contains("work_email"))
-                            throw new InvalidOperationException("Work email already exists", ex);
-                        if (ex.Message.Contains("username"))
-                            throw new InvalidOperationException("Username already exists", ex);
-                        if (ex.Message.Contains("cpr"))
-                            throw new InvalidOperationException("CPR already exists", ex);
-                        throw new InvalidOperationException("A duplicate value exists. Please check email, username, or CPR", ex);
-                    case 547: // Foreign key constraint violation
-                        if (ex.Message.Contains("user_role"))
-                            throw new KeyNotFoundException("Invalid user role ID", ex);
-                        if (ex.Message.Contains("department"))
-                            throw new KeyNotFoundException("Invalid department ID", ex);
-                        if (ex.Message.Contains("position"))
-                            throw new KeyNotFoundException("Invalid position ID", ex);
-                        if (ex.Message.Contains("disc_profile"))
-                            throw new KeyNotFoundException("Invalid disc profile ID", ex);
-                        throw new KeyNotFoundException("Invalid reference to related entity", ex);
-                    default:
-                        throw new InvalidOperationException($"Database error: {ex.Message}", ex);
-                }
+                _logger.LogWarning(ex, "Foreign key constraint violation - SQL Error {ErrorNumber}: {Message}", ex.Number, ex.Message);
+                throw new KeyNotFoundException("Invalid foreign key reference.", ex);
+            }
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Number);
+                _logger.LogWarning(ex, "Unique constraint violation - SQL Error {ErrorNumber}: {Message}", ex.Number, ex.Message);
+                throw new InvalidOperationException("Db constraint violation.", ex);
+            }
+            catch (ArgumentException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error creating employee");
-                throw new InvalidOperationException("Failed to create employee", ex);
+                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "Error adding employee via stored procedure");
+                throw;
             }
+
         }
 
         /// <summary>

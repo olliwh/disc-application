@@ -23,7 +23,13 @@ var startupLogger = LoggerFactory.Create(config =>
 startupLogger.LogInformation("App starting...");
 startupLogger.LogInformation("Connection string: {ConnectionString}", builder.Configuration.GetConnectionString("DefaultConnection"));
 
-
+// Add logging configuration
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole();
+    config.AddDebug();
+    config.SetMinimumLevel(LogLevel.Debug);
+});
 
 // Add services to the container.
 

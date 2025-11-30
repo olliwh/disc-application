@@ -38,12 +38,20 @@ namespace backend_disc.Services
         /// <exception cref="NotImplementedException"></exception>
         public async Task<EmployeeDto?> CreateEmployee(CreateNewEmployee dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
+                throw new ArgumentException("First name and last name are required");
+
+            if (dto.DepartmentId <= 0)
+                throw new ArgumentException("Valid department ID is required");
+            if (dto.PositionId <= 0)
+                throw new ArgumentException("Valid position ID is required");
+            if (dto.DiscProfileId <= 0)
+                throw new ArgumentException("Valid disc profile ID is required");
+
             try
             {
-                if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
-                    throw new ArgumentException("First name and last name are required");
-
-                Dictionary<string, string> usernameWorkMailAndPhone = await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName);
+                Dictionary<string, string> usernameWorkMailAndPhone =
+                    await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName);
 
                 dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
                 dto.WorkPhone = usernameWorkMailAndPhone["phoneNumber"];
@@ -51,11 +59,21 @@ namespace backend_disc.Services
                 dto.PasswordHash = GeneratePasswordHash("Pass@word1");
                 dto.UserRoleId = 1;
                 dto.ImagePath = DEFAULT_IMAGE_PATH;
-                AddEmployeeSpParams? employeeSPParams = _mapper.Map<AddEmployeeSpParams?>(dto) ?? throw new InvalidOperationException("Failed to map employee data");
+
+                AddEmployeeSpParams? employeeSPParams = _mapper.Map<AddEmployeeSpParams?>(dto);
+                if (employeeSPParams == null)
+                    throw new InvalidOperationException("Failed to map employee data");
+
                 var employee = await _employeeRepository.AddEmployeeSPAsync(employeeSPParams);
-                return employee == null
-                    ? throw new InvalidOperationException("Failed to create employee - no employee returned from database")
-                    : _mapper.Map<EmployeeDto?>(employee);
+
+                if (employee == null)
+                    throw new InvalidOperationException("Failed to create employee - no employee returned from database");
+
+                var employeeDto = _mapper.Map<EmployeeDto?>(employee);
+                if (employeeDto == null)
+                    throw new InvalidOperationException("Failed to map employee to DTO");
+
+                return employeeDto;
             }
             catch (KeyNotFoundException)
             {
@@ -67,10 +85,12 @@ namespace backend_disc.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error in CreateEmployee");
+                _logger.LogError(ex, "Unexpected error creating employee: {FirstName} {LastName}",
+                    dto.FirstName, dto.LastName);
                 throw new InvalidOperationException("An error occurred while creating the employee", ex);
             }
         }
+
 
         private static string GeneratePasswordHash(string password)
         {
@@ -92,7 +112,7 @@ namespace backend_disc.Services
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>Dictionary<string, string></returns>
-        private async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName)
+        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName)
         {
             var company = await _companiesRepository.GetById(1);
             if (company == null)
@@ -140,16 +160,24 @@ namespace backend_disc.Services
             };
         }
 
-        private static string GetRandomDigits(int length)
+        internal static string GetRandomDigits(int length)
         {
             StringBuilder stringBuilder = new();
-            lock (_randomLock)
+            if(length < 1)
             {
-                for (int i = 0; i < length; i++)
-                {
-                    stringBuilder.Append(_random.Next(0, 10));
-                }
+                throw new ArgumentException("Length must be at least 1", nameof(length));
             }
+            else if (length > 25)
+            {
+                throw new ArgumentException("Length must be 25 max", nameof(length));
+            }
+            lock (_randomLock)
+                {
+                    for (int i = 0; i < length; i++)
+                    {
+                        stringBuilder.Append(_random.Next(0, 10));
+                    }
+                }
             return stringBuilder.ToString();
         }
         public async Task<PaginatedList<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
@@ -166,7 +194,7 @@ namespace backend_disc.Services
 
             if (pageSize > 50)
             {
-                pageSize = 50; // max page size
+                pageSize = 50;
             }
             var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
