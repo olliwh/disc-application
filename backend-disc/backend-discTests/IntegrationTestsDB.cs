@@ -157,24 +157,24 @@ namespace backend_discTests
         [TestMethod]
         [DataRow(
             VALID_CPR, 999999, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, VALID_USER_ROLE_ID,
-            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, "74657370363"
+            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, "fk1", VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, "fk1@test.com", "74657370363"
         )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, 999999999, VALID_POSITION_ID, VALID_USER_ROLE_ID,
-            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, "735480763562"
+            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, "fk2", VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, "fk2@test.com", "735480763"
         )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, 999999999, VALID_USER_ROLE_ID,
-            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, "7354967272345"
+            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, "fk3", VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, "fk3@test.com", "735496727"
         )]
         [DataRow(
             VALID_CPR, VALID_DEPARTMENT_ID, VALID_DISC_PROFILE_ID, VALID_POSITION_ID, 999999999,
-            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, VALID_USERNAME, VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, VALID_WORK_EMAIL, "743045747464"
+            VALID_FIRST_NAME, VALID_LAST_NAME, DEFAULT_IMAGE_PATH, PASSWORD_HASH, "fk4", VALID_PRIVATE_EMAIL, VALID_PRIVATE_PHONE, "fk4@test.com", "743045747"
         )]
         public async Task AddEmployeeSPAsync_InValidForeignKeys(string cpr, int deptId, int discId, int posId, int userRoleId, string firstName, string lastName, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone)
         {
             Console.WriteLine($"Test: deptId={deptId}, discId={discId}, posId={posId}, userRoleId={userRoleId}");
-            Console.WriteLine($"Testing foreign key validation with workPhone={workPhone}");
+            Console.WriteLine($"Testing foreign key validation with workEmail={workEmail}, workPhone={workPhone}");
             
             AddEmployeeSpParams p = new AddEmployeeSpParams
             {
