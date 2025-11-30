@@ -80,30 +80,29 @@ jobs:
           echo "Running seeder..."
           dotnet run --configuration Release
           echo "Seeder completed!"
+          sleep 5
 
-      - name: Install Playwright
-        working-directory: e2e-tests
-        run: npm install
+      - name: Run .NET tests
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+        working-directory: backend-disc
+        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --verbosity normal
 
-      - name: Run API tests
-        working-directory: e2e-tests
-        run: npx playwright test tests/api.spec.ts
+      - name: Upload .NET test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: "**/test-results.trx"
+          if-no-files-found: warn
 
-      # - name: Print backend logs
-      #   if: always()
-      #   run: |
-      #     echo "=== Backend Logs ==="
-      #     if [ -f backend.log ]; then
-      #       cat backend.log
-      #     else
-      #       echo "No backend log found"
-      #       ls -la
-      #     fi
+      - name: Install Newman
+        run: npm install -g newman
 
-      # - name: Upload Playwright report
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: playwright-api-report
-      #     path: e2e-tests/playwright-report/
-      #     retention-days: 7
+      - name: Run Postman tests
+        working-directory: backend-disc
+        run: |
+          newman run Disc-app-api-posmtan-tests.postman_collection.json \
+            --environment postman-env.json \
+            --reporters cli,json \
+            --reporter-json-export test-results.json

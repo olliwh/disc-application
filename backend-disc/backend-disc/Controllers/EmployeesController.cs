@@ -44,8 +44,7 @@ namespace backend_disc.Controllers
         {
             // Get employeeId from token
             var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
-            _logger.LogWarning($"🔍 GetById - employeeIdFromToken: {employeeIdFromToken}");
-            _logger.LogWarning($"🔍 GetById - All claims: {string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+
             
             if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
             {
@@ -56,7 +55,7 @@ namespace backend_disc.Controllers
             // Check if requested ID matches token ID (unless user is Admin)
             if (id != tokenEmployeeId)
             {
-                _logger.LogWarning($"User {tokenEmployeeId} attempted to access employee {id}");
+                _logger.LogWarning("User {TokenEmployeeId} attempted to access employee {EmployeeId}", tokenEmployeeId, id);
                 return Forbid();
             }
 
@@ -139,7 +138,7 @@ namespace backend_disc.Controllers
 
             if (id != tokenEmployeeId)
             {
-                _logger.LogWarning($"User {tokenEmployeeId} attempted to update employee {id}");
+                _logger.LogWarning("User {TokenEmployeeId} attempted to update employee {EmployeeId}", tokenEmployeeId, id);
                 return Forbid();
             }
 

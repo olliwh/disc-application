@@ -42,7 +42,6 @@ namespace backend_disc.Services
                     return null;
                 }
 
-                // Verify password - wrap in try-catch as Argon2 can throw on invalid hash format
                 bool isPasswordValid;
                 try
                 {
@@ -51,7 +50,7 @@ namespace backend_disc.Services
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Password verification failed for user {Username}", dto.Username);
-                    return null; // Treat as invalid login
+                    return null; 
                 }
 
                 if (!isPasswordValid)
@@ -91,13 +90,13 @@ namespace backend_disc.Services
             }
             catch (InvalidOperationException)
             {
-                // Re-throw configuration errors (API_SECRET_KEY missing)
+                
                 throw;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error during login for user {Username}", dto.Username);
-                throw; // Let controller handle it
+                return null;
             }
         }
     }

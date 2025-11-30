@@ -1,0 +1,1826 @@
+{
+	"info": {
+		"_postman_id": "054067ea-6963-40ba-b856-b2b679eac944",
+		"name": "Disc-app-api-posmtan-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25638427",
+		"_collection_link": "https://lkdwljadlkjslkdj.postman.co/workspace/dc5b7322-1f10-47de-8d15-8122d5305457/collection/25638427-054067ea-6963-40ba-b856-b2b679eac944?action=share&source=collection_link&creator=25638427"
+	},
+	"item": [
+		{
+			"name": "departmentNoAuth",
+			"item": [
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required root properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"items\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalCount\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageIndex\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageSize\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasPreviousPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasNextPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalPages\");\r",
+									"});\r",
+									"\r",
+									"// Items array validation\r",
+									"pm.test(\"Items array contains 6 departments\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf(jsonData.totalCount);\r",
+									"});\r",
+									"\r",
+									"// Item structure validation\r",
+									"pm.test(\"Each item has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.items.forEach(item => {\r",
+									"        pm.expect(item).to.have.property(\"name\");\r",
+									"        pm.expect(item).to.have.property(\"description\");\r",
+									"        pm.expect(item).to.have.property(\"id\");\r",
+									"        pm.expect(item.name).to.be.a(\"string\");\r",
+									"        pm.expect(item.description).to.be.a(\"string\");\r",
+									"        pm.expect(item.id).to.be.a(\"number\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Specific department validation\r",
+									"pm.test(\"HR department exists with correct data\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const hr = jsonData.items.find(item => item.id === 1);\r",
+									"    pm.expect(hr).to.exist;\r",
+									"    pm.expect(hr.name).to.equal(\"HR\");\r",
+									"    pm.expect(hr.description).to.include(\"employee life cycle\");\r",
+									"});\r",
+									"\r",
+									"// ID uniqueness validation\r",
+									"pm.test(\"All department IDs are unique\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const ids = jsonData.items.map(item => item.id);\r",
+									"    const uniqueIds = [...new Set(ids)];\r",
+									"    pm.expect(ids.length).to.equal(uniqueIds.length);\r",
+									"});\r",
+									"\r",
+									"// Verify all expected departments exist\r",
+									"pm.test(\"All expected departments are present\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const expectedDepartments = [\"HR\", \"Marketing\", \"Finance\", \"IT\", \"Legal\", \"Customer Service\"];\r",
+									"    const actualDepartments = jsonData.items.map(item => item.name);\r",
+									"    expectedDepartments.forEach(dept => {\r",
+									"        pm.expect(actualDepartments).to.include(dept);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401 Unauthorized\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Team Bulding\",\r\n  \"description\": \"New Department for team building\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Specific data validation\r",
+									"pm.test(\"Department data is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.equal(1);\r",
+									"    pm.expect(jsonData.name).to.equal(\"HR\");\r",
+									"    pm.expect(jsonData.description).to.equal(\"Manages all aspects of employee life cycle, including recruitment, benefits, training, and workplace culture.\");\r",
+									"});\r",
+									"\r",
+									"// Non-empty validation\r",
+									"pm.test(\"Name and description are not empty\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.not.be.empty;\r",
+									"    pm.expect(jsonData.description).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID in URL matches response\r",
+									"pm.test(\"Response ID matches requested ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const url = pm.request.url.toString();\r",
+									"    const urlId = parseInt(url.split('/').pop());\r",
+									"    pm.expect(jsonData.id).to.equal(urlId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401 Unauthorized\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401 Unauthorized\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New Department for team building updated\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authUser",
+			"item": [
+				{
+					"name": "loginAlice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"alice\",\r\n  \"password\": \"Pass@word1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "departmentUserAuth",
+			"item": [
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required root properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"items\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalCount\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageIndex\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageSize\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasPreviousPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasNextPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalPages\");\r",
+									"});\r",
+									"\r",
+									"// Items array validation\r",
+									"pm.test(\"Items array contains 6 departments\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf(jsonData.totalCount);\r",
+									"});\r",
+									"\r",
+									"// Item structure validation\r",
+									"pm.test(\"Each item has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.items.forEach(item => {\r",
+									"        pm.expect(item).to.have.property(\"name\");\r",
+									"        pm.expect(item).to.have.property(\"description\");\r",
+									"        pm.expect(item).to.have.property(\"id\");\r",
+									"        pm.expect(item.name).to.be.a(\"string\");\r",
+									"        pm.expect(item.description).to.be.a(\"string\");\r",
+									"        pm.expect(item.id).to.be.a(\"number\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Specific department validation\r",
+									"pm.test(\"HR department exists with correct data\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const hr = jsonData.items.find(item => item.id === 1);\r",
+									"    pm.expect(hr).to.exist;\r",
+									"    pm.expect(hr.name).to.equal(\"HR\");\r",
+									"    pm.expect(hr.description).to.include(\"employee life cycle\");\r",
+									"});\r",
+									"\r",
+									"// ID uniqueness validation\r",
+									"pm.test(\"All department IDs are unique\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const ids = jsonData.items.map(item => item.id);\r",
+									"    const uniqueIds = [...new Set(ids)];\r",
+									"    pm.expect(ids.length).to.equal(uniqueIds.length);\r",
+									"});\r",
+									"\r",
+									"// Verify all expected departments exist\r",
+									"pm.test(\"All expected departments are present\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const expectedDepartments = [\"HR\", \"Marketing\", \"Finance\", \"IT\", \"Legal\", \"Customer Service\"];\r",
+									"    const actualDepartments = jsonData.items.map(item => item.name);\r",
+									"    expectedDepartments.forEach(dept => {\r",
+									"        pm.expect(actualDepartments).to.include(dept);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Team Bulding\",\r\n  \"description\": \"New Department for team building\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Specific data validation\r",
+									"pm.test(\"Marketing department data is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.equal(2);\r",
+									"    pm.expect(jsonData.name).to.equal(\"Marketing\");\r",
+									"    pm.expect(jsonData.description).to.equal(\"Drives business growth through brand development, advertising, and market engagement strategies.\");\r",
+									"});\r",
+									"\r",
+									"// Non-empty validation\r",
+									"pm.test(\"Name and description are not empty\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.not.be.empty;\r",
+									"    pm.expect(jsonData.description).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID in URL matches response\r",
+									"pm.test(\"Response ID matches requested ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const url = pm.request.url.toString();\r",
+									"    const urlId = parseInt(url.split('/').pop());\r",
+									"    pm.expect(jsonData.id).to.equal(urlId);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/departments/2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New Department for team building updated\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/3",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "authManager",
+			"item": [
+				{
+					"name": "loginManager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"manager\",\r\n  \"password\": \"Pass@word1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "departmentsManagerAuth",
+			"item": [
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required root properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"items\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalCount\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageIndex\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageSize\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasPreviousPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasNextPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalPages\");\r",
+									"});\r",
+									"\r",
+									"// Items array validation\r",
+									"pm.test(\"Items array contains 6 departments\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf(jsonData.totalCount);\r",
+									"});\r",
+									"\r",
+									"// Item structure validation\r",
+									"pm.test(\"Each item has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.items.forEach(item => {\r",
+									"        pm.expect(item).to.have.property(\"name\");\r",
+									"        pm.expect(item).to.have.property(\"description\");\r",
+									"        pm.expect(item).to.have.property(\"id\");\r",
+									"        pm.expect(item.name).to.be.a(\"string\");\r",
+									"        pm.expect(item.description).to.be.a(\"string\");\r",
+									"        pm.expect(item.id).to.be.a(\"number\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Specific department validation\r",
+									"pm.test(\"HR department exists with correct data\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const hr = jsonData.items.find(item => item.id === 1);\r",
+									"    pm.expect(hr).to.exist;\r",
+									"    pm.expect(hr.name).to.equal(\"HR\");\r",
+									"    pm.expect(hr.description).to.include(\"employee life cycle\");\r",
+									"});\r",
+									"\r",
+									"// ID uniqueness validation\r",
+									"pm.test(\"All department IDs are unique\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const ids = jsonData.items.map(item => item.id);\r",
+									"    const uniqueIds = [...new Set(ids)];\r",
+									"    pm.expect(ids.length).to.equal(uniqueIds.length);\r",
+									"});\r",
+									"\r",
+									"// Verify all expected departments exist\r",
+									"pm.test(\"All expected departments are present\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const expectedDepartments = [\"HR\", \"Marketing\", \"Finance\", \"IT\", \"Legal\", \"Customer Service\"];\r",
+									"    const actualDepartments = jsonData.items.map(item => item.name);\r",
+									"    expectedDepartments.forEach(dept => {\r",
+									"        pm.expect(actualDepartments).to.include(dept);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 201 Created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Request body match validation\r",
+									"pm.test(\"Response name matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.name).to.equal(requestBody.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response description matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.description).to.equal(requestBody.description);\r",
+									"});\r",
+									"\r",
+									"// ID generation validation\r",
+									"pm.test(\"Response contains a valid ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Save ID for potential cleanup or subsequent tests\r",
+									"pm.test(\"Store created department ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"lastCreatedDepartmentId\", jsonData.id);\r",
+									"});\r",
+									"pm.environment.set(\"department_id\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Team Bulding\",\r\n  \"description\": \"New Department for team building\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Request body match validation\r",
+									"pm.test(\"Response name matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.name).to.equal(requestBody.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response description matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.description).to.equal(requestBody.description);\r",
+									"});\r",
+									"\r",
+									"// ID persistence validation\r",
+									"pm.test(\"ID remains unchanged after update\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.exist;\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID matches the one being updated\r",
+									"pm.test(\"Response ID matches the updated resource\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    // If you're using a variable for the ID in the URL\r",
+									"    const expectedId = pm.collectionVariables.get(\"department_id\") || pm.environment.get(\"department_id\");\r",
+									"    if (expectedId) {\r",
+									"        pm.expect(jsonData.id).to.equal(parseInt(expectedId));\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Departmnet updated\",\r\n  \"description\": \"New Department  updated\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// ID persistence validation\r",
+									"pm.test(\"ID remains unchanged after update\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.exist;\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID matches the one being updated\r",
+									"pm.test(\"Response ID matches the updated resource\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    // If you're using a variable for the ID in the URL\r",
+									"    const expectedId = pm.collectionVariables.get(\"department_id\") || pm.environment.get(\"department_id\");\r",
+									"    if (expectedId) {\r",
+									"        pm.expect(jsonData.id).to.equal(parseInt(expectedId));\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403 Forbidden\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "authAdmin",
+			"item": [
+				{
+					"name": "loginManager",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"Pass@word1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "departmentsAdminAuth",
+			"item": [
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response is a number validation\r",
+									"pm.test(\"Response is a number (ID)\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    pm.expect(responseId).to.be.a(\"number\");\r",
+									"    pm.expect(responseId).to.not.be.NaN;\r",
+									"});\r",
+									"\r",
+									"// Response matches environment variable\r",
+									"pm.test(\"Response ID matches department_id variable\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    const expectedId = pm.environment.get(\"department_id\");\r",
+									"    pm.expect(responseId).to.equal(parseInt(expectedId));\r",
+									"});\r",
+									"\r",
+									"// Valid ID validation\r",
+									"pm.test(\"Deleted ID is greater than 0\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    pm.expect(responseId).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Clear the variable after successful deletion\r",
+									"pm.test(\"Clear department_id variable after deletion\", function () {\r",
+									"    pm.environment.unset(\"department_id\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required root properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"items\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalCount\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageIndex\");\r",
+									"    pm.expect(jsonData).to.have.property(\"pageSize\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasPreviousPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"hasNextPage\");\r",
+									"    pm.expect(jsonData).to.have.property(\"totalPages\");\r",
+									"});\r",
+									"\r",
+									"// Items array validation\r",
+									"pm.test(\"Items array contains 6 departments\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf(jsonData.totalCount);\r",
+									"});\r",
+									"\r",
+									"// Item structure validation\r",
+									"pm.test(\"Each item has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    jsonData.items.forEach(item => {\r",
+									"        pm.expect(item).to.have.property(\"name\");\r",
+									"        pm.expect(item).to.have.property(\"description\");\r",
+									"        pm.expect(item).to.have.property(\"id\");\r",
+									"        pm.expect(item.name).to.be.a(\"string\");\r",
+									"        pm.expect(item.description).to.be.a(\"string\");\r",
+									"        pm.expect(item.id).to.be.a(\"number\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Specific department validation\r",
+									"pm.test(\"HR department exists with correct data\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const hr = jsonData.items.find(item => item.id === 1);\r",
+									"    pm.expect(hr).to.exist;\r",
+									"    pm.expect(hr.name).to.equal(\"HR\");\r",
+									"    pm.expect(hr.description).to.include(\"employee life cycle\");\r",
+									"});\r",
+									"\r",
+									"// ID uniqueness validation\r",
+									"pm.test(\"All department IDs are unique\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const ids = jsonData.items.map(item => item.id);\r",
+									"    const uniqueIds = [...new Set(ids)];\r",
+									"    pm.expect(ids.length).to.equal(uniqueIds.length);\r",
+									"});\r",
+									"\r",
+									"// Verify all expected departments exist\r",
+									"pm.test(\"All expected departments are present\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const expectedDepartments = [\"HR\", \"Marketing\", \"Finance\", \"IT\", \"Legal\", \"Customer Service\"];\r",
+									"    const actualDepartments = jsonData.items.map(item => item.name);\r",
+									"    expectedDepartments.forEach(dept => {\r",
+									"        pm.expect(actualDepartments).to.include(dept);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 201 Created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Request body match validation\r",
+									"pm.test(\"Response name matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.name).to.equal(requestBody.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response description matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.description).to.equal(requestBody.description);\r",
+									"});\r",
+									"\r",
+									"// ID generation validation\r",
+									"pm.test(\"Response contains a valid ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Save ID for potential cleanup or subsequent tests\r",
+									"pm.test(\"Store created department ID\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"lastCreatedDepartmentId\", jsonData.id);\r",
+									"});\r",
+									"pm.environment.set(\"department_id\", pm.response.json().id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Team Bulding\",\r\n  \"description\": \"New Department for team building\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Request body match validation\r",
+									"pm.test(\"Response name matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.name).to.equal(requestBody.name);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response description matches request body\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const requestBody = JSON.parse(pm.request.body.raw);\r",
+									"    pm.expect(jsonData.description).to.equal(requestBody.description);\r",
+									"});\r",
+									"\r",
+									"// ID persistence validation\r",
+									"pm.test(\"ID remains unchanged after update\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.exist;\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID matches the one being updated\r",
+									"pm.test(\"Response ID matches the updated resource\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    // If you're using a variable for the ID in the URL\r",
+									"    const expectedId = pm.collectionVariables.get(\"department_id\") || pm.environment.get(\"department_id\");\r",
+									"    if (expectedId) {\r",
+									"        pm.expect(jsonData.id).to.equal(parseInt(expectedId));\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Departmnet updated\",\r\n  \"description\": \"New Department  updated\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"name\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.description).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// ID persistence validation\r",
+									"pm.test(\"ID remains unchanged after update\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.exist;\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Verify ID matches the one being updated\r",
+									"pm.test(\"Response ID matches the updated resource\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    // If you're using a variable for the ID in the URL\r",
+									"    const expectedId = pm.collectionVariables.get(\"department_id\") || pm.environment.get(\"department_id\");\r",
+									"    if (expectedId) {\r",
+									"        pm.expect(jsonData.id).to.equal(parseInt(expectedId));\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response is a number validation\r",
+									"pm.test(\"Response is a number (ID)\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    pm.expect(responseId).to.be.a(\"number\");\r",
+									"    pm.expect(responseId).to.not.be.NaN;\r",
+									"});\r",
+									"\r",
+									"// Response matches environment variable\r",
+									"pm.test(\"Response ID matches department_id variable\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    const expectedId = pm.environment.get(\"department_id\");\r",
+									"    pm.expect(responseId).to.equal(parseInt(expectedId));\r",
+									"});\r",
+									"\r",
+									"// Valid ID validation\r",
+									"pm.test(\"Deleted ID is greater than 0\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    pm.expect(responseId).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Clear the variable after successful deletion\r",
+									"pm.test(\"Clear department_id variable after deletion\", function () {\r",
+									"    pm.environment.unset(\"department_id\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"departments",
+								"{{department_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"pm.test(\"Response time is less than 5000ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(50000);\r",
+					"});\r",
+					"// pm.test(\"Content-Type is application/json\", function () {\r",
+					"//     pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+					"// });\r",
+					"// pm.test(\"Response is valid JSON\", function () {\r",
+					"//     pm.expect(() => JSON.parse(pm.response.text())).not.to.throw();\r",
+					"// });"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": ""
+		},
+		{
+			"key": "lastCreatedDepartmentId",
+			"value": ""
+		}
+	]
+}
