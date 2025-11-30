@@ -14,7 +14,6 @@ namespace backend_discTests
         private DiscProfileDbContext _context = null!;
         private EmployeesRepository _repository = null!;
         private IConfiguration _configuration = null!;
-        private int createdEmployee;
         // Valid Values for adding an employee
         private const string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private const string PASSWORD_HASH = "$argon2id$v=19$m=65536,t=3,p=1$JcD7uPdQ3ey8lapNPowUmg$ulD90DajUEOpnbsnmY1Q/pkNeoLArY5XXJlpbRi4QcY";
@@ -142,7 +141,6 @@ namespace backend_discTests
             var result = await _repository.AddEmployeeSPAsync(p);
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Id);
-            createdEmployee = result.Id;
             Assert.AreEqual(firstName, result.FirstName);
             Assert.AreEqual(lastName, result.LastName);
             Assert.AreEqual(workEmail, result.WorkEmail);
@@ -173,8 +171,6 @@ namespace backend_discTests
         )]
         public async Task AddEmployeeSPAsync_InValidForeignKeys(string cpr, int deptId, int discId, int posId, int userRoleId, string firstName, string lastName, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone)
         {
-            Console.WriteLine($"Test: deptId={deptId}, discId={discId}, posId={posId}, userRoleId={userRoleId}");
-            Console.WriteLine($"Testing foreign key validation with workEmail={workEmail}, workPhone={workPhone}");
             
             AddEmployeeSpParams p = new AddEmployeeSpParams
             {
@@ -194,18 +190,10 @@ namespace backend_discTests
                 UserRoleId = userRoleId
             };
 
-            try
-            {
-                await Assert.ThrowsExceptionAsync<KeyNotFoundException>(
-                   async () => await _repository.AddEmployeeSPAsync(p)
-               );
-                Console.WriteLine("✓ Test passed - KeyNotFoundException was thrown as expected");
-            }
-            catch (AssertFailedException ex)
-            {
-                Console.WriteLine($"✗ Test failed - {ex.Message}");
-                throw;
-            }
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(
+                async () => await _repository.AddEmployeeSPAsync(p)
+            );
+
         }
 
         [TestMethod]
