@@ -21,14 +21,14 @@ namespace backend_discTests
         private const string VALID_CPR = "12345678";
         private const int VALID_DEPARTMENT_ID = 1;
         private const int VALID_DISC_PROFILE_ID = 1;
-        private const string VALID_FIRST_NAME = "John";
-        private const string VALID_LAST_NAME = "Doe";
+        private const string VALID_FIRST_NAME = "Timmy";
+        private const string VALID_LAST_NAME = "Clarckson";
         private const int VALID_POSITION_ID = 1;
         private const string VALID_USERNAME = "test.user";
-        private const string VALID_WORK_EMAIL = "work@test.com";
-        private const string VALID_WORK_PHONE = "8765454321";
-        private const string VALID_PRIVATE_EMAIL = "private@test.com";
-        private const string VALID_PRIVATE_PHONE = "12345678";
+        private const string VALID_WORK_EMAIL = "Timmyca23@test.com";
+        private const string VALID_WORK_PHONE = "83559674";
+        private const string VALID_PRIVATE_EMAIL = "Timmy@test.com";
+        private const string VALID_PRIVATE_PHONE = "73549583";
         private const int VALID_USER_ROLE_ID = 1;
 
         // Not unique values
