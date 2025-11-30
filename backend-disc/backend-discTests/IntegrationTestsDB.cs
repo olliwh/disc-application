@@ -172,6 +172,9 @@ namespace backend_discTests
         )]
         public async Task AddEmployeeSPAsync_InValidForeignKeys(string cpr, int deptId, int discId, int posId, int userRoleId, string firstName, string lastName, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone)
         {
+            Console.WriteLine($"Test: deptId={deptId}, discId={discId}, posId={posId}, userRoleId={userRoleId}");
+            Console.WriteLine($"Testing foreign key validation with workPhone={workPhone}");
+            
             AddEmployeeSpParams p = new AddEmployeeSpParams
             {
                 CPR = cpr,
@@ -190,9 +193,18 @@ namespace backend_discTests
                 UserRoleId = userRoleId
             };
 
-            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(
-               async () => await _repository.AddEmployeeSPAsync(p)
-           );
+            try
+            {
+                await Assert.ThrowsExceptionAsync<KeyNotFoundException>(
+                   async () => await _repository.AddEmployeeSPAsync(p)
+               );
+                Console.WriteLine("✓ Test passed - KeyNotFoundException was thrown as expected");
+            }
+            catch (AssertFailedException ex)
+            {
+                Console.WriteLine($"✗ Test failed - {ex.Message}");
+                throw;
+            }
         }
 
         [TestMethod]

@@ -39,14 +39,23 @@ namespace backend_disc.Repositories
         /// <exception cref="InvalidOperationException">When database constraints are violated</exception>
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
+            Console.WriteLine($"[AddEmployeeSPAsync] Starting - DeptId={p.DepartmentId}, DiscId={p.DiscProfileId}, PosId={p.PositionId}, UserRoleId={p.UserRoleId}");
+            Console.WriteLine($"[AddEmployeeSPAsync] Employee: {p.FirstName} {p.LastName}, Email={p.WorkEmail}, Phone={p.WorkPhone}");
+            
             //check values set be service
             if (string.IsNullOrWhiteSpace(p.WorkPhone) || string.IsNullOrWhiteSpace(p.WorkEmail) ||
                 string.IsNullOrWhiteSpace(p.Username) || string.IsNullOrWhiteSpace(p.ImagePath) ||
                 string.IsNullOrWhiteSpace(p.PasswordHash))
+            {
+                Console.WriteLine("[AddEmployeeSPAsync] ✗ Validation failed: required values are not set");
                 throw new ArgumentException("required values are not set");
+            }
 
             if (p.DepartmentId <= 0 || p.PositionId <= 0 || p.DiscProfileId <= 0 || p.UserRoleId <= 0)
+            {
+                Console.WriteLine($"[AddEmployeeSPAsync] ✗ Validation failed: Invalid IDs - DeptId={p.DepartmentId}, PosId={p.PositionId}, DiscId={p.DiscProfileId}, UserRoleId={p.UserRoleId}");
                 throw new ArgumentException("ID must be positive int");
+            }
 
             var parameters = new[]
             {
@@ -68,6 +77,7 @@ namespace backend_disc.Repositories
 
             try
             {
+                Console.WriteLine("[AddEmployeeSPAsync] Executing stored procedure...");
                 var employeeIds = await _context.Database
                     .SqlQueryRaw<int>(
                         "EXEC sp_AddEmployee @first_name, @last_name, @work_email, @work_phone, @image_path, @department_id, @position_id, @disc_profile_id, @cpr, @private_email, @private_phone, @username, @password_hash, @user_role_id",
@@ -78,35 +88,34 @@ namespace backend_disc.Repositories
 
                 if (employeeId == 0)
                 {
+                    Console.WriteLine("[AddEmployeeSPAsync] ✗ Stored procedure returned 0 employee ID");
                     _logger.LogWarning("Stored procedure returned 0 employee ID");
                     return null;
                 }
 
+                Console.WriteLine($"[AddEmployeeSPAsync] ✓ Employee created successfully with ID={employeeId}");
                 return await _context.Employees.FindAsync(employeeId);
             }
             catch (SqlException ex) when (ex.Number == 547)
             {
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine(ex.Number);
-
+                Console.WriteLine($"[AddEmployeeSPAsync] ✗ Foreign Key Violation (547): {ex.Message}");
                 _logger.LogWarning(ex, "Foreign key constraint violation - SQL Error {ErrorNumber}: {Message}", ex.Number, ex.Message);
                 throw new KeyNotFoundException("Invalid foreign key reference.", ex);
             }
             catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
             {
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine(ex.Number);
+                Console.WriteLine($"[AddEmployeeSPAsync] ✗ Unique Constraint Violation ({ex.Number}): {ex.Message}");
                 _logger.LogWarning(ex, "Unique constraint violation - SQL Error {ErrorNumber}: {Message}", ex.Number, ex.Message);
                 throw new InvalidOperationException("Db constraint violation.", ex);
             }
             catch (ArgumentException ex)
             {
-                Debug.WriteLine(ex.Message);
+                Console.WriteLine($"[AddEmployeeSPAsync] ✗ ArgumentException: {ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                Console.WriteLine($"[AddEmployeeSPAsync] ✗ Unexpected exception: {ex.GetType().Name} - {ex.Message}");
                 _logger.LogError(ex, "Error adding employee via stored procedure");
                 throw;
             }
