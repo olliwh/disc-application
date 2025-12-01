@@ -49,15 +49,9 @@ export class PageModel {
     await this.loginBtnModal.click();
 
     // Wait for login to complete
-    await this.waitForUserLoggedIn();
-  }
-
-  private async waitForUserLoggedIn() {
-    await this.logoutBtn.waitFor({ state: "visible", timeout: 15000 });
   }
 
   async goToProfile() {
-    await this.waitForUserLoggedIn();
     await this.toProfileBtn.waitFor({ state: "visible", timeout: 15000 });
     await this.toProfileBtn.click();
     await expect(
@@ -78,6 +72,8 @@ export class PageModel {
       .locator("..")
       .getByRole("button", { name: "Delete" });
     await deleteButton.click();
+    await this.page.waitForLoadState("networkidle");
+    await expect(employeeCard).toBeHidden();
   }
 
   getEmployeeByName(employeeName: string): Locator {

@@ -74,7 +74,7 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    entrypoint: sh -c "echo 'Waiting for SQL Server to be fully ready...' && sleep 10 && /app/entrypoint.sh"
+    command: sh -c "/app/entrypoint.sh"
     deploy:
       replicas: 1    # 0 prevents seeder from starting automatically
 # to run with seeder: docker compose up -d --build --scale seeder=1

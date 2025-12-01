@@ -24,7 +24,6 @@ class Program
             string sqlCreateStoredProcEdit = await ReadSqlFile("createStoredProcEdit.sql");
             string sqlCreateView = await ReadSqlFile("createView.sql");
             string sqlInsertData = await ReadSqlFile("insertDataQuery.sql");
-
             // Execute scripts
             await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
             await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
