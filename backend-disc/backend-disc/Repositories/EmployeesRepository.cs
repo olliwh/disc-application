@@ -126,7 +126,7 @@ namespace backend_disc.Repositories
         public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             IQueryable<Employee> query = _context.Employees
-                .AsNoTracking()//because we are only reading
+                .AsNoTracking()
                 .Include(e => e.DiscProfile);
 
             if (departmentId.HasValue)
@@ -137,21 +137,34 @@ namespace backend_disc.Repositories
 
             if (positionId.HasValue)
                 query = query.Where(e => e.PositionId == positionId);
+
+            // Apply database-translatable filters first
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string normalizedSearch = search.Trim();
+                string normalizedSearch = search.Trim().ToLower();
                 query = query.Where(e =>
-                    e.FirstName.Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase) ||
-                    e.LastName.Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase) ||
-                    (e.FirstName + " " + e.LastName).Contains(normalizedSearch, StringComparison.OrdinalIgnoreCase)
+                    e.FirstName.ToLower().Contains(normalizedSearch) ||
+                    e.LastName.ToLower().Contains(normalizedSearch)
                 );
             }
+
             int totalCount = await query.CountAsync();
 
+            // Materialize the data, then apply client-side full name search
             var employees = await query
-                    .Skip((pageIndex - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Client-side filtering for full name search (if needed)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizedSearch = search.Trim().ToLower();
+                employees = employees
+                    .Where(e => (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch))
+                    .ToList();
+            }
+
             return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
         }
         public async Task<EmployeesOwnProfile?> GetById(int id)

@@ -8,7 +8,9 @@ services:
     ports:
       - "1434:1433"
     volumes:
-      - mssql-data:/var/opt/mssql
+      - /var/opt/mssql
+  #   - mssql-data:/var/opt/mssql
+
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '${DB_PASSWORD}' -Q 'SELECT 1' -C -b"]
       interval: 10s
@@ -72,10 +74,11 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    entrypoint: sh -c "echo 'Waiting for SQL Server to be fully ready...' && sleep 10 && /app/entrypoint.sh"
     deploy:
-      replicas: 1    # prevents seeder from starting automatically
+      replicas: 1    # 0 prevents seeder from starting automatically
 # to run with seeder: docker compose up -d --build --scale seeder=1
 
-volumes:
-  mssql-data:
+# volumes:
+#   mssql-data:
 
