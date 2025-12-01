@@ -371,7 +371,7 @@
 									"});\r",
 									"\r",
 									"// Verify all expected positions exist\r",
-									"pm.test(\"Some expected positions are present\", function () {\r",
+									"pm.test(\"of the expected positions are present\", function () {\r",
 									"    const jsonData = pm.response.json();\r",
 									"    const expectedPositions = [\"Software Engineer\", \"Research Analyst\"];\r",
 									"    const actualPositions = jsonData.items.map(item => item.name);\r",
