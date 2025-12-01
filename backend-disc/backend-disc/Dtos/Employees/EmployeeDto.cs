@@ -3,7 +3,7 @@
     public class EmployeeDto
     {
 
-        public required string Id { get; set; }
+        public required int Id { get; set; }
         public required string WorkEmail { get; set; }
 
         public string? WorkPhone { get; set; }

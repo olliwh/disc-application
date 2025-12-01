@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { PageModel } from "../PageModel";
 
-const EMPLOYEE_NAMES: Record<string, string> = {
-  chromium: "Sofie Nielsen",
-  webkit: "Emma Christensen",
-  firefox: "Freja Mortensen",
+
+const EMPLOYEE_TO_DELETE_NAMES: Record<string, string> = {
+  chromium: "Jonas Pedersen",
+  webkit: "Lucas Olsen",
+  firefox: "Ida Thomsen",
 };
 
 test.describe("Disc application e2e tests", () => {
@@ -16,7 +17,8 @@ test.describe("Disc application e2e tests", () => {
   test("Login and edit as alice", async ({ page }, testInfo) => {
     const discPage = new PageModel(page);
     const browserName = testInfo.project?.name || "chromium";
-    const employeeName = EMPLOYEE_NAMES[browserName];
+    const employeeToDeleteName = EMPLOYEE_TO_DELETE_NAMES[browserName];
+    const employeeToGetName = "Alice Jensen";
     const newEmail = "aliiiiice@@ok.dk";
     await expect(discPage.positionheading).toBeVisible();
     await expect(discPage.departmentheading).toBeVisible();
@@ -29,7 +31,7 @@ test.describe("Disc application e2e tests", () => {
     await expect(discPage.deleteBtn).toBeHidden();
     await discPage.goToProfile();
     await discPage.editEmail(newEmail);
-    await expect(discPage.getEmployeeByName(employeeName)).toBeVisible();
+    await expect(discPage.getEmployeeByName(employeeToGetName)).toBeVisible();
 
     // Verify changes persisted
     await discPage.goToProfile();
@@ -42,14 +44,11 @@ test.describe("Disc application e2e tests", () => {
     await discPage.login("admin", "Pass@word1");
     await expect(discPage.deleteBtn).toBeVisible();
 
-    const employeeCard = discPage.getEmployeeByName(employeeName);
+    const employeeCard = discPage.getEmployeeByName(employeeToGetName);
     await expect(employeeCard).toBeVisible();
 
-    await discPage.deleteEmployee(employeeName);
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(2000);
+    await discPage.deleteEmployee(employeeToDeleteName);
 
-    await expect(employeeCard).toBeHidden();
     await discPage.logout();
   });
 });

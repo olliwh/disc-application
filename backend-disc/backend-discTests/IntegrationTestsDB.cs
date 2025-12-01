@@ -1,9 +1,11 @@
 ﻿using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Data;
+using class_library_disc.Models.Sql;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
 
 
 namespace backend_discTests
@@ -149,6 +151,14 @@ namespace backend_discTests
             Assert.AreEqual(deptId, result.DepartmentId);
             Assert.AreEqual(discId, result.DiscProfileId);
             Assert.AreEqual(posId, result.PositionId);
+            Debug.WriteLine($"Employee ID from SP: {result.Id}");
+
+            Employee? entity = await _context.Employees.FirstOrDefaultAsync(e => e.Id == result.Id);
+            if (entity != null)
+            {
+                _context.Employees.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
 
