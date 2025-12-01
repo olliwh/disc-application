@@ -172,7 +172,7 @@ jobs:
 
       - name: Run Playwright tests
         working-directory: e2e-tests
-        run: npm test
+        run: npm run tests
 
       - name: Upload Playwright test results
         if: always()
