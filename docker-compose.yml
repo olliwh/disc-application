@@ -6,7 +6,7 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=${DB_PASSWORD}
     ports:
-      - "1434:1433"
+      - "1433:1433"
     volumes:
       - /var/opt/mssql
   #   - mssql-data:/var/opt/mssql
@@ -76,8 +76,8 @@ services:
       - .env
     command: sh -c "/app/entrypoint.sh"
     deploy:
-      replicas: 1    # 0 prevents seeder from starting automatically
-# to run with seeder: docker compose up -d --build --scale seeder=1
+      replicas: 0    # 0 prevents seeder from starting automatically
+# to run with seeder: docker compose up -d --scale seeder=1
 
 # volumes:
 #   mssql-data:
