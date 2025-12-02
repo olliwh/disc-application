@@ -3,7 +3,7 @@ using Neo4j.Driver;
 
 namespace Migrator.Services;
 
-public class Neo4jConnection
+public class Neo4JConnection
 {
     private readonly IDriver _driver;
     private const string Database = "discprofileneo4jdb";
@@ -11,7 +11,7 @@ public class Neo4jConnection
     private const string Neo4jUser = "neo4j";
     private const string Neo4jPassword = "12345678";
 
-    public Neo4jConnection()
+    public Neo4JConnection()
     {
         _driver = GraphDatabase.Driver(
             Neo4jUrl,
@@ -59,7 +59,7 @@ public class Neo4jConnection
             await result.ForEachAsync(record =>
             {
                 var node = record["n"].As<INode>();
-                Console.WriteLine($"Node {++nodeCount}: {node.Labels[0]} with ID {node.Id}");
+                Console.WriteLine($"Node {++nodeCount}: {node.Labels[0]} with ID {node.ElementId}");
             });
 
             Console.WriteLine($"Neo4j connection successful! Found {nodeCount} nodes.");
@@ -96,7 +96,7 @@ public class Neo4jConnection
             // Run the query to create the node
             var result = await session.RunAsync(query, parameters);
             var record = await result.SingleAsync();
-            var node = record["n"].As<INode>();
+            record["n"].As<INode>();
         }
         catch (Exception ex)
         {

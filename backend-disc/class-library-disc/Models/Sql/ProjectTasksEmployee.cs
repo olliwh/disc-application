@@ -13,5 +13,5 @@ public partial class ProjectTasksEmployee
 
     public virtual Employee Employee { get; set; } = null!;
 
-    public virtual ProjectTask ProjectTask { get; set; } = null!;
+    public virtual ProjectTask Task { get; set; } = null!;
 }

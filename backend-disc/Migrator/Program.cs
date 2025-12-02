@@ -12,7 +12,12 @@ await ConnectToDatabase(configuration);
 
 async Task ConnectToDatabase(IConfiguration config)
 {
-    string connectionString = config.GetConnectionString("DefaultConnection");
+    string? connectionString = config.GetConnectionString("DefaultConnection");
+    if (connectionString == null)
+    {
+        Console.WriteLine("Connection string not found in configuration.");
+        return;
+    }
 
     Console.WriteLine($"Connecting to database...");
 
@@ -24,18 +29,14 @@ async Task ConnectToDatabase(IConfiguration config)
 
     try
     {
-        //Console.WriteLine("Testing database connection...");
-        //await dbContext.Database.CanConnectAsync();
-        //Console.WriteLine("Successfully connected to SQL Server database!");
-
         var fetcher = new SqlDataFetcher(dbContext);
 
         Console.WriteLine("Data fetched successfully. Testing Neo4j connection...\n");
 
-        var neo4j = new Neo4jConnection();
+        var neo4j = new Neo4JConnection();
         await neo4j.RecreateDatabaseAsync();
 
-        var migrator = new MigrateToNeo4j(neo4j, fetcher);
+        var migrator = new MigrateToNeo4J(neo4j, fetcher);
         migrator.MigrateDataToNeo4jAsync().Wait();
 
         await neo4j.TestConnectionAsync();

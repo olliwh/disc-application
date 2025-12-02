@@ -22,7 +22,7 @@ public class SqlDataFetcher
             var employees = await _dbContext.Employees
                 .Include(e => e.StressMeasures)
                 .Include(e => e.ProjectTasksEmployees)
-                    .ThenInclude(pte => pte.ProjectTask)
+                    .ThenInclude(pte => pte.Task)
                 .Include(e => e.EmployeesProjects)
                     .ThenInclude(ep => ep.Project)
                 .Include(e => e.Department)
@@ -58,7 +58,6 @@ public class SqlDataFetcher
             var userRoles = await _dbContext.UserRoles
                 .ToListAsync();
 
-            // Fetch ProjectTasks with their stress measures and employees
             var projectTasks = await _dbContext.ProjectTasks
                 .Include(pt => pt.StressMeasures)
                 .Include(pt => pt.TimeToComplete)

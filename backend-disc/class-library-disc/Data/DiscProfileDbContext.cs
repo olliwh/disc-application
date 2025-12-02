@@ -50,12 +50,11 @@ public partial class DiscProfileDbContext : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__company__3213E83F58F8EDE6");
+            entity.HasKey(e => e.Id).HasName("PK__company__3213E83FBC214E0F");
 
             entity.ToTable("company");
 
@@ -74,7 +73,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<CompletionInterval>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__completi__3213E83F6B3D5BAF");
+            entity.HasKey(e => e.Id).HasName("PK__completi__3213E83F8D36C5A8");
 
             entity.ToTable("completion_intervals");
 
@@ -86,7 +85,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<Department>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__departme__3213E83FDC4A124C");
+            entity.HasKey(e => e.Id).HasName("PK__departme__3213E83F7F71CF1A");
 
             entity.ToTable("departments");
 
@@ -101,7 +100,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<DiscProfile>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__disc_pro__3213E83F5581FE1A");
+            entity.HasKey(e => e.Id).HasName("PK__disc_pro__3213E83F671F06F3");
 
             entity.ToTable("disc_profiles");
 
@@ -123,7 +122,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__employee__3213E83F8B60120A");
+            entity.HasKey(e => e.Id).HasName("PK__employee__3213E83F3E48FF04");
 
             entity.ToTable("employees");
 
@@ -139,9 +138,9 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasIndex(e => e.PositionId, "IX_employees_position_id");
 
-            entity.HasIndex(e => e.WorkEmail, "UQ__employee__0DD4ED79C2BCCA1D").IsUnique();
+            entity.HasIndex(e => e.WorkEmail, "UQ__employee__0DD4ED79C16104C5").IsUnique();
 
-            entity.HasIndex(e => e.WorkPhone, "UQ__employee__67295B20DD3AEDCF").IsUnique();
+            entity.HasIndex(e => e.WorkPhone, "UQ__employee__67295B202D9BC11D").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.DepartmentId).HasColumnName("department_id");
@@ -168,20 +167,20 @@ public partial class DiscProfileDbContext : DbContext
             entity.HasOne(d => d.Department).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.DepartmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__employees__depar__0D99FE17");
+                .HasConstraintName("FK__employees__depar__505BE5AD");
 
             entity.HasOne(d => d.DiscProfile).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.DiscProfileId)
-                .HasConstraintName("FK__employees__disc___0F824689");
+                .HasConstraintName("FK__employees__disc___52442E1F");
 
             entity.HasOne(d => d.Position).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.PositionId)
-                .HasConstraintName("FK__employees__posit__0E8E2250");
+                .HasConstraintName("FK__employees__posit__515009E6");
         });
 
         modelBuilder.Entity<EmployeePrivateDatum>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__employee__C52E0BA85D4725C8");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__employee__C52E0BA83C6B2368");
 
             entity.ToTable("employee_private_data");
 
@@ -203,7 +202,7 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithOne(p => p.EmployeePrivateDatum)
                 .HasForeignKey<EmployeePrivateDatum>(d => d.EmployeeId)
-                .HasConstraintName("FK__employee___emplo__125EB334");
+                .HasConstraintName("FK__employee___emplo__55209ACA");
         });
 
         modelBuilder.Entity<EmployeesOwnProfile>(entity =>
@@ -257,7 +256,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<EmployeesProject>(entity =>
         {
-            entity.HasKey(e => new { e.ProjectId, e.EmployeeId }).HasName("PK__employee__202B7EA5DC888D74");
+            entity.HasKey(e => new { e.ProjectId, e.EmployeeId }).HasName("PK__employee__202B7EA5F693CBBE");
 
             entity.ToTable("employees_projects");
 
@@ -268,16 +267,16 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithMany(p => p.EmployeesProjects)
                 .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__employees__emplo__2E06CDA9");
+                .HasConstraintName("FK__employees__emplo__70C8B53F");
 
             entity.HasOne(d => d.Project).WithMany(p => p.EmployeesProjects)
                 .HasForeignKey(d => d.ProjectId)
-                .HasConstraintName("FK__employees__proje__2D12A970");
+                .HasConstraintName("FK__employees__proje__6FD49106");
         });
 
         modelBuilder.Entity<Position>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__position__3213E83FCAF9BC9E");
+            entity.HasKey(e => e.Id).HasName("PK__position__3213E83F88B6D11C");
 
             entity.ToTable("positions");
 
@@ -294,7 +293,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<Project>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__projects__3213E83F5397537B");
+            entity.HasKey(e => e.Id).HasName("PK__projects__3213E83F04E211B9");
 
             entity.ToTable("projects", tb => tb.HasTrigger("add_to_project_audit_table"));
 
@@ -314,7 +313,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<ProjectTask>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__project___3213E83F0315B56F");
+            entity.HasKey(e => e.Id).HasName("PK__project___3213E83F4F74A9C7");
 
             entity.ToTable("project_tasks", tb => tb.HasTrigger("trg_task_completion"));
 
@@ -334,16 +333,16 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.Project).WithMany(p => p.ProjectTasks)
                 .HasForeignKey(d => d.ProjectId)
-                .HasConstraintName("FK__project_t__proje__21A0F6C4");
+                .HasConstraintName("FK__project_t__proje__6462DE5A");
 
             entity.HasOne(d => d.TimeToComplete).WithMany(p => p.ProjectTasks)
                 .HasForeignKey(d => d.TimeToCompleteId)
-                .HasConstraintName("FK__project_t__time___22951AFD");
+                .HasConstraintName("FK__project_t__time___65570293");
         });
 
         modelBuilder.Entity<ProjectTasksEmployee>(entity =>
         {
-            entity.HasKey(e => new { e.TaskId, e.EmployeeId }).HasName("PK__project___98C0F4379084294F");
+            entity.HasKey(e => new { e.TaskId, e.EmployeeId }).HasName("PK__project___98C0F43728C4ADD8");
 
             entity.ToTable("project_tasks_employees");
 
@@ -353,16 +352,16 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithMany(p => p.ProjectTasksEmployees)
                 .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__project_t__emplo__2A363CC5");
+                .HasConstraintName("FK__project_t__emplo__6CF8245B");
 
-            entity.HasOne(d => d.ProjectTask).WithMany(p => p.ProjectTasksEmployees)
+            entity.HasOne(d => d.Task).WithMany(p => p.ProjectTasksEmployees)
                 .HasForeignKey(d => d.TaskId)
-                .HasConstraintName("FK__project_t__task___2942188C");
+                .HasConstraintName("FK__project_t__task___6C040022");
         });
 
         modelBuilder.Entity<ProjectsAudit>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__projects__3213E83F855B68D7");
+            entity.HasKey(e => e.Id).HasName("PK__projects__3213E83FB38E7C5A");
 
             entity.ToTable("projects_audit");
 
@@ -384,7 +383,7 @@ public partial class DiscProfileDbContext : DbContext
 
         modelBuilder.Entity<ProjectsDiscProfile>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__projects__3213E83FA415EA35");
+            entity.HasKey(e => e.Id).HasName("PK__projects__3213E83FCF42BFC5");
 
             entity.ToTable("projects_disc_profiles");
 
@@ -394,16 +393,16 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.DiscProfile).WithMany(p => p.ProjectsDiscProfiles)
                 .HasForeignKey(d => d.DiscProfileId)
-                .HasConstraintName("FK__projects___disc___31D75E8D");
+                .HasConstraintName("FK__projects___disc___74994623");
 
             entity.HasOne(d => d.Project).WithMany(p => p.ProjectsDiscProfiles)
                 .HasForeignKey(d => d.ProjectId)
-                .HasConstraintName("FK__projects___proje__30E33A54");
+                .HasConstraintName("FK__projects___proje__73A521EA");
         });
 
         modelBuilder.Entity<StressMeasure>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stress_m__3213E83F7E35CB64");
+            entity.HasKey(e => e.Id).HasName("PK__stress_m__3213E83F886F722A");
 
             entity.ToTable("stress_measures");
 
@@ -417,22 +416,22 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithMany(p => p.StressMeasures)
                 .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__stress_me__emplo__257187A8");
+                .HasConstraintName("FK__stress_me__emplo__68336F3E");
 
             entity.HasOne(d => d.Task).WithMany(p => p.StressMeasures)
                 .HasForeignKey(d => d.TaskId)
-                .HasConstraintName("FK__stress_me__task___2665ABE1");
+                .HasConstraintName("FK__stress_me__task___69279377");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__users__C52E0BA8DC1174BA");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__users__C52E0BA828408414");
 
             entity.ToTable("users");
 
             entity.HasIndex(e => e.Username, "IX_users_username");
 
-            entity.HasIndex(e => e.Username, "UQ__users__F3DBC572D358499A").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__users__F3DBC5723C23AD95").IsUnique();
 
             entity.Property(e => e.EmployeeId)
                 .ValueGeneratedNever()
@@ -449,17 +448,17 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithOne(p => p.User)
                 .HasForeignKey<User>(d => d.EmployeeId)
-                .HasConstraintName("FK__users__employee___162F4418");
+                .HasConstraintName("FK__users__employee___58F12BAE");
 
             entity.HasOne(d => d.UserRole).WithMany(p => p.Users)
                 .HasForeignKey(d => d.UserRoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__users__user_role__17236851");
+                .HasConstraintName("FK__users__user_role__59E54FE7");
         });
 
         modelBuilder.Entity<UserRole>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__user_rol__3213E83F223F1904");
+            entity.HasKey(e => e.Id).HasName("PK__user_rol__3213E83F46351C99");
 
             entity.ToTable("user_roles");
 

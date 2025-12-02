@@ -4,12 +4,12 @@ using Migrator.Data;
 
 namespace Migrator.Services
 {
-    public class MigrateToNeo4j
+    public class MigrateToNeo4J
     {
-        private readonly Neo4jConnection _neo4j;
+        private readonly Neo4JConnection _neo4j;
         private readonly SqlDataFetcher _dataFetcher;
 
-        public MigrateToNeo4j(Neo4jConnection neo4j, SqlDataFetcher dataFetcher)
+        public MigrateToNeo4J(Neo4JConnection neo4j, SqlDataFetcher dataFetcher)
         {
             _neo4j = neo4j;
             _dataFetcher = dataFetcher;
@@ -134,22 +134,7 @@ namespace Migrator.Services
             }
             Console.WriteLine($"{nodeName} migration completed");
         }
-        //public async Task MigrateUserRolesAsync(FetchedData data)
-        //{
-        //    string nodeName = "UserRole";
-        //    Console.WriteLine($"Migrating {data.UserRoles.Count} {nodeName} to Neo4j...");
-        //    foreach (var d in data.UserRoles)
-        //    {
-        //        var dict = new Dictionary<string, object?>
-        //        {
-        //            { "id", d.Id },
-        //            { "name", d.Name },
-        //            { "description", d.Description }
-        //        };
-        //        await _neo4j.CreateNodeAsync(nodeName, dict);
-        //    }
-        //    Console.WriteLine($"{nodeName} migration completed");
-        //}
+
         public async Task MigrateUsersAsync(FetchedData data)
         {
             string nodeName = "User";
@@ -238,15 +223,15 @@ namespace Migrator.Services
                     { "image_path", employee.ImagePath }
                 };
                 await _neo4j.CreateNodeAsync(nodeName, dict);
-                foreach (var task in employee.ProjectTasksEmployees)
+                foreach (var pte in employee.ProjectTasksEmployees)
                 {
-                    if (!task.ProjectTask.Completed)
+                    if (!pte.Task.Completed)
                     {
-                        await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "IN_PROGRESS", "ProjectTask", task.TaskId);
+                        await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "IN_PROGRESS", "ProjectTask", pte.TaskId);
                     }
                     else
                     {
-                        await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_COMPLETED", "ProjectTask", task.TaskId);
+                        await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_COMPLETED", "ProjectTask", pte.TaskId);
                     }
                 }
                 foreach (var sm in employee.StressMeasures)
@@ -269,7 +254,7 @@ namespace Migrator.Services
                 {
                     Console.WriteLine("Error between employee and Department");
                 }
-                if (employee.Position != null)
+                if (employee.PositionId != null)
                 {
                     await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "OCCUPIES", "Position", employee.PositionId);
                 }
@@ -312,7 +297,7 @@ namespace Migrator.Services
             {
                 foreach (var nested in item.ProjectTasksEmployees)
                 {
-                    if (!nested.ProjectTask.Completed)
+                    if (!nested.Task.Completed)
                     {
                         await _neo4j.CreateRelationshipAsync("Employee", item.Id, "IN_PROGRESS", "ProjectTask", nested.TaskId);
                     }
@@ -351,14 +336,11 @@ namespace Migrator.Services
             await MigrateDiscProfilesAsync(data);
             await MigrateEmployeePrivateDataAsync(data);
             await MigratePositionsAsync(data);
-            //await MigrateUserRolesAsync(data);
             await MigrateUsersAsync(data);
             await MigrateStressMeasuresAsync(data);
             await MigrateProjectTasksAsync(data);
             await MigrateProjectsAsync(data);
             await MigrateEmployeesAsync(data);
-            // Call other migration methods here
-            //await CreateRelationships(data);
 
         }
     }
