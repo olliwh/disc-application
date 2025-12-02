@@ -26,53 +26,65 @@ namespace seeder
                 string sqlCreateStoredProcEdit = await ReadSqlFile("createStoredProcEdit.sql");
                 string sqlCreateView = await ReadSqlFile("createView.sql");
                 string sqlInsertData = await ReadSqlFile("insertDataQuery.sql");
-                bool success = await TryExecuteNonQueryWithRetry(connectionString, sqlCreateStoredProc);
-                if (!success)
-                {
-                    Console.WriteLine("Seeding failed after retries.");
-                    Environment.Exit(1);
-                }
+                await WaitForTable(connectionString, "dbo.stress_measures");
+                
                 // Execute scripts
+                await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
                 await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
                 await ExecuteNonQuery(connectionString, sqlCreateView);
-                success = await TryExecuteNonQueryWithRetry(connectionString, sqlInsertData);
-                if (!success)
-                {
-                    Console.WriteLine("Seeding failed after retries.");
-                    Environment.Exit(1);
-                }
-
+                await ExecuteNonQuery(connectionString, sqlInsertData);
                 Console.WriteLine("Seeder completed successfully!");
+            }
+            catch (SqlException ex)
+            {
+                // SQL Server error codes for unique constraint violation: 2627, 2601
+                if (ex.Number == 2627 || ex.Number == 2601)
+                {
+                    Console.WriteLine($"Unique constraint violation encountered: {ex.Message}");
+                    // Continue execution, do not throw
+                }
+                else
+                {
+                    Console.WriteLine($" Query failed: {ex.Message}");
+                    throw;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                Environment.Exit(1);
+                throw;
+            }
+
+        }
+        static async Task<bool> TableExists(string connectionString, string tableName)
+        {
+            string sql = $"SELECT OBJECT_ID('{tableName}', 'U') AS TableId;";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                await connection.OpenAsync();
+                var result = await command.ExecuteScalarAsync();
+                return result != DBNull.Value && result != null;
             }
         }
-        static async Task<bool> TryExecuteNonQueryWithRetry(string connectionString, string sqlQuery, int maxRetries = 5, int delayMs = 10000)
+        static async Task WaitForTable(string connectionString, string tableName, int maxRetries = 20, int delayMs = 3000)
         {
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                try
+                if (await TableExists(connectionString, tableName))
                 {
-                    await ExecuteNonQuery(connectionString, sqlQuery);
-                    return true; 
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Attempt {attempt} failed: {ex.Message}");
-                    if (attempt == maxRetries)
-                    {
-                        Console.WriteLine("Max retry attempts reached. Giving up.");
-                        return false;
-                    }
-                    Console.WriteLine($"Waiting {delayMs / 1000} seconds before retrying...");
+                    Console.WriteLine($"Table '{tableName}' exists.");
                     await Task.Delay(delayMs);
+
+                    return;
                 }
+                Console.WriteLine($"Table '{tableName}' does not exist. Attempt {attempt}/{maxRetries}. Waiting {delayMs / 1000} seconds before retrying...");
+                await Task.Delay(delayMs);
             }
-            return false;
+            Console.WriteLine($"Table '{tableName}' did not appear after {maxRetries} attempts. Giving up.");
+            Environment.Exit(1);
         }
+
 
         static async Task<string> ReadSqlFile(string filename)
         {
