@@ -15,7 +15,7 @@ class Program
         
         string connectionString = $"Server={DB_HOST},{DB_PORT};Database={DB_NAME};User Id={DB_USER};Password={DB_PASSWORD};TrustServerCertificate=True;";
 
-        Console.WriteLine($"📍 Connecting to: {DB_HOST}:{DB_PORT}/{DB_NAME}");
+        Console.WriteLine($"Connecting to: {DB_HOST}:{DB_PORT}/{DB_NAME}");
 
         try
         {
@@ -48,12 +48,12 @@ class Program
                 throw new FileNotFoundException($"SQL file not found: {filename}");
             }
             string content = await File.ReadAllTextAsync(filename);
-            Console.WriteLine($"✓ Read {filename} ({content.Length} bytes)");
+            Console.WriteLine($"Read {filename} ({content.Length} bytes)");
             return content;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Failed to read {filename}: {ex.Message}");
+            Console.WriteLine($"Failed to read {filename}: {ex.Message}");
             throw;
         }
     }
@@ -70,11 +70,11 @@ class Program
                 await connection.OpenAsync();
                 Console.WriteLine("  → Executing query...");
                 int rowsAffected = await command.ExecuteNonQueryAsync();
-                Console.WriteLine($"  ✓ Query executed ({rowsAffected} rows affected)");
+                Console.WriteLine($"Query executed ({rowsAffected} rows affected)");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"  ❌ Query failed: {ex.Message}");
+                Console.WriteLine($" Query failed: {ex.Message}");
                 throw;
             }
         }

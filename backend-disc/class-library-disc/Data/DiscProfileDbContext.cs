@@ -355,7 +355,7 @@ public partial class DiscProfileDbContext : DbContext
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FK__project_t__emplo__2A363CC5");
 
-            entity.HasOne(d => d.Task).WithMany(p => p.ProjectTasksEmployees)
+            entity.HasOne(d => d.ProjectTask).WithMany(p => p.ProjectTasksEmployees)
                 .HasForeignKey(d => d.TaskId)
                 .HasConstraintName("FK__project_t__task___2942188C");
         });

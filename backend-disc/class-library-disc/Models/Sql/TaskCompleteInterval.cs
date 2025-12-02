@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace class_library_disc.Models.Sql;
 
+// where does this come from
+
 public partial class TaskCompleteInterval
 {
     public int Id { get; set; }
