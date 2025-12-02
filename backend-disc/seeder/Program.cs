@@ -27,7 +27,8 @@ namespace seeder
                 string sqlCreateView = await ReadSqlFile("createView.sql");
                 string sqlInsertData = await ReadSqlFile("insertDataQuery.sql");
                 await WaitForTable(connectionString, "dbo.stress_measures");
-                
+                await WaitForTable(connectionString, "dbo.employees");
+
                 // Execute scripts
                 await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
                 await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
@@ -67,7 +68,7 @@ namespace seeder
                 return result != DBNull.Value && result != null;
             }
         }
-        static async Task WaitForTable(string connectionString, string tableName, int maxRetries = 20, int delayMs = 3000)
+        static async Task WaitForTable(string connectionString, string tableName, int maxRetries = 25, int delayMs = 5000)
         {
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
