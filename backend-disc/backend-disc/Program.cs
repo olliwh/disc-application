@@ -1,8 +1,9 @@
 using backend_disc.Dtos.Departments;
-using backend_disc.Dtos.Positions;
 using backend_disc.Dtos.DiscProfiles;
+using backend_disc.Dtos.Positions;
 using backend_disc.Models;
 using backend_disc.Repositories;
+using backend_disc.Repositories.Neo4J;
 using backend_disc.Services;
 using class_library_disc.Data;
 using class_library_disc.Models.Sql;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Neo4j.Driver;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,6 +87,17 @@ builder.Services.AddAutoMapper(
     cfg => { }, // optional config lambda 
     typeof(AutoMapperProfile) // where to find mappers
 );
+// Neo4j driver registration
+builder.Services.AddSingleton<IDriver>(provider =>
+{
+    var config = builder.Configuration;
+
+    return GraphDatabase.Driver(
+        config["Neo4j:Uri"],
+        AuthTokens.Basic(config["Neo4j:User"], config["Neo4j:Password"])
+    );
+});
+
 
 builder.Services.AddScoped<IGenericService<DepartmentDto, CreateDepartmentDto, UpdateDepartmentDto>,
     GenericService<Department, DepartmentDto, CreateDepartmentDto, UpdateDepartmentDto>>();
@@ -94,7 +107,7 @@ builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, Updat
     GenericService<Position, PositionDto, CreatePositionDto, UpdatePositionDto>>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
+builder.Services.AddScoped<IEmployeesRepository, EmployeesNeo4JRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 

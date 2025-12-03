@@ -74,7 +74,7 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
         //NullReferenceException if fk doesnt exist
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateNewEmployee dto)
         {
             try
