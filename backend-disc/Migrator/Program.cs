@@ -19,34 +19,45 @@ async Task ConnectToDatabase(IConfiguration config)
         return;
     }
 
-    Console.WriteLine($"Connecting to database...");
+    Console.WriteLine("Connecting to database...");
 
     var options = new DbContextOptionsBuilder<DiscProfileDbContext>()
         .UseSqlServer(connectionString)
         .Options;
 
     var dbContext = new DiscProfileDbContext(options);
+    var fetcher = new SqlDataFetcher(dbContext);
+    var data = await fetcher.FetchAllDataAsync();
 
     try
     {
-        var fetcher = new SqlDataFetcher(dbContext);
+        try
+        {
+            var mongodb = new MongoConnection();
+            await mongodb.DropAndRecreateDatabaseAsync();
+            var mongoMigrator = new MigrateToMongo(mongodb);
+            await mongoMigrator.MigrateDataToMongoAsync(data);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Migration to MongoDB failed: {ex.Message}");
+        }
 
-        Console.WriteLine("Data fetched successfully. Testing Neo4j connection...\n");
+        try
+        {
+            var neo4j = new Neo4JConnection();
+            await neo4j.RecreateDatabaseAsync();
 
-        var neo4j = new Neo4JConnection();
-        await neo4j.RecreateDatabaseAsync();
+            var neo4jMigrator = new MigrateToNeo4J(neo4j);
+            await neo4jMigrator.MigrateDataToNeo4jAsync(data);
 
-        var migrator = new MigrateToNeo4J(neo4j, fetcher);
-        migrator.MigrateDataToNeo4jAsync().Wait();
-
-        await neo4j.TestConnectionAsync();
-
-
-        await neo4j.CloseAsync();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed: {ex.Message}");
+            await neo4j.TestConnectionAsync();
+            await neo4j.CloseAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Migration to Neo4j failed: {ex.Message}");
+        }
     }
     finally
     {

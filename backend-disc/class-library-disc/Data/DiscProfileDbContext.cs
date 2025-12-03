@@ -319,9 +319,6 @@ public partial class DiscProfileDbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Completed).HasColumnName("completed");
-            entity.Property(e => e.Evaluation)
-                .HasMaxLength(255)
-                .HasColumnName("evaluation");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");

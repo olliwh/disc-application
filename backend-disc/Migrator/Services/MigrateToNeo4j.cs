@@ -7,12 +7,10 @@ namespace Migrator.Services
     public class MigrateToNeo4J
     {
         private readonly Neo4JConnection _neo4j;
-        private readonly SqlDataFetcher _dataFetcher;
 
-        public MigrateToNeo4J(Neo4JConnection neo4j, SqlDataFetcher dataFetcher)
+        public MigrateToNeo4J(Neo4JConnection neo4j)
         {
             _neo4j = neo4j;
-            _dataFetcher = dataFetcher;
         }
 
         public async Task MigrateCompanysAsync(FetchedData data)
@@ -164,15 +162,14 @@ namespace Migrator.Services
                     { "id", pt.Id },
                     { "name", pt.Name },
                     { "completed", pt.Completed },
-                    { "time_of_completion", pt.TimeOfCompletion },
-                    { "evaluation", pt.Evaluation }
+                    { "time_of_completion", pt.TimeOfCompletion }
                 };
                 await _neo4j.CreateNodeAsync(nodeName, dict);
                 foreach (var sm in pt.StressMeasures)
                 {
                     await _neo4j.CreateRelationshipAsync("ProjectTask", pt.Id, "MEASSURED_TO", "StressMeassure", sm.Id);
                 }
-                if(pt.TimeToComplete != null)
+                if (pt.TimeToComplete != null)
                 {
                     await _neo4j.CreateRelationshipAsync("ProjectTask", pt.Id, "FINNISHED_IN", "CompletionInterval", pt.TimeToComplete.Id);
                 }
@@ -274,11 +271,11 @@ namespace Migrator.Services
 
                 foreach (var project in employee.EmployeesProjects)
                 {
-                    if(project.IsProjectManager) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "IS_MANAGER", "Project", project.ProjectId);
-                    if(project.CurrentlyWorkingOn) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "CURRENTLY_WORKING_ON", "Project", project.ProjectId);
+                    if (project.IsProjectManager) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "IS_MANAGER", "Project", project.ProjectId);
+                    if (project.CurrentlyWorkingOn) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "CURRENTLY_WORKING_ON", "Project", project.ProjectId);
                     else await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_WORKED_ON", "Project", project.ProjectId);
                 }
-                if(employee.User != null)
+                if (employee.User != null)
                 {
                     if (employee.User.UserRoleId == 1) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_ADMIN_ROLE", "User", employee.User.EmployeeId);
                     else if (employee.User.UserRoleId == 2) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_MANAGER_ROLE", "User", employee.User.EmployeeId);
@@ -291,7 +288,7 @@ namespace Migrator.Services
         }
 
 
-        public async Task CreateRelationships(FetchedData data) 
+        public async Task CreateRelationships(FetchedData data)
         {
             foreach (var item in data.Employees)
             {
@@ -311,21 +308,20 @@ namespace Migrator.Services
                     await _neo4j.CreateRelationshipAsync("StressMeassure", nested.Id, "MEASSURED_BY", "Employee", item.Id);
                 }
             }
-            foreach(var item in data.ProjectTasks)
+            foreach (var item in data.ProjectTasks)
             {
-                foreach(var nested in item.StressMeasures)
+                foreach (var nested in item.StressMeasures)
                 {
                     await _neo4j.CreateRelationshipAsync("StressMeassure", nested.Id, "MEASSURES_TO", "ProjectTask", item.Id);
                 }
             }
 
         }
-        public async Task MigrateDataToNeo4jAsync()
+        public async Task MigrateDataToNeo4jAsync(FetchedData data)
         {
             Console.WriteLine("MigrateDataToNeo4jAsync function");
 
-            FetchedData data = await _dataFetcher.FetchAllDataAsync();
-            if(data == null)
+            if (data == null)
             {
                 Console.WriteLine("No data fetched to migrate.");
                 return;
