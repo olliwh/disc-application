@@ -15,8 +15,6 @@ public partial class ProjectTask
 
     public int? TimeToCompleteId { get; set; }
 
-    public string? Evaluation { get; set; }
-
     public int ProjectId { get; set; }
 
     public virtual Project Project { get; set; } = null!;

@@ -7,15 +7,9 @@ employees:
   "work_email": "admin@h.ok",
   "work_phone": "88888888",
   "image_path": "default_img",
-  "user_account": {
-    "username": "admin",
-    "requires_reset": false,
-    "user_role_id": 1
-  },
-  "private_data": {
-    "private_email": "user@mail.com",
-    "private_phone": "11112222"
-  },
+  "private_email": "user@mail.com",
+  "private_phone": "11112222",
+  "user_role_id": 1,
   "department": {
     "_id": 1,
     "name": "IT",
@@ -89,7 +83,7 @@ projects:
   ]
 }
 
-USERS:
+users:
   {
   "employee_id": 1,
   "username": "jdoe",
