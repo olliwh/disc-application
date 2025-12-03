@@ -116,25 +116,23 @@ internal class MigrateToMongo
             WorkEmail = employee.WorkEmail,
             WorkPhone = employee.WorkPhone ?? "",
             ImagePath = employee.ImagePath,
-            DiscProfileId = employee.DiscProfileId.HasValue && discProfilesMap.ContainsKey(employee.DiscProfileId.Value)
-                ? discProfilesMap[employee.DiscProfileId.Value]
-                : null,
+            DiscProfileId = employee.DiscProfileId,
             PrivateEmail = employee.EmployeePrivateDatum?.PrivateEmail ?? "",
             PrivatePhone = employee.EmployeePrivateDatum?.PrivatePhone ?? "",
-            UserRoleId = employee.User != null && userRolesMap.ContainsKey(employee.User.UserRoleId)
-                ? userRolesMap[employee.User.UserRoleId]
-                : MongoDB.Bson.ObjectId.Empty,
+            UserRoleId = employee.User.UserRoleId,
             CurrentProjects = employee.EmployeesProjects
                 .Where(ep => ep.CurrentlyWorkingOn)
                 .Select(ep => projectsMap.ContainsKey(ep.ProjectId) ? projectsMap[ep.ProjectId] : (MongoDB.Bson.ObjectId?)null)
                 .ToList(),
             Department = new DepartmentMongo
             {
+                DepartmentId = employee.DepartmentId,
                 Name = employee.Department.Name,
                 Description = employee.Department.Description ?? ""
             },
             Position = employee.Position != null ? new PositionMongo
             {
+                PositionId = employee.PositionId,
                 Name = employee.Position.Name,
                 Description = employee.Position.Description
             } : null
