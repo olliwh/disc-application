@@ -14,7 +14,7 @@ COPY backend-disc/backend-disc/ backend-disc/
 COPY backend-disc/class-library-disc/ class-library-disc/
 
 # Build and publish (PRODUCTION - Release mode)
-RUN dotnet publish backend-disc/backend-disc.csproj -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish backend-disc/backend-disc.csproj -c Release -o /app/publish
 
 # Runtime stage - smaller image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
