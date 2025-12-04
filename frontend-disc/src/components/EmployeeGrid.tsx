@@ -20,7 +20,12 @@ const EmployeeGrid = () => {
       next={fetchNextPage}
       hasMore={hasNextPage ?? false}
       loader={<Spinner />}
-      scrollThreshold={1}
+      scrollThreshold={0.8}
+      endMessage={
+        <Text textAlign="center" py={4}>
+          No more employees to load
+        </Text>
+      }
     >
       {error && <Text color="tomato">{error.message}</Text>}
       <SimpleGrid
