@@ -21,26 +21,40 @@ namespace backend_disc.Controllers
             _logger = logger;
         }
 
+        //[HttpGet]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //public async Task<IActionResult> GetAll(
+        //    [FromQuery] int? departmentId = null,
+        //    [FromQuery] int? discProfileId = null,
+        //    [FromQuery] int? positionId = null,
+        //    [FromQuery] string? search = null,
+        //    [FromQuery] int pageIndex = 1,
+        //    [FromQuery] int pageSize = 12)
+        //{
+        //    var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+        //    return Ok(employees);
+        //}
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
-            [FromQuery] int? departmentId = null,
-            [FromQuery] int? discProfileId = null,
-            [FromQuery] int? positionId = null,
-            [FromQuery] string? search = null,
-            [FromQuery] int pageIndex = 1,
-            [FromQuery] int pageSize = 12)
-        {
-            var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
-            return Ok(employees);
-        }
+        [FromQuery] string db = "mssql",
+        [FromQuery] int? departmentId = null,
+        [FromQuery] int? discProfileId = null,
+        [FromQuery] int? positionId = null,
+        [FromQuery] string? search = null,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 12)
+            {
+                var employees = await _employeeService.GetAll(db, departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+                return Ok(employees);
+            }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize]
-        public virtual async Task<IActionResult> GetById(int id)
+        public virtual async Task<IActionResult> GetById(int id, [FromQuery] string db = "mssql")
         {
             // Get employeeId from token
             var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
@@ -59,7 +73,7 @@ namespace backend_disc.Controllers
                 return Forbid();
             }
 
-            var view = await _employeeService.GetByIdAsync(id);
+            var view = await _employeeService.GetByIdAsync(db, id);
             if (view == null) return NotFound();
             return Ok(view);
         }
@@ -74,12 +88,12 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
         //NullReferenceException if fk doesnt exist
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateEmployee([FromBody] CreateNewEmployee dto)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateEmployee([FromBody] CreateNewEmployee dto, [FromQuery] string db = "mssql")
         {
             try
             {
-                var employee = await _employeeService.CreateEmployee(dto);
+                var employee = await _employeeService.CreateEmployee(db, dto);
                 if (employee == null)
                 {
                     _logger.LogError("Employee service returned null");
@@ -101,7 +115,7 @@ namespace backend_disc.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex, "Database operation failed when creating employee");
-                return StatusCode(500, new { message = ex.Message});
+                return StatusCode(500, new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -112,9 +126,9 @@ namespace backend_disc.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public virtual async Task<IActionResult> Delete(int id)
+        public virtual async Task<IActionResult> Delete(int id, [FromQuery] string db = "mssql")
         {
-            var deleted = await _employeeService.DeleteAsync(id);
+            var deleted = await _employeeService.DeleteAsync(db,id);
             if (deleted == null) return NotFound();
             return Ok(deleted);
         }
@@ -126,7 +140,7 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize]
-        public virtual async Task<IActionResult> Update(int id, [FromBody] UpdatePrivateDataDto updateDto)
+        public virtual async Task<IActionResult> Update(int id, [FromBody] UpdatePrivateDataDto updateDto, [FromQuery] string db = "mssql")
         {
             // Get employeeId from token
             var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
@@ -144,7 +158,7 @@ namespace backend_disc.Controllers
 
             try
             {
-                var updated = await _employeeService.UpdatePrivateDataAsync(id, updateDto);
+                var updated = await _employeeService.UpdatePrivateDataAsync(db, id, updateDto);
                 return Ok(new { id = updated });
             }
             catch (ArgumentException ex)

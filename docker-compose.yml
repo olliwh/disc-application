@@ -18,6 +18,43 @@ services:
       retries: 10
       start_period: 30s
 
+  mongo:
+    image: mongo:7
+    container_name: disc-mongo
+    ports:
+      - "27018:27017"   # external:internal
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mongosh", "--username", "root", "--password", "${MONGO_PASSWORD}", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  neo4jdb:
+    image: neo4j:latest
+    container_name: disc-neo4j
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/var/lib/neo4j/import
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
+      - NEO4J_dbms_memory_heap_max__size=1G
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "${NEO4J_USER}", "-p", "${NEO4J_PASSWORD}", "RETURN 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   backend-disc:
     container_name: backend-disc
     build:
@@ -32,6 +69,10 @@ services:
       - "5000:5000"
     depends_on:
       mssql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      neo4jdb:
         condition: service_healthy
     volumes:
       - ./backend-disc:/src
@@ -79,6 +120,10 @@ services:
       replicas: 1    # 0 prevents seeder from starting automatically
 # to run with seeder: docker compose up -d --scale seeder=1
 
-# volumes:
+volumes:
 #   mssql-data:
+  mongo_data:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:
 

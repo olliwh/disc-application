@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.Employees;
+using backend_disc.Factories;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
@@ -11,7 +12,6 @@ namespace backend_disc.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeesRepository _employeeRepository;
         private readonly IUserRepository _userRepository;
         private readonly IGenericRepository<Company> _companiesRepository;
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
@@ -19,15 +19,17 @@ namespace backend_disc.Services
         private static readonly object _randomLock = new();
         private readonly IMapper _mapper;
         private readonly ILogger<EmployeeService> _logger;
+        private readonly IEmployeeRepositoryFactory _factory;
 
-        public EmployeeService(IEmployeesRepository employeeRepository, IUserRepository userRepository,
-            IGenericRepository<Company> companiesRepository, IMapper mapper, ILogger<EmployeeService> logger)
+        public EmployeeService(IUserRepository userRepository,
+            IGenericRepository<Company> companiesRepository, IMapper mapper, ILogger<EmployeeService> logger,
+            IEmployeeRepositoryFactory factory)
         {
-            _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _companiesRepository = companiesRepository;
             _mapper = mapper;
             _logger = logger;
+            _factory = factory;
         }
 
         /// <summary>
@@ -36,8 +38,10 @@ namespace backend_disc.Services
         /// <param name="dto"></param>
         /// <returns>EmployeeDto</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<EmployeeDto?> CreateEmployee(CreateNewEmployee dto)
+        public async Task<EmployeeDto?> CreateEmployee(string dbType, CreateNewEmployee dto)
         {
+            var repo = _factory.GetRepository(dbType);
+
             if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
                 throw new ArgumentException("First name and last name are required");
 
@@ -51,7 +55,7 @@ namespace backend_disc.Services
             try
             {
                 Dictionary<string, string> usernameWorkMailAndPhone =
-                    await GenerateUsernameWorkMailAndPhone(dto.FirstName, dto.LastName);
+                    await GenerateUsernameWorkMailAndPhone(repo, dto.FirstName, dto.LastName);
 
                 dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
                 dto.WorkPhone = usernameWorkMailAndPhone["phoneNumber"];
@@ -64,7 +68,7 @@ namespace backend_disc.Services
                 if (employeeSPParams == null)
                     throw new InvalidOperationException("Failed to map employee data");
 
-                var employee = await _employeeRepository.AddEmployeeSPAsync(employeeSPParams);
+                var employee = await repo.AddEmployeeSPAsync(employeeSPParams);
 
                 if (employee == null)
                     throw new InvalidOperationException("Failed to create employee - no employee returned from database");
@@ -97,9 +101,11 @@ namespace backend_disc.Services
             string hash = Argon2.Hash(password);
             return hash;
         }
-        public async Task<EmployeeOwnProfileDto?> GetByIdAsync(int id)
+        public async Task<EmployeeOwnProfileDto?> GetByIdAsync(string dbType, int id)
         {
-            var entity = await _employeeRepository.GetById(id);
+            var repo = _factory.GetRepository(dbType);
+
+            var entity = await repo.GetById(id);
             return _mapper.Map<EmployeeOwnProfileDto?>(entity);
         }
 
@@ -112,11 +118,11 @@ namespace backend_disc.Services
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>Dictionary<string, string></returns>
-        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(string firstName, string lastName)
+        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo, string firstName, string lastName)
         {
             var company = await _companiesRepository.GetById(1);
             if (company == null)
-                { throw new KeyNotFoundException($"Company with ID {1} not found"); }
+            { throw new KeyNotFoundException($"Company with ID {1} not found"); }
             string username;
             bool usernameAlreadyExists;
             int attempts = 0;
@@ -143,7 +149,7 @@ namespace backend_disc.Services
             {
                 phoneNumber = GetRandomDigits(8);
 
-                phoneNumberAlreadyExists = await _employeeRepository.PhoneNumExists(phoneNumber);
+                phoneNumberAlreadyExists = await repo.PhoneNumExists(phoneNumber);
                 attempts++;
                 if (attempts >= maxAttempts)
                 {
@@ -180,8 +186,11 @@ namespace backend_disc.Services
                 }
             return stringBuilder.ToString();
         }
-        public async Task<PaginatedList<ReadEmployee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<PaginatedList<ReadEmployee>> GetAll(string dbType, int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
+            var repo = _factory.GetRepository(dbType);
+            Console.WriteLine(repo);
+            Console.WriteLine(dbType);
             if (pageIndex < 1)
             {
                 pageIndex = 1;
@@ -196,9 +205,9 @@ namespace backend_disc.Services
             {
                 pageSize = 50;
             }
-            var employees = await _employeeRepository.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+            var employees = await repo.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
-            var mapped =  employees.Items.Select(e => new ReadEmployee
+            var mapped = employees.Items.Select(e => new ReadEmployee
             {
                 Id = e.Id,
                 FirstName = e.FirstName,
@@ -215,18 +224,23 @@ namespace backend_disc.Services
 
             return new PaginatedList<ReadEmployee>(mapped, employees.PageIndex, employees.TotalCount, employees.PageSize);
         }
-        public async Task<int?> DeleteAsync(int id)
+        
+        public async Task<int?> DeleteAsync(string dbType, int id)
         {
-            var deleted = await _employeeRepository.Delete(id);
+            var repo = _factory.GetRepository(dbType);
+
+            var deleted = await repo.Delete(id);
             return deleted;
         }
 
-        public async Task<int?> UpdatePrivateDataAsync(int id, UpdatePrivateDataDto updateDto)
+        public async Task<int?> UpdatePrivateDataAsync(string dbType, int id, UpdatePrivateDataDto updateDto)
         {
+            var repo = _factory.GetRepository(dbType);
+
             if (string.IsNullOrWhiteSpace(updateDto.PrivateEmail) || string.IsNullOrWhiteSpace(updateDto.PrivatePhone))
                 throw new ArgumentException("Private email and phone cannot be empty");
 
-            return await _employeeRepository.UpdatePrivateData(id, updateDto.PrivateEmail, updateDto.PrivatePhone);
+            return await repo.UpdatePrivateData(id, updateDto.PrivateEmail, updateDto.PrivatePhone);
         }
 
     }
