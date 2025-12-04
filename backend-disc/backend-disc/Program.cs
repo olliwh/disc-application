@@ -163,10 +163,15 @@ app.UseAuthorization();
 app.UseCors("AllowFrontend");
 
 app.MapControllers();
-using (var scope = app.Services.CreateScope())
+
+// Only create tables in development
+if (app.Environment.IsDevelopment())
 {
-    var db = scope.ServiceProvider.GetRequiredService<DiscProfileDbContext>();
-    await db.Database.EnsureCreatedAsync(); 
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DiscProfileDbContext>();
+        await db.Database.EnsureCreatedAsync();
+    }
 }
 
 await app.RunAsync();

@@ -44,8 +44,7 @@ internal class MigrateToMongo
             EmployeeId = user.EmployeeId,
             Username = user.Username,
             PasswordHash = user.PasswordHash,
-            RequiresReset = user.RequiresReset,
-            UserRoleId = user.UserRoleId
+            RequiresReset = user.RequiresReset
         }).ToList();
 
         await usersCollection.InsertManyAsync(userDocuments);
@@ -120,6 +119,7 @@ internal class MigrateToMongo
             PrivateEmail = employee.EmployeePrivateDatum?.PrivateEmail ?? "",
             PrivatePhone = employee.EmployeePrivateDatum?.PrivatePhone ?? "",
             UserRoleId = employee.User.UserRoleId,
+            
             CurrentProjects = employee.EmployeesProjects
                 .Where(ep => ep.CurrentlyWorkingOn)
                 .Select(ep => projectsMap.ContainsKey(ep.ProjectId) ? projectsMap[ep.ProjectId] : (MongoDB.Bson.ObjectId?)null)
@@ -226,8 +226,9 @@ internal class MigrateToMongo
             Console.WriteLine("No data fetched to migrate.");
             return;
         }
-
+        await MigrateCompaniesAsync(data);
         await MigrateDiscProfilesAsync(data);
+        await MigrateUsersAsync(data);
         await MigrateUserRolesAsync(data);
         await MigrateProjectsAsync(data);
         await MigrateEmployeesAsync(data);
