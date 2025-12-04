@@ -14,6 +14,7 @@ namespace backend_disc.Repositories.Neo4J
     {
         private readonly IDriver _driver;
         private readonly ILogger<EmployeesNeo4JRepository> _logger;
+        private readonly string dbName = "neo4j";
 
         public EmployeesNeo4JRepository(IDriver driver, ILogger<EmployeesNeo4JRepository> logger)
         {
@@ -21,7 +22,7 @@ namespace backend_disc.Repositories.Neo4J
             _logger = logger;
         }
 
-        public async Task<PaginatedList<Employee>> GetAll(
+                public async Task<PaginatedList<Employee>> GetAll(
              int? departmentId,
              int? discProfileId,
              int? positionId,
@@ -29,14 +30,9 @@ namespace backend_disc.Repositories.Neo4J
              int pageIndex,
              int pageSize)
         {
-            var session = _driver.AsyncSession(o => o.WithDatabase("discprofileneo4jdb"));
+            var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
-                var testResult = await session.RunAsync("MATCH (e:Employee) RETURN count(e) AS cnt");
-                var testRecord = await testResult.SingleAsync();
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                Console.WriteLine("Employee count: " + testRecord["cnt"].As<int>());
-                // Build WHERE conditions dynamically
                 var conditions = new List<string>();
                 var parameters = new Dictionary<string, object>
                 {
@@ -72,9 +68,25 @@ namespace backend_disc.Repositories.Neo4J
                     ? "WHERE " + string.Join(" AND ", conditions)
                     : "";
 
+                // Include OPTIONAL MATCH only when NOT filtering
+                var optionalDepartmentMatch = !departmentId.HasValue
+                    ? "OPTIONAL MATCH (e)-[:WORKS_IN]->(d:Department)"
+                    : "";
+
+                var optionalDiscProfileMatch = !discProfileId.HasValue
+                    ? "OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)"
+                    : "";
+
+                var optionalPositionMatch = !positionId.HasValue
+                    ? "OPTIONAL MATCH (e)-[:OCCUPIES]->(p:Position)"
+                    : "";
+
                 // 🔹 Get total count
                 var countQuery = $@"
         MATCH (e:Employee)
+        {optionalDepartmentMatch}
+        {optionalDiscProfileMatch}
+        {optionalPositionMatch}
         {whereClause}
         RETURN count(e) AS totalCount";
 
@@ -82,14 +94,16 @@ namespace backend_disc.Repositories.Neo4J
                 var countRecord = await countResult.SingleAsync();
                 var totalCount = countRecord["totalCount"].As<int>();
 
-                // 🔹 Get paginated results - Use $$ to escape the $ for Neo4j parameters
+                // 🔹 Get paginated results
                 var dataQuery = $@"
         MATCH (e:Employee)
+        {optionalDepartmentMatch}
+        {optionalDiscProfileMatch}
+        {optionalPositionMatch}
         {whereClause}
-        OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)
-        RETURN e, dp
-SKIP $skip LIMIT $limit";
-                Console.WriteLine(dataQuery);
+        RETURN e, d, dp, p
+        SKIP $skip LIMIT $limit";
+                
                 var result = await session.RunAsync(dataQuery, parameters);
                 var employees = new List<Employee>();
 
@@ -97,11 +111,22 @@ SKIP $skip LIMIT $limit";
                 {
                     var eNode = record["e"].As<INode>();
 
-                    // Proper null check for OPTIONAL MATCH
+                    INode? dNode = null;
+                    if (record["d"] != null && record["d"].As<object>() != null)
+                    {
+                        dNode = record["d"].As<INode>();
+                    }
+
                     INode? dpNode = null;
                     if (record["dp"] != null && record["dp"].As<object>() != null)
                     {
                         dpNode = record["dp"].As<INode>();
+                    }
+
+                    INode? pNode = null;
+                    if (record["p"] != null && record["p"].As<object>() != null)
+                    {
+                        pNode = record["p"].As<INode>();
                     }
 
                     var employee = new Employee
@@ -112,6 +137,8 @@ SKIP $skip LIMIT $limit";
                         WorkEmail = eNode["work_email"].As<string>(),
                         WorkPhone = eNode["work_phone"].As<string>(),
                         ImagePath = eNode["image_path"].As<string>(),
+                        DepartmentId = dNode["id"].As<int>(),
+                        PositionId = pNode?["id"].As<int?>(),
                         DiscProfileId = dpNode?["id"].As<int?>(),
                         DiscProfile = dpNode == null ? null : new DiscProfile
                         {
@@ -149,7 +176,7 @@ SKIP $skip LIMIT $limit";
 
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
-            var session = _driver.AsyncSession(o => o.WithDatabase("discprofileneo4jdb"));
+            var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
                 var query = @"
@@ -233,7 +260,7 @@ SKIP $skip LIMIT $limit";
 
         public async Task<EmployeesOwnProfile?> GetById(int id)
         {
-            var session = _driver.AsyncSession(o => o.WithDatabase("discprofileneo4jdb"));
+            var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
                 var query = @"
@@ -296,7 +323,7 @@ SKIP $skip LIMIT $limit";
 
         public async Task<int?> Delete(int id)
         {
-            var session = _driver.AsyncSession(o => o.WithDatabase("discprofileneo4jdb"));
+            var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
                 var query = @"
@@ -327,7 +354,7 @@ SKIP $skip LIMIT $limit";
 
         public async Task<int?> UpdatePrivateData(int id, string mail, string phone)
         {
-            var session = _driver.AsyncSession(o => o.WithDatabase("discprofileneo4jdb"));
+            var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
                 var query = @"

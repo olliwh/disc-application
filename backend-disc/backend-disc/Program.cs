@@ -2,6 +2,7 @@ using backend_disc.Dtos.Departments;
 using backend_disc.Dtos.DiscProfiles;
 using backend_disc.Dtos.Positions;
 using backend_disc.Models;
+using backend_disc.Factories;
 using backend_disc.Repositories;
 using backend_disc.Repositories.Mongo;
 using backend_disc.Repositories.Neo4J;
@@ -115,8 +116,12 @@ builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, Updat
     GenericService<Position, PositionDto, CreatePositionDto, UpdatePositionDto>>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
+//builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
+builder.Services.AddScoped<IEmployeeRepositoryFactory, EmployeeRepositoryFactory>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<EmployeesRepository>();
+builder.Services.AddScoped<EmployeesMongoRepository>();
+builder.Services.AddScoped<EmployeesNeo4JRepository>();
 
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.Employees;
+using backend_disc.Factories;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
@@ -15,6 +16,7 @@ namespace backend_disc.Services.Tests
     [TestClass()]
     public class EmployeeServiceTests
     {
+        private Mock<IEmployeeRepositoryFactory> _mockEmployeeRepositoryFactory = null!;
         private Mock<IEmployeesRepository> _mockEmployeeRepository = null!;
         private Mock<IUserRepository> _mockUserRepository = null!;
         private Mock<IGenericRepository<Company>> _mockCompanyRepository = null!;
@@ -23,6 +25,7 @@ namespace backend_disc.Services.Tests
         private Company _company = null!;
         private readonly string emailDomain = "@TechCorp.com";
         private const int length = 2;
+        private readonly string db = "mssql";
 
         private const string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private const string PASSWORD_HASH = "$argon2id$v=19$m=65536,t=3,p=1$JcD7uPdQ3ey8lapNPowUmg$ulD90DajUEOpnbsnmY1Q/pkNeoLArY5XXJlpbRi4QcY";
@@ -46,12 +49,17 @@ namespace backend_disc.Services.Tests
         [TestInitialize]
         public void Setup()
         {
+            _mockEmployeeRepositoryFactory = new Mock<IEmployeeRepositoryFactory>();
             _mockEmployeeRepository = new Mock<IEmployeesRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
             _mockCompanyRepository = new Mock<IGenericRepository<Company>>();
             _mockMapper = new Mock<IMapper>();
             _company = new Company { Id = 1, Name = "TechCorp", BusinessField = "Software", Location = "Copenhagen" };
             _mockCompanyRepository.Setup(x => x.GetById(1)).ReturnsAsync(_company);
+
+            _mockEmployeeRepositoryFactory
+             .Setup(f => f.GetRepository(It.IsAny<string>()))
+             .Returns(_mockEmployeeRepository.Object);
 
             var employees = new List<Employee>
             {
@@ -70,7 +78,7 @@ namespace backend_disc.Services.Tests
             _mockEmployeeRepository.Setup(x => x.GetAll(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(paginatedList);
 
 
-            _employeeService = new EmployeeService(_mockEmployeeRepository.Object, _mockUserRepository.Object, _mockCompanyRepository.Object, _mockMapper.Object, NullLogger<EmployeeService>.Instance);
+            _employeeService = new EmployeeService(_mockUserRepository.Object, _mockCompanyRepository.Object, _mockMapper.Object, NullLogger<EmployeeService>.Instance, _mockEmployeeRepositoryFactory.Object);
 
             _validDtoEmployee = new CreateNewEmployee()
             {
@@ -105,7 +113,7 @@ namespace backend_disc.Services.Tests
         [TestMethod()]
         public async Task GetAll_Success()
         {
-            var result = await _employeeService.GetAll(null, null, null, null, 1, 10);
+            var result = await _employeeService.GetAll(db, null, null, null, null, 1, 10);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.TotalCount);
@@ -117,7 +125,7 @@ namespace backend_disc.Services.Tests
 
             for (int i = 0; i < length; i++)
             {
-                var result = await _employeeService.GenerateUsernameWorkMailAndPhone(firstName, lastName);
+                var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, firstName, lastName);
                 string username = result["username"];
                 int digitCountUsername = username.Count(char.IsDigit);
                 string phoneNumber = result["phoneNumber"];
@@ -156,7 +164,7 @@ namespace backend_disc.Services.Tests
         public async Task GenerateUsernameWorkMailAndPhone_DictionaryStructure(string firstName, string lastName)
         {
 
-            var result = await _employeeService.GenerateUsernameWorkMailAndPhone(firstName, lastName);
+            var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, firstName, lastName);
             string username = result["username"];
             string phoneNumber = result["phoneNumber"];
             string workEmail = result["workEmail"];
@@ -182,7 +190,7 @@ namespace backend_disc.Services.Tests
             string fName = "Bob";
             string lName = "Marley";
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await _employeeService.GenerateUsernameWorkMailAndPhone(fName, lName)
+                async () => await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, fName, lName)
             );
         }
         [TestMethod()]
@@ -208,7 +216,7 @@ namespace backend_disc.Services.Tests
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(string));
-            Assert.IsTrue(result.All(char.IsDigit));    
+            Assert.IsTrue(result.All(char.IsDigit));
             Assert.AreEqual(length, result.Length);
         }
 
@@ -227,7 +235,7 @@ namespace backend_disc.Services.Tests
             _validDtoEmployee.LastName = Lname;
 
             await Assert.ThrowsExceptionAsync<ArgumentException>(
-                async () => await _employeeService.CreateEmployee(_validDtoEmployee)
+                async () => await _employeeService.CreateEmployee(db, _validDtoEmployee)
             );
 
         }
@@ -241,7 +249,7 @@ namespace backend_disc.Services.Tests
                 .ThrowsAsync(new KeyNotFoundException());
 
             await Assert.ThrowsExceptionAsync<KeyNotFoundException>(
-                async () => await _employeeService.CreateEmployee(_validDtoEmployee)
+                async () => await _employeeService.CreateEmployee(db, _validDtoEmployee)
             );
         }
 
@@ -251,7 +259,7 @@ namespace backend_disc.Services.Tests
             _mockMapper.Setup(x => x.Map<AddEmployeeSpParams?>(It.IsAny<CreateNewEmployee>())).Returns((AddEmployeeSpParams?)null);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await _employeeService.CreateEmployee(_validDtoEmployee)
+                async () => await _employeeService.CreateEmployee(db, _validDtoEmployee)
             );
         }
 
@@ -262,7 +270,7 @@ namespace backend_disc.Services.Tests
             _mockMapper.Setup(x => x.Map<AddEmployeeSpParams?>(It.IsAny<CreateNewEmployee>())).Returns(_validSpParamsEmployee);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await _employeeService.CreateEmployee(_validDtoEmployee)
+                async () => await _employeeService.CreateEmployee(db, _validDtoEmployee)
             );
         }
 
@@ -287,7 +295,7 @@ namespace backend_disc.Services.Tests
             _mockMapper.Setup(x => x.Map<EmployeeDto?>(It.IsAny<Employee>())).Returns((EmployeeDto?)null);
 
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await _employeeService.CreateEmployee(_validDtoEmployee)
+                async () => await _employeeService.CreateEmployee(db, _validDtoEmployee)
             );
         }
 

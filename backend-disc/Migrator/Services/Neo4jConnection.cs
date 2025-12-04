@@ -6,7 +6,7 @@ namespace Migrator.Services;
 public class Neo4JConnection
 {
     private readonly IDriver _driver;
-    private const string Database = "discprofileneo4jdb";
+    private const string Database = "neo4j";
     private const string Neo4jUrl = "neo4j://localhost:7687";
     private const string Neo4jUser = "neo4j";
     private const string Neo4jPassword = "12345678";
@@ -21,23 +21,27 @@ public class Neo4JConnection
 
     public async Task RecreateDatabaseAsync()
     {
-        var session = _driver.AsyncSession(o => o.WithDatabase("system"));
+        var session = _driver.AsyncSession(o => o.WithDatabase(Database));
 
         try
         {
-            Console.WriteLine($"Dropping database {Database} if it exists...");
-            await session.RunAsync($"DROP DATABASE {Database} IF EXISTS");
-            await Task.Delay(1000);
-            Console.WriteLine($"Database {Database} dropped successfully");
+            Console.WriteLine($"Clearing all nodes and relationships from {Database}...");
+            try
+            {
+                await session.RunAsync("MATCH (n) DETACH DELETE n");
+                await Task.Delay(1000);
+                Console.WriteLine($"Database {Database} cleared successfully");
+            }
+            catch (Neo4jException ex) when (ex.Message.Contains("database does not exist"))
+            {
+                Console.WriteLine($"Database {Database} does not exist, skipping clear");
+            }
 
-            Console.WriteLine($"Creating database {Database}...");
-            await session.RunAsync($"CREATE DATABASE {Database}");
-            await Task.Delay(1000);
-            Console.WriteLine($"Database {Database} created successfully");
+            Console.WriteLine($"Database {Database} is ready for migration");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error recreating database: {ex.Message}");
+            Console.WriteLine($"Error clearing database: {ex.Message}");
             throw;
         }
         finally

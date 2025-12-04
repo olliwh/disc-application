@@ -7,7 +7,7 @@ public class MongoConnection
 {
     private readonly IMongoClient _client;
     private readonly IMongoDatabase _database;
-    private const string ConnectionString = "mongodb://localhost:27018";
+    private const string ConnectionString = "mongodb://root:Pass%40word1@localhost:27018/disc_profile_mongo_db?authSource=admin";
     private const string DatabaseName = "disc_profile_mongo_db";
 
     public MongoConnection()
