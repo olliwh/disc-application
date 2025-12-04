@@ -25,8 +25,6 @@ var startupLogger = LoggerFactory.Create(config =>
     config.AddConsole();
 }).CreateLogger("Startup");
 
-startupLogger.LogInformation("App starting...");
-startupLogger.LogInformation("Connection string: {ConnectionString}", builder.Configuration.GetConnectionString("DefaultConnection"));
 
 // Add logging configuration
 builder.Services.AddLogging(config =>
