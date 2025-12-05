@@ -21,8 +21,7 @@ namespace backend_disc.Repositories.Neo4J
             _driver = driver;
             _logger = logger;
         }
-
-                public async Task<PaginatedList<Employee>> GetAll(
+        public async Task<PaginatedList<Employee>> GetAll(
              int? departmentId,
              int? discProfileId,
              int? positionId,
@@ -33,81 +32,65 @@ namespace backend_disc.Repositories.Neo4J
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
-                var conditions = new List<string>();
                 var parameters = new Dictionary<string, object>
                 {
                     ["skip"] = (pageIndex - 1) * pageSize,
                     ["limit"] = pageSize
                 };
 
+                var matchClauses = new List<string> { "MATCH (e:Employee)" };
+                var whereClause = "";
+                // Where need to be reight after match employee
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    whereClause = "WHERE (toLower(e.first_name) CONTAINS toLower($search) OR toLower(e.last_name) CONTAINS toLower($search))";
+                    parameters["search"] = search;
+                }
+                matchClauses.Add(whereClause);
+
+
                 if (departmentId.HasValue)
                 {
-                    conditions.Add("(e)-[:WORKS_IN]->(:Department {id: $departmentId})");
+                    matchClauses.Add("MATCH (e)-[:WORKS_IN]->(d:Department {id: $departmentId})");
                     parameters["departmentId"] = departmentId.Value;
+                }
+                else
+                {
+                    matchClauses.Add("OPTIONAL MATCH (e)-[:WORKS_IN]->(d:Department)");
                 }
 
                 if (discProfileId.HasValue)
                 {
-                    conditions.Add("(e)-[:BELONGS_TO]->(:DiscProfile {id: $discProfileId})");
+                    matchClauses.Add("MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile {id: $discProfileId})");
                     parameters["discProfileId"] = discProfileId.Value;
+                }
+                else
+                {
+                    matchClauses.Add("OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)");
                 }
 
                 if (positionId.HasValue)
                 {
-                    conditions.Add("(e)-[:OCCUPIES]->(:Position {id: $positionId})");
+                    matchClauses.Add("MATCH (e)-[:OCCUPIES]->(p:Position {id: $positionId})");
                     parameters["positionId"] = positionId.Value;
                 }
-
-                if (!string.IsNullOrWhiteSpace(search))
+                else
                 {
-                    conditions.Add("(toLower(e.first_name) CONTAINS toLower($search) OR toLower(e.last_name) CONTAINS toLower($search))");
-                    parameters["search"] = search;
+                    matchClauses.Add("OPTIONAL MATCH (e)-[:OCCUPIES]->(p:Position)");
                 }
 
-                var whereClause = conditions.Count > 0
-                    ? "WHERE " + string.Join(" AND ", conditions)
-                    : "";
+                var matchClause = string.Join("\n", matchClauses);
+                string countReturn = "RETURN count(e) AS totalCount";
+                string dataReturn = "RETURN e, d, dp, p\nSKIP $skip LIMIT $limit";
 
-                // Include OPTIONAL MATCH only when NOT filtering
-                var optionalDepartmentMatch = !departmentId.HasValue
-                    ? "OPTIONAL MATCH (e)-[:WORKS_IN]->(d:Department)"
-                    : "";
-
-                var optionalDiscProfileMatch = !discProfileId.HasValue
-                    ? "OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)"
-                    : "";
-
-                var optionalPositionMatch = !positionId.HasValue
-                    ? "OPTIONAL MATCH (e)-[:OCCUPIES]->(p:Position)"
-                    : "";
-
-                // 🔹 Get total count
-                var countQuery = $@"
-        MATCH (e:Employee)
-        {optionalDepartmentMatch}
-        {optionalDiscProfileMatch}
-        {optionalPositionMatch}
-        {whereClause}
-        RETURN count(e) AS totalCount";
-
-                var countResult = await session.RunAsync(countQuery, parameters);
+                var countResult = await session.RunAsync($"{matchClause}\n{countReturn}", parameters);
                 var countRecord = await countResult.SingleAsync();
                 var totalCount = countRecord["totalCount"].As<int>();
 
-                // 🔹 Get paginated results
-                var dataQuery = $@"
-        MATCH (e:Employee)
-        {optionalDepartmentMatch}
-        {optionalDiscProfileMatch}
-        {optionalPositionMatch}
-        {whereClause}
-        RETURN e, d, dp, p
-        SKIP $skip LIMIT $limit";
-                
-                var result = await session.RunAsync(dataQuery, parameters);
+                var dataResult = await session.RunAsync($"{matchClause}\n{dataReturn}", parameters);
                 var employees = new List<Employee>();
 
-                await foreach (var record in result)
+                await foreach (var record in dataResult)
                 {
                     var eNode = record["e"].As<INode>();
 
@@ -162,6 +145,8 @@ namespace backend_disc.Repositories.Neo4J
                 await session.CloseAsync();
             }
         }
+
+        
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
             // Implementation for Neo4j
@@ -177,6 +162,9 @@ namespace backend_disc.Repositories.Neo4J
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
+            var random = new Random();
+            var uniqueId = random.Next(1, int.MaxValue);
+
             try
             {
                 var query = @"
@@ -212,7 +200,7 @@ namespace backend_disc.Repositories.Neo4J
 
                 var result = await session.RunAsync(query, new
                 {
-                    id = 0, // Will be auto-generated from DB if needed, or pass from parameter
+                    id = uniqueId,
                     firstName = p.FirstName,
                     lastName = p.LastName,
                     workEmail = p.WorkEmail,

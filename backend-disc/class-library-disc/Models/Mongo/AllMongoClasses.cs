@@ -10,6 +10,8 @@ namespace class_library_disc.Models.Mongo
     {
         [BsonId]
         public ObjectId Id { get; set; }
+        [BsonElement("company_id")]
+        public int CompanyId { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
@@ -80,9 +82,12 @@ namespace class_library_disc.Models.Mongo
 
         [BsonElement("position")]
         public PositionMongo? Position { get; set; }
+        [BsonElement("user_role_id")]
 
         public int UserRoleId { get; set; }
-        public List<ObjectId?> CurrentProjects { get; set; } = new List<ObjectId?>();
+        [BsonElement("current_project_ids")]
+
+        public List<int?> CurrentProjectIds { get; set; } = [];
     }
 
     public class EmployeePrivateDataMongo
@@ -90,7 +95,7 @@ namespace class_library_disc.Models.Mongo
         [BsonId]
         public ObjectId Id { get; set; }
         [BsonElement("employee_id")]
-        public ObjectId EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
 
         [BsonElement("cpr")]
         public string Cpr { get; set; } = null!;
@@ -100,6 +105,9 @@ namespace class_library_disc.Models.Mongo
     {
         [BsonId]
         public ObjectId Id { get; set; }
+
+        [BsonElement("project_id")]
+        public int ProjectId { get; set; }
 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
@@ -117,14 +125,18 @@ namespace class_library_disc.Models.Mongo
         public int? EmployeesNeeded { get; set; }
 
         [BsonElement("employee_ids")]
-        public List<ObjectId> EmployeeIds { get; set; } = new List<ObjectId>();
+        public List<int?> EmployeeIds { get; set; } = [];
+        [BsonElement("disc_profile_ids")]
+        public List<int?> DiscProfileIds { get; set; } = [];
 
         [BsonElement("project_tasks")]
-        public List<ProjectTaskMongo> ProjectTasks { get; set; } = new List<ProjectTaskMongo>();
+        public List<ProjectTaskMongo> ProjectTasks { get; set; } = [];
     }
 
     public class ProjectTaskMongo
     {
+        [BsonElement("project_task_id")]
+        public int ProjectTaskId { get; set; }
         [BsonElement("name")]
         public string Name { get; set; } = null!;
 
@@ -138,13 +150,15 @@ namespace class_library_disc.Models.Mongo
         public string? TimeToComplete { get; set; }
 
         [BsonElement("assigned_employee_ids")]
-        public List<ObjectId> AssignedEmployeeIds { get; set; } = new List<ObjectId>();
+        public List<int?> AssignedEmployeeIds { get; set; } = [];
         [BsonElement("stress_measures")]
-        public List<StressMeasureMongo> StressMeasures { get; set; } = new List<StressMeasureMongo>();
+        public List<StressMeasureMongo> StressMeasures { get; set; } = [];
     }
 
     public class StressMeasureMongo
     {
+        [BsonElement("stress_measure_id")]
+        public int StressMeasureId { get; set; }
         [BsonElement("description")]
         public string? Description { get; set; }
 
@@ -183,9 +197,6 @@ namespace class_library_disc.Models.Mongo
 
         [BsonElement("requires_reset")]
         public bool RequiresReset { get; set; }
-
-        [BsonElement("user_role_id")]
-        public int UserRoleId { get; set; }
     }
 
     public partial class DiscProfileMongo
@@ -193,7 +204,7 @@ namespace class_library_disc.Models.Mongo
         [BsonId]
         public ObjectId Id { get; set; }
         [BsonElement("disc_profile_id")]
-        public int DiscProfileId { get; set; }
+        public int DiscProfileId { get; set; } 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
         [BsonElement("color")]

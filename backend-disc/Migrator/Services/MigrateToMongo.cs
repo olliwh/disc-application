@@ -23,6 +23,7 @@ internal class MigrateToMongo
 
         var companiesDocuments = data.Companies.Select(company => new CompanyMongo
         {
+            CompanyId = company.Id,
             Name = company.Name,
             Location = company.Location,
             BusinessField = company.BusinessField
@@ -58,6 +59,7 @@ internal class MigrateToMongo
 
         var userRolesDocuments = data.UserRoles.Select(userRole => new UserRoleMongo
         {
+            UserRoleId = userRole.Id,
             Name = userRole.Name,
             Description = userRole.Description
         }).ToList();
@@ -88,24 +90,6 @@ internal class MigrateToMongo
         var collectionName = "employees";
         var database = _mongodb.GetDatabase();
         var employeesCollection = database.GetCollection<EmployeeMongo>(collectionName);
-        var discProfilesCollection = database.GetCollection<DiscProfileMongo>("disc_profiles");
-        var userRolesCollection = database.GetCollection<UserRoleMongo>("user_roles");
-        var projectsCollection = database.GetCollection<ProjectMongo>("projects");
-
-        var discProfilesMap = (await discProfilesCollection
-            .Find(FilterDefinition<DiscProfileMongo>.Empty)
-            .ToListAsync())
-            .ToDictionary(dp => data.DiscProfiles.FirstOrDefault(d => d.Name == dp.Name)?.Id ?? 0, dp => dp.Id);
-
-        var userRolesMap = (await userRolesCollection
-            .Find(FilterDefinition<UserRoleMongo>.Empty)
-            .ToListAsync())
-            .ToDictionary(ur => data.UserRoles.FirstOrDefault(u => u.Name == ur.Name)?.Id ?? 0, ur => ur.Id);
-
-        var projectsMap = (await projectsCollection
-            .Find(FilterDefinition<ProjectMongo>.Empty)
-            .ToListAsync())
-            .ToDictionary(p => data.ProjectTasks.FirstOrDefault(pt => pt.Project.Name == p.Name)?.Project.Id ?? 0, p => p.Id);
 
         var employeeDocuments = data.Employees.Select(employee => new EmployeeMongo
         {
@@ -118,11 +102,10 @@ internal class MigrateToMongo
             DiscProfileId = employee.DiscProfileId,
             PrivateEmail = employee.EmployeePrivateDatum?.PrivateEmail ?? "",
             PrivatePhone = employee.EmployeePrivateDatum?.PrivatePhone ?? "",
-            UserRoleId = employee.User.UserRoleId,
-            
-            CurrentProjects = employee.EmployeesProjects
+            UserRoleId = employee.User?.UserRoleId ?? 0,
+            CurrentProjectIds = employee.EmployeesProjects
                 .Where(ep => ep.CurrentlyWorkingOn)
-                .Select(ep => projectsMap.ContainsKey(ep.ProjectId) ? projectsMap[ep.ProjectId] : (MongoDB.Bson.ObjectId?)null)
+                .Select(ep => (int?)ep.ProjectId)
                 .ToList(),
             Department = new DepartmentMongo
             {
@@ -148,12 +131,6 @@ internal class MigrateToMongo
         var collectionName = "projects";
         var database = _mongodb.GetDatabase();
         var projectsCollection = database.GetCollection<ProjectMongo>(collectionName);
-        var employeesCollection = database.GetCollection<EmployeeMongo>("employees");
-
-        var employeesMap = (await employeesCollection
-            .Find(FilterDefinition<EmployeeMongo>.Empty)
-            .ToListAsync())
-            .ToDictionary(e => e.EmployeeId, e => e.Id);
 
         var projects = data.ProjectTasks.Select(pt => pt.Project).DistinctBy(p => p.Id).ToList();
 
@@ -163,22 +140,27 @@ internal class MigrateToMongo
 
             return new ProjectMongo
             {
+                ProjectId = project.Id,
                 Name = project.Name,
                 Description = project.Description ?? "",
                 Deadline = project.Deadline,
                 Completed = project.Completed,
                 EmployeesNeeded = project.EmployeesNeeded ?? 0,
                 EmployeeIds = project.EmployeesProjects
-                    .Select(ep => employeesMap.ContainsKey(ep.EmployeeId) ? employeesMap[ep.EmployeeId] : MongoDB.Bson.ObjectId.Empty)
+                    .Select(ep => (int?)ep.EmployeeId)
+                    .ToList(),
+                DiscProfileIds = project.ProjectsDiscProfiles
+                    .Select(dp => (int?)dp.DiscProfileId)
                     .ToList(),
                 ProjectTasks = projectTasks.Select(task => new ProjectTaskMongo
                 {
+                    ProjectTaskId = task.Id,
                     Name = task.Name,
                     Completed = task.Completed,
                     TimeOfCompletion = task.TimeOfCompletion,
                     TimeToComplete = task.TimeToComplete?.TimeToComplete ?? "",
                     AssignedEmployeeIds = task.ProjectTasksEmployees
-                        .Select(pte => employeesMap.ContainsKey(pte.EmployeeId) ? employeesMap[pte.EmployeeId] : MongoDB.Bson.ObjectId.Empty)
+                        .Select(pte => (int?)pte.EmployeeId)
                         .ToList(),
                     StressMeasures = task.StressMeasures.Select(sm => new StressMeasureMongo
                     {
@@ -198,18 +180,10 @@ internal class MigrateToMongo
         var collectionName = "employee_private_data";
         var database = _mongodb.GetDatabase();
         var employeePrivateDataCollection = database.GetCollection<EmployeePrivateDataMongo>(collectionName);
-        var employeesCollection = database.GetCollection<EmployeeMongo>("employees");
-
-        var employeesMap = (await employeesCollection
-            .Find(FilterDefinition<EmployeeMongo>.Empty)
-            .ToListAsync())
-            .ToDictionary(e => e.EmployeeId, e => e.Id);
 
         var employeePrivateDataDocuments = data.EmployeePrivateData.Select(epd => new EmployeePrivateDataMongo
         {
-            EmployeeId = employeesMap.ContainsKey(epd.EmployeeId)
-                ? employeesMap[epd.EmployeeId]
-                : MongoDB.Bson.ObjectId.Empty,
+            EmployeeId = epd.EmployeeId,
             Cpr = epd.Cpr
         }).ToList();
 

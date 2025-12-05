@@ -17,7 +17,6 @@ namespace backend_disc.Repositories
 
         public async Task<T> Add(T entity)
         {
-            Console.WriteLine(entity);
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;

@@ -26,7 +26,7 @@ namespace backend_disc.Factories
                 "mssql" => _sqlRepo,
                 "mongodb" => _mongoRepo,
                 "neo4j" => _neoRepo,
-                _ => _sqlRepo    // default
+                _ => _sqlRepo    
             };
     }
 }

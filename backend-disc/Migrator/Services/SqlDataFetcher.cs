@@ -18,21 +18,13 @@ public class SqlDataFetcher
         try
         {
             Console.WriteLine("Fetching data from SQL Server...");
-            // Fetch Employees with their stress measures and project tasks
             var employees = await _dbContext.Employees
+
                 .Include(e => e.StressMeasures)
                 .Include(e => e.ProjectTasksEmployees)
-                    .ThenInclude(pte => pte.Task)
                 .Include(e => e.EmployeesProjects)
-                    .ThenInclude(ep => ep.Project)
-                .Include(e => e.Department)
-                .Include(e => e.Position)
-                .Include(e => e.DiscProfile)
-                .Include(e => e.User)
-                .Include(e => e.EmployeePrivateDatum)
                 .ToListAsync();
 
-            // Fetch StressMeasures with related Employee and Task
             var stressMeasures = await _dbContext.StressMeasures
                 .ToListAsync();
             var companies = await _dbContext.Companies
@@ -44,7 +36,6 @@ public class SqlDataFetcher
             var discProfiles = await _dbContext.DiscProfiles
                 .ToListAsync();
             var users = await _dbContext.Users
-                .Include(u => u.UserRole)
                 .ToListAsync();
             var employeePrivateData = await _dbContext.EmployeePrivateData
                 .ToListAsync();
@@ -52,7 +43,6 @@ public class SqlDataFetcher
                 .ToListAsync();
             var projects = await _dbContext.Projects
                 .Include(p => p.ProjectsDiscProfiles)
-                    .ThenInclude(pdp => pdp.DiscProfile)
                 .Include( p => p.ProjectTasks)
                 .ToListAsync();
             var userRoles = await _dbContext.UserRoles
@@ -60,7 +50,6 @@ public class SqlDataFetcher
 
             var projectTasks = await _dbContext.ProjectTasks
                 .Include(pt => pt.StressMeasures)
-                .Include(pt => pt.TimeToComplete)
                 .ToListAsync();
 
             return new FetchedData

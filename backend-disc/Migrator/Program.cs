@@ -51,7 +51,6 @@ async Task ConnectToDatabase(IConfiguration config)
             var neo4jMigrator = new MigrateToNeo4J(neo4j);
             await neo4jMigrator.MigrateDataToNeo4jAsync(data);
 
-            await neo4j.TestConnectionAsync();
             await neo4j.CloseAsync();
         }
         catch (Exception ex)

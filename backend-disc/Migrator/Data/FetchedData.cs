@@ -21,6 +21,5 @@ namespace Migrator.Data
         public required List<Department> Departments { get; set; }
         public required List<CompletionInterval> CompletionIntervals { get; set; }
         public required List<Company> Companies { get; set; }
-
     }
 }

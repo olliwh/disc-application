@@ -84,18 +84,15 @@ public class Neo4JConnection
 
         try
         {
-            // Construct the Cypher query
-            // toInteger is used because otherwise float values are used.
             var query = $@"
             CREATE (n:{label} $properties)
-            SET n.id = toInteger(n.id)
             RETURN n
         ";
 
             var parameters = new Dictionary<string, object>
-        {
-            { "properties", properties }
-        };
+            {
+                { "properties", properties }
+            };
 
             // Run the query to create the node
             var result = await session.RunAsync(query, parameters);
@@ -113,7 +110,8 @@ public class Neo4JConnection
         }
     }
 
-    public async Task CreateRelationshipAsync(string fromLabel, object fromId, string relationship, string toLabel, object toId)
+    public async Task CreateRelationshipAsync(string fromLabel, object fromId, 
+        string relationship, string toLabel, object toId)
     {
         var session = _driver.AsyncSession(o => o.WithDatabase(Database));
 

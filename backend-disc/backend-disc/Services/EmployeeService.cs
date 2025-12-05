@@ -189,8 +189,6 @@ namespace backend_disc.Services
         public async Task<PaginatedList<ReadEmployee>> GetAll(string dbType, int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             var repo = _factory.GetRepository(dbType);
-            Console.WriteLine(repo);
-            Console.WriteLine(dbType);
             if (pageIndex < 1)
             {
                 pageIndex = 1;
