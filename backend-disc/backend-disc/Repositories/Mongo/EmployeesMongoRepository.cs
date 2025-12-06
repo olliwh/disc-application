@@ -39,7 +39,7 @@ namespace backend_disc.Repositories.Mongo
 
                 if (departmentId.HasValue)
                 {
-                    filters.Add(filterBuilder.Eq(e => e.Department.DepartmentId, departmentId.Value));
+                    filters.Add(filterBuilder.Eq(e => e.DepartmentId, departmentId.Value));
                 }
 
                 if (discProfileId.HasValue)
@@ -49,7 +49,7 @@ namespace backend_disc.Repositories.Mongo
 
                 if (positionId.HasValue)
                 {
-                    filters.Add(filterBuilder.Eq(e => e.Position.PositionId, positionId.Value));
+                    filters.Add(filterBuilder.Eq(e => e.PositionId, positionId.Value));
                 }
 
                 if (!string.IsNullOrWhiteSpace(search))
@@ -94,8 +94,8 @@ namespace backend_disc.Repositories.Mongo
                         WorkEmail = me.WorkEmail,
                         WorkPhone = me.WorkPhone,
                         ImagePath = me.ImagePath,
-                        DepartmentId = me.Department.DepartmentId,
-                        PositionId = me.Position?.PositionId,
+                        DepartmentId = me.DepartmentId,
+                        PositionId = me?.PositionId,
                         DiscProfileId = me.DiscProfileId,
                         DiscProfile = discProfile != null ? new DiscProfile
                         {

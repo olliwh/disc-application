@@ -19,7 +19,7 @@ internal class MigrateToMongo
     {
         var collectionName = "companies";
         var database = _mongodb.GetDatabase();
-        var userCompanyCollection = database.GetCollection<CompanyMongo>(collectionName);
+        var companyCollection = database.GetCollection<CompanyMongo>(collectionName);
 
         var companiesDocuments = data.Companies.Select(company => new CompanyMongo
         {
@@ -29,10 +29,41 @@ internal class MigrateToMongo
             BusinessField = company.BusinessField
         }).ToList();
 
-        await userCompanyCollection.InsertManyAsync(companiesDocuments);
+        await companyCollection.InsertManyAsync(companiesDocuments);
         Console.WriteLine($"Created {companiesDocuments.Count} {collectionName} in MongoDB");
     }
+    public async Task MigrateDepartmentsAsync(FetchedData data)
+    {
+        var collectionName = "departments";
+        var database = _mongodb.GetDatabase();
+        var departmentCollection = database.GetCollection<DepartmentMongo>(collectionName);
 
+        var departmentDocuments = data.Departments.Select(dep => new DepartmentMongo
+        {
+            DepartmentId = dep.Id,
+            Name = dep.Name,
+            Description = dep.Description
+        }).ToList();
+
+        await departmentCollection.InsertManyAsync(departmentDocuments);
+        Console.WriteLine($"Created {departmentDocuments.Count}  {collectionName} in MongoDB");
+    }
+    public async Task MigratePositionsAsync(FetchedData data)
+    {
+        var collectionName = "positions";
+        var database = _mongodb.GetDatabase();
+        var positionCollection = database.GetCollection<PositionMongo>(collectionName);
+
+        var positionDocuments = data.Positions.Select(dep => new PositionMongo
+        {
+            PositionId = dep.Id,
+            Name = dep.Name,
+            Description = dep.Description
+        }).ToList();
+
+        await positionCollection.InsertManyAsync(positionDocuments);
+        Console.WriteLine($"Created {positionDocuments.Count}  {collectionName} in MongoDB");
+    }
 
     public async Task MigrateUsersAsync(FetchedData data)
     {
@@ -107,18 +138,8 @@ internal class MigrateToMongo
                 .Where(ep => ep.CurrentlyWorkingOn)
                 .Select(ep => (int?)ep.ProjectId)
                 .ToList(),
-            Department = new DepartmentMongo
-            {
-                DepartmentId = employee.DepartmentId,
-                Name = employee.Department.Name,
-                Description = employee.Department.Description ?? ""
-            },
-            Position = employee.Position != null ? new PositionMongo
-            {
-                PositionId = employee.PositionId,
-                Name = employee.Position.Name,
-                Description = employee.Position.Description
-            } : null
+            DepartmentId = employee.DepartmentId,
+            PositionId = employee.PositionId,
         }).ToList();
 
         await employeesCollection.InsertManyAsync(employeeDocuments);
@@ -201,6 +222,8 @@ internal class MigrateToMongo
             return;
         }
         await MigrateCompaniesAsync(data);
+        await MigrateDepartmentsAsync(data);
+        await MigratePositionsAsync(data);
         await MigrateDiscProfilesAsync(data);
         await MigrateUsersAsync(data);
         await MigrateUserRolesAsync(data);
