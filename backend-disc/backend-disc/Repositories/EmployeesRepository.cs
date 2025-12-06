@@ -13,7 +13,8 @@ namespace backend_disc.Repositories
         private readonly DiscProfileDbContext _context;
         private readonly ILogger<EmployeesRepository> _logger;
 
-        public EmployeesRepository(DiscProfileDbContext context, ILogger<EmployeesRepository> logger)
+        public EmployeesRepository(DiscProfileDbContext context, 
+            ILogger<EmployeesRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -75,7 +76,10 @@ namespace backend_disc.Repositories
             {
                 var employeeIds = await _context.Database
                     .SqlQueryRaw<int>(
-                        "EXEC sp_AddEmployee @first_name, @last_name, @work_email, @work_phone, @image_path, @department_id, @position_id, @disc_profile_id, @cpr, @private_email, @private_phone, @username, @password_hash, @user_role_id",
+                        "EXEC sp_AddEmployee @first_name, @last_name, " +
+                        "@work_email, @work_phone, @image_path, @department_id, " +
+                        "@position_id, @disc_profile_id, @cpr, @private_email, " +
+                        "@private_phone, @username, @password_hash, @user_role_id",
                         parameters)
                     .ToListAsync();
 
@@ -123,7 +127,8 @@ namespace backend_disc.Repositories
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns>Task<PaginatedList<Employee>></returns>
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, 
+            int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             IQueryable<Employee> query = _context.Employees
                 .AsNoTracking()
@@ -138,7 +143,6 @@ namespace backend_disc.Repositories
             if (positionId.HasValue)
                 query = query.Where(e => e.PositionId == positionId);
 
-            // Apply database-translatable filters first
             if (!string.IsNullOrWhiteSpace(search))
             {
                 string normalizedSearch = search.Trim().ToLower();
@@ -150,13 +154,11 @@ namespace backend_disc.Repositories
 
             int totalCount = await query.CountAsync();
 
-            // Materialize the data, then apply client-side full name search
             var employees = await query
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            // Client-side filtering for full name search (if needed)
             if (!string.IsNullOrWhiteSpace(search))
             {
                 string normalizedSearch = search.Trim().ToLower();
@@ -183,14 +185,16 @@ namespace backend_disc.Repositories
         public async Task<int?> UpdatePrivateData(int id, string mail, string phone)
         {
             if (string.IsNullOrWhiteSpace(mail) || string.IsNullOrWhiteSpace(phone))
+            {
                 throw new ArgumentException("Email and phone cannot be null or empty");
+            }
 
             var parameters = new[]
-            {
-        new SqlParameter("@id", id),
-        new SqlParameter("@private_email", mail),
-        new SqlParameter("@private_phone", phone)
-    };
+                {
+                    new SqlParameter("@id", id),
+                    new SqlParameter("@private_email", mail),
+                    new SqlParameter("@private_phone", phone)
+                };
 
             try
             {

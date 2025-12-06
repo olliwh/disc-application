@@ -22,12 +22,8 @@ namespace backend_disc.Repositories.Neo4J
             _logger = logger;
         }
         public async Task<PaginatedList<Employee>> GetAll(
-             int? departmentId,
-             int? discProfileId,
-             int? positionId,
-             string? search,
-             int pageIndex,
-             int pageSize)
+             int? departmentId, int? discProfileId, int? positionId,
+             string? search, int pageIndex, int pageSize)
         {
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
@@ -40,14 +36,13 @@ namespace backend_disc.Repositories.Neo4J
 
                 var matchClauses = new List<string> { "MATCH (e:Employee)" };
                 var whereClause = "";
-                // Where need to be reight after match employee
+                // need to be reight after match employee
                 if (!string.IsNullOrWhiteSpace(search))
                 {
                     whereClause = "WHERE (toLower(e.first_name) CONTAINS toLower($search) OR toLower(e.last_name) CONTAINS toLower($search))";
                     parameters["search"] = search;
                 }
                 matchClauses.Add(whereClause);
-
 
                 if (departmentId.HasValue)
                 {
@@ -197,8 +192,8 @@ namespace backend_disc.Repositories.Neo4J
                 CREATE (e)-[:BELONGS_TO]->(disc)
                 RETURN e, epd, u
                 ";
-
-                var result = await session.RunAsync(query, new
+                var tx = await session.BeginTransactionAsync();
+                var result = await tx.RunAsync(query, new
                 {
                     id = uniqueId,
                     firstName = p.FirstName,

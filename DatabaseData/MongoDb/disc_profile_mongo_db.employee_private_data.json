@@ -1,0 +1,161 @@
+[{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24244"
+  },
+  "employee_id": 1,
+  "cpr": "1704867890"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24245"
+  },
+  "employee_id": 2,
+  "cpr": "1234567890"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24246"
+  },
+  "employee_id": 3,
+  "cpr": "2345678901"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24247"
+  },
+  "employee_id": 4,
+  "cpr": "3456789012"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24248"
+  },
+  "employee_id": 5,
+  "cpr": "4567890123"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24249"
+  },
+  "employee_id": 6,
+  "cpr": "5678901234"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2424a"
+  },
+  "employee_id": 7,
+  "cpr": "6789012345"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2424b"
+  },
+  "employee_id": 8,
+  "cpr": "7890123456"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2424c"
+  },
+  "employee_id": 9,
+  "cpr": "8901234567"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2424d"
+  },
+  "employee_id": 10,
+  "cpr": "9012345678"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2424e"
+  },
+  "employee_id": 11,
+  "cpr": "0123456789"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2424f"
+  },
+  "employee_id": 12,
+  "cpr": "1123456790"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24250"
+  },
+  "employee_id": 13,
+  "cpr": "1704867890"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24251"
+  },
+  "employee_id": 14,
+  "cpr": "1234500011"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24252"
+  },
+  "employee_id": 15,
+  "cpr": "1234500022"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24253"
+  },
+  "employee_id": 16,
+  "cpr": "1234500033"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24254"
+  },
+  "employee_id": 17,
+  "cpr": "1234500044"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24255"
+  },
+  "employee_id": 18,
+  "cpr": "1234500055"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24256"
+  },
+  "employee_id": 19,
+  "cpr": "1234500066"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24257"
+  },
+  "employee_id": 20,
+  "cpr": "1234500077"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24258"
+  },
+  "employee_id": 21,
+  "cpr": "1234500088"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24259"
+  },
+  "employee_id": 22,
+  "cpr": "1234500099"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2425a"
+  },
+  "employee_id": 23,
+  "cpr": "1234500100"
+}]

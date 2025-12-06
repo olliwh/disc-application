@@ -1,0 +1,457 @@
+[{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24226"
+  },
+  "project_id": 1,
+  "name": "Mobile App",
+  "description": "Developing a new mobile platform",
+  "deadline": {
+    "$date": "2026-11-30T23:00:00.000Z"
+  },
+  "completed": false,
+  "employees_needed": 5,
+  "employee_ids": [ 1, 2, 4, 7, 8, 9
+  ],
+  "disc_profile_ids": [ 1, 2, 2, 3, 4
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 1,
+      "name": "Setup backend API",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        1,
+        9
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 2,
+      "name": "Design mobile UI",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2025-09-15T12:00:00.000Z"
+      },
+      "time_to_complete_id": "3-6 hours",
+      "assigned_employee_ids": [
+        2,
+        4,
+        7,
+        8
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "Deadline pressure",
+          "measure": 7
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24227"
+  },
+  "project_id": 2,
+  "name": "Employee Wellbeing Program",
+  "description": "Initiative to reduce stress",
+  "deadline": {
+    "$date": "2026-08-14T22:00:00.000Z"
+  },
+  "completed": false,
+  "employees_needed": 7,
+  "employee_ids": [
+    5,
+    6,
+    10,
+    11,
+    12,
+    21
+  ],
+  "disc_profile_ids": [
+    1,
+    2,
+    3,
+    4,
+    1,
+    2,
+    3
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 3,
+      "name": "Survey employees",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        5,
+        6
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 4,
+      "name": "Organize wellness workshops",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        10,
+        11,
+        21
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 5,
+      "name": "Create mental health resources portal",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        12
+      ],
+      "stress_measures": []
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24228"
+  },
+  "project_id": 3,
+  "name": "Smart Building",
+  "description": "Construction project with eco focus",
+  "deadline": {
+    "$date": "2026-03-29T22:00:00.000Z"
+  },
+  "completed": false,
+  "employees_needed": 2,
+  "employee_ids": [
+    14,
+    23
+  ],
+  "disc_profile_ids": [
+    4,
+    1
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 6,
+      "name": "Implement smart energy monitoring system",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        14
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 19,
+      "name": "Install solar panels",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        23
+      ],
+      "stress_measures": []
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24229"
+  },
+  "project_id": 4,
+  "name": "Customer Portal Redesign",
+  "description": "Modernize user interface and experience",
+  "deadline": {
+    "$date": "2026-11-19T23:00:00.000Z"
+  },
+  "completed": false,
+  "employees_needed": 5,
+  "employee_ids": [
+    11,
+    15,
+    16,
+    17
+  ],
+  "disc_profile_ids": [
+    1,
+    2,
+    1,
+    3,
+    1
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 7,
+      "name": "Conduct user research and interviews",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2025-08-20T09:00:00.000Z"
+      },
+      "time_to_complete_id": "3-6 hours",
+      "assigned_employee_ids": [
+        11,
+        15
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "Smooth progress",
+          "measure": 3
+        }
+      ]
+    },
+    {
+      "project_task_id": 8,
+      "name": "Create new design mockups",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        16
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 9,
+      "name": "Develop responsive frontend components",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        17
+      ],
+      "stress_measures": []
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2422a"
+  },
+  "project_id": 5,
+  "name": "Data Migration Initiative",
+  "description": "Move legacy systems to cloud infrastructure",
+  "deadline": {
+    "$date": "2026-09-09T22:00:00.000Z"
+  },
+  "completed": false,
+  "employees_needed": 8,
+  "employee_ids": [
+    3,
+    7,
+    13,
+    18
+  ],
+  "disc_profile_ids": [
+    1,
+    1,
+    2,
+    2,
+    3,
+    4,
+    1,
+    1
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 10,
+      "name": "Audit existing database schemas",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2025-07-12T07:15:00.000Z"
+      },
+      "time_to_complete_id": "1-2 hours",
+      "assigned_employee_ids": [
+        13,
+        18
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "Smooth progress",
+          "measure": 3
+        }
+      ]
+    },
+    {
+      "project_task_id": 11,
+      "name": "Setup cloud infrastructure",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        3
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 12,
+      "name": "Migrate production data to cloud",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        7
+      ],
+      "stress_measures": []
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2422b"
+  },
+  "project_id": 6,
+  "name": "Marketing Campaign Q4",
+  "description": "Launch new product awareness campaign",
+  "deadline": {
+    "$date": "2026-11-30T23:00:00.000Z"
+  },
+  "completed": false,
+  "employees_needed": 4,
+  "employee_ids": [
+    19,
+    20,
+    22
+  ],
+  "disc_profile_ids": [
+    1,
+    1,
+    3,
+    4
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 13,
+      "name": "Develop campaign strategy",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2025-09-30T13:30:00.000Z"
+      },
+      "time_to_complete_id": "3-6 hours",
+      "assigned_employee_ids": [
+        20
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "Smooth progress",
+          "measure": 3
+        }
+      ]
+    },
+    {
+      "project_task_id": 14,
+      "name": "Create promotional materials",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        19
+      ],
+      "stress_measures": []
+    },
+    {
+      "project_task_id": 15,
+      "name": "Launch social media advertising",
+      "completed": false,
+      "time_of_completion": null,
+      "time_to_complete_id": "",
+      "assigned_employee_ids": [
+        22
+      ],
+      "stress_measures": []
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2422c"
+  },
+  "project_id": 8,
+  "name": "Older Project",
+  "description": "Event needs to delete",
+  "deadline": {
+    "$date": "2023-02-21T23:00:00.000Z"
+  },
+  "completed": true,
+  "employees_needed": 10,
+  "employee_ids": [
+    15,
+    18,
+    21
+  ],
+  "disc_profile_ids": [
+    3
+  ],
+  "project_tasks": [
+    {
+      "project_task_id": 16,
+      "name": "Plan event logistics",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2023-01-15T09:00:00.000Z"
+      },
+      "time_to_complete_id": "1 day",
+      "assigned_employee_ids": [
+        21
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "Smooth progress",
+          "measure": 3
+        }
+      ]
+    },
+    {
+      "project_task_id": 17,
+      "name": "Book venue and catering",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2023-01-20T13:30:00.000Z"
+      },
+      "time_to_complete_id": "1-2 hours",
+      "assigned_employee_ids": [
+        21
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "Moderate stress",
+          "measure": 5
+        }
+      ]
+    },
+    {
+      "project_task_id": 18,
+      "name": "Execute event successfully",
+      "completed": true,
+      "time_of_completion": {
+        "$date": "2023-02-22T17:00:00.000Z"
+      },
+      "time_to_complete_id": "More than one day",
+      "assigned_employee_ids": [
+        15,
+        18
+      ],
+      "stress_measures": [
+        {
+          "stress_measure_id": 0,
+          "description": "High workload",
+          "measure": 8
+        }
+      ]
+    }
+  ]
+}]
