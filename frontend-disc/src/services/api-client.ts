@@ -56,6 +56,9 @@ class ApiClient<T> {
     axiosInstance
       .post<R>(`${this.endpoint}${path}`, data)
       .then((res) => res.data);
+
+  getWeather = <R = T>() =>
+    axiosInstance.get<R>(`${this.endpoint}`).then((res) => res.data);
 }
 
 export default ApiClient;

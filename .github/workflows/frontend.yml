@@ -1,163 +1,167 @@
 name: Frontend CI/CD
 
 on:
-  push:
-    branches:
-      - main
-      - playwright-tests
-    paths: ["frontend-disc/**", "e2e-tests/**"]
-  pull_request:
-    branches:
-      - main
-    paths: ["frontend-disc/**", "e2e-tests/**"]
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+            - playwright-tests
+        paths: ["frontend-disc/**", "e2e-tests/**"]
+    pull_request:
+        branches:
+            - main
+        paths: ["frontend-disc/**", "e2e-tests/**"]
+    workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
 
-    env:
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Start SQL Server
-        shell: bash
-        run: |
-          docker run \
-            -e ACCEPT_EULA=Y \
-            -e SA_PASSWORD="$DB_PASSWORD" \
-            -p 1433:1433 \
-            --name disc-mssql \
-            -d mcr.microsoft.com/mssql/server:2022-latest
-
-          echo "Waiting for SQL Server..."
-          for i in {1..60}; do
-            if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready"; then
-              echo "SQL Server ready!"
-              break
-            fi
-            sleep 2
-          done
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: Restore dependencies
-        working-directory: backend-disc
-        run: dotnet restore
-
-      - name: Build API
-        working-directory: backend-disc
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Start API
-        working-directory: backend-disc
         env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-          ASPNETCORE_URLS: http://0.0.0.0:5000
-          ASPNETCORE_ENVIRONMENT: Development
-        run: |
-          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
-          echo $! > api.pid
-          echo "Backend started with PID: $(cat api.pid)"
-          sleep 5
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
 
-      - name: run seeder
-        working-directory: backend-disc/seeder
-        env:
-          DB_HOST: "localhost"
-          DB_PORT: "1433"
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: "sa"
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          echo "Running seeder..."
-          dotnet run --configuration Release
-          echo "Seeder completed!"
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Verify backend is ready
-        run: |
-          echo "Waiting for backend API to be ready..."
-          for i in {1..30}; do
-            if curl -f http://localhost:5000/api/positions 2>/dev/null; then
-              echo "✅ Backend is ready!"
-              break
-            fi
-            echo "⏳ Attempt $i/30: Backend not ready yet..."
-            sleep 2
-          done
+            - name: Start SQL Server
+              shell: bash
+              run: |
+                  docker run \
+                    -e ACCEPT_EULA=Y \
+                    -e SA_PASSWORD="$DB_PASSWORD" \
+                    -p 1433:1433 \
+                    --name disc-mssql \
+                    -d mcr.microsoft.com/mssql/server:2022-latest
 
-      - name: Test backend login endpoint
-        run: |
-          echo "Testing login endpoint..."
-          curl -v -X POST http://localhost:5000/api/Auth/login \
-            -H "Content-Type: application/json" \
-            -d '{"username":"alice","password":"Pass@word1"}' || echo "Login test failed"
+                  echo "Waiting for SQL Server..."
+                  for i in {1..60}; do
+                    if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready"; then
+                      echo "SQL Server ready!"
+                      break
+                    fi
+                    sleep 2
+                  done
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: "8.0.x"
 
-      - name: Install frontend dependencies
-        working-directory: frontend-disc
-        run: npm install
+            - name: Restore dependencies
+              working-directory: backend-disc
+              run: dotnet restore
 
-      - name: Build frontend
-        working-directory: frontend-disc
-        run: npm run build
+            - name: Build API
+              working-directory: backend-disc
+              run: dotnet build --no-restore --configuration Release
 
-      - name: Start frontend dev server
-        working-directory: frontend-disc
-        run: npm run dev > frontend.log 2>&1 &
+            - name: Start API
+              working-directory: backend-disc
+              env:
+                  ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+                  API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+                  ASPNETCORE_URLS: http://0.0.0.0:5000
+                  ASPNETCORE_ENVIRONMENT: Development
+              run: |
+                  dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" &
+                  echo $! > api.pid
+                  echo "Backend started with PID: $(cat api.pid)"
+                  sleep 5
 
-      - name: Wait for frontend to be ready
-        run: |
-          echo "📍 Starting wait loop..."
-          for i in {1..30}; do
-            echo "Attempt $i/30..."
-            if curl -s http://localhost:3000 | grep -q "<!DOCTYPE\|<html"; then
-              echo "✅ Frontend is ready!"
-              break
-            fi
-            echo "⏳ Waiting for frontend... ($i/30)"
-            sleep 2
-          done
+            - name: run seeder
+              working-directory: backend-disc/seeder
+              env:
+                  DB_HOST: "localhost"
+                  DB_PORT: "1433"
+                  DB_NAME: ${{ secrets.DB_NAME }}
+                  DB_USER: "sa"
+                  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+              run: |
+                  echo "Running seeder..."
+                  dotnet run --configuration Release
+                  echo "Seeder completed!"
 
-      - name: Verify frontend is accessible
-        run: |
-          echo "Testing frontend accessibility..."
-          curl -v http://localhost:3000 2>&1 | head -20
+            - name: Verify backend is ready
+              run: |
+                  echo "Waiting for backend API to be ready..."
+                  for i in {1..30}; do
+                    if curl -f http://localhost:5000/api/positions 2>/dev/null; then
+                      echo "✅ Backend is ready!"
+                      break
+                    fi
+                    echo "⏳ Attempt $i/30: Backend not ready yet..."
+                    sleep 2
+                  done
 
-      - name: Check if port 3000 is listening
-        run: |
-          sleep 2
-          netstat -tlnp 2>/dev/null | grep 3000 || ss -tlnp 2>/dev/null | grep 3000 || echo "Checking with lsof..." && lsof -i :3000 || echo "Port check failed"
+            - name: Test backend login endpoint
+              run: |
+                  echo "Testing login endpoint..."
+                  curl -v -X POST http://localhost:5000/api/Auth/login \
+                    -H "Content-Type: application/json" \
+                    -d '{"username":"alice","password":"Pass@word1"}' || echo "Login test failed"
 
-      - name: Check backend health
-        run: |
-          echo "=== Testing Backend API ===" 
-          curl -v http://localhost:5000/api/positions || echo "Positions endpoint failed"
-          curl -v http://localhost:5000/api/departments || echo "Departments endpoint failed"
-          curl -v http://localhost:5000/api/employees || echo "Employees endpoint failed"
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
 
-      - name: Test login endpoints
-        run: |
-          echo "=== Testing Login Endpoints ==="
-          echo "Testing alice login..."
-          curl -v -X POST http://localhost:5000/api/Auth/login \
-            -H "Content-Type: application/json" \
-            -d '{"username":"alice","password":"Pass@word1"}'
+            - name: Install frontend dependencies
+              working-directory: frontend-disc
+              run: npm install
 
-          echo ""
-          echo "Testing admin login..."
-          curl -v -X POST http://localhost:5000/api/Auth/login \
-            -H "Content-Type: application/json" \
-            -d '{"username":"admin","password":"Pass@word1"}'
+            - name: Run frontend tests
+              working-directory: frontend-disc
+              run: npx vitest run
+
+            - name: Build frontend
+              working-directory: frontend-disc
+              run: npm run build
+
+            - name: Start frontend dev server
+              working-directory: frontend-disc
+              run: npm run dev > frontend.log 2>&1 &
+
+            - name: Wait for frontend to be ready
+              run: |
+                  echo "📍 Starting wait loop..."
+                  for i in {1..30}; do
+                    echo "Attempt $i/30..."
+                    if curl -s http://localhost:3000 | grep -q "<!DOCTYPE\|<html"; then
+                      echo "✅ Frontend is ready!"
+                      break
+                    fi
+                    echo "⏳ Waiting for frontend... ($i/30)"
+                    sleep 2
+                  done
+
+            - name: Verify frontend is accessible
+              run: |
+                  echo "Testing frontend accessibility..."
+                  curl -v http://localhost:3000 2>&1 | head -20
+
+            - name: Check if port 3000 is listening
+              run: |
+                  sleep 2
+                  netstat -tlnp 2>/dev/null | grep 3000 || ss -tlnp 2>/dev/null | grep 3000 || echo "Checking with lsof..." && lsof -i :3000 || echo "Port check failed"
+
+            - name: Check backend health
+              run: |
+                  echo "=== Testing Backend API ===" 
+                  curl -v http://localhost:5000/api/positions || echo "Positions endpoint failed"
+                  curl -v http://localhost:5000/api/departments || echo "Departments endpoint failed"
+                  curl -v http://localhost:5000/api/employees || echo "Employees endpoint failed"
+
+            - name: Test login endpoints
+              run: |
+                  echo "=== Testing Login Endpoints ==="
+                  echo "Testing alice login..."
+                  curl -v -X POST http://localhost:5000/api/Auth/login \
+                    -H "Content-Type: application/json" \
+                    -d '{"username":"alice","password":"Pass@word1"}'
+
+                  echo ""
+                  echo "Testing admin login..."
+                  curl -v -X POST http://localhost:5000/api/Auth/login \
+                    -H "Content-Type: application/json" \
+                    -d '{"username":"admin","password":"Pass@word1"}'

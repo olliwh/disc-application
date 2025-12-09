@@ -1,0 +1,116 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": [
+            "_id",
+            "completed",
+            "deadline",
+            "description",
+            "disc_profile_ids",
+            "employee_ids",
+            "employees_needed",
+            "name",
+            "project_id",
+            "project_tasks"
+        ],
+        "properties": {
+            "_id": {
+                "bsonType": "objectId"
+            },
+            "completed": {
+                "bsonType": "bool"
+            },
+            "deadline": {
+                "bsonType": ["null", "date"]
+            },
+            "description": {
+                "bsonType": ["null", "string"]
+            },
+            "disc_profile_ids": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "int"
+                }
+            },
+            "employee_ids": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "int"
+                }
+            },
+            "employees_needed": {
+                "bsonType": ["null", "int"]
+            },
+            "name": {
+                "bsonType": "string"
+            },
+            "project_id": {
+                "bsonType": "int"
+            },
+            "project_tasks": {
+                "bsonType": "array",
+                "items": {
+                    "bsonType": "object",
+                    "properties": {
+                        "assigned_employee_ids": {
+                            "bsonType": "array",
+                            "items": {
+                                "bsonType": "int"
+                            }
+                        },
+                        "completed": {
+                            "bsonType": "bool"
+                        },
+                        "name": {
+                            "bsonType": "string"
+                        },
+                        "project_task_id": {
+                            "bsonType": "int"
+                        },
+                        "stress_measures": {
+                            "bsonType": "array",
+                            "items": {
+                                "bsonType": "object",
+                                "properties": {
+                                    "description": {
+                                        "bsonType": "string"
+                                    },
+                                    "employee_id": {
+                                        "bsonType": "int"
+                                    },
+                                    "measure": {
+                                        "bsonType": "int"
+                                    },
+                                    "stress_measure_id": {
+                                        "bsonType": "int"
+                                    }
+                                },
+                                "required": [
+                                    "description",
+                                    "employee_id",
+                                    "measure",
+                                    "stress_measure_id"
+                                ]
+                            }
+                        },
+                        "time_of_completion": {
+                            "bsonType": ["null", "date"]
+                        },
+                        "time_to_complete": {
+                            "bsonType": ["null", "string"]
+                        }
+                    },
+                    "required": [
+                        "assigned_employee_ids",
+                        "completed",
+                        "name",
+                        "project_task_id",
+                        "stress_measures",
+                        "time_of_completion",
+                        "time_to_complete_id"
+                    ]
+                }
+            }
+        }
+    }
+}

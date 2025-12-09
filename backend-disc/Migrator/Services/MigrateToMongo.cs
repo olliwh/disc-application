@@ -185,8 +185,10 @@ internal class MigrateToMongo
                         .ToList(),
                     StressMeasures = task.StressMeasures.Select(sm => new StressMeasureMongo
                     {
+                        StressMeasureId = sm.Id,
                         Description = sm.Description ?? "",
-                        Measure = sm.Measure ?? 0
+                        Measure = sm.Measure ?? 0,
+                        EmployeeId = sm.EmployeeId
                     }).ToList()
                 }).ToList()
             };

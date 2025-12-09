@@ -149,7 +149,7 @@ namespace class_library_disc.Models.Mongo
         [BsonElement("time_of_completion")]
         public DateTime? TimeOfCompletion { get; set; }
 
-        [BsonElement("time_to_complete_id")]
+        [BsonElement("time_to_complete")]
         public string? TimeToComplete { get; set; }
 
         [BsonElement("assigned_employee_ids")]
@@ -167,6 +167,8 @@ namespace class_library_disc.Models.Mongo
 
         [BsonElement("measure")]
         public int? Measure { get; set; }
+        [BsonElement("employee_id")]
+        public int EmployeeId { get; set; }
 
     }
     public class UserRoleMongo
