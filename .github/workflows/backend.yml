@@ -99,10 +99,18 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Postman tests
+      - name: Run Postman tests for mssql
         working-directory: backend-disc
         run: |
           newman run Disc-app-api-postman-final-tests.postman_collection.json \
+            --environment postman-env.json \
+            --reporters cli,json \
+            --reporter-json-export test-results.json
+
+      - name: Run Postman tests for neo4j
+        working-directory: backend-disc
+        run: |
+          newman run Disc-app-api-postman-neo4j-tests.postman_collection.json \
             --environment postman-env.json \
             --reporters cli,json \
             --reporter-json-export test-results.json

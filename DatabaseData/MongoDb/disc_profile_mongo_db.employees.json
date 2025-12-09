@@ -1,0 +1,455 @@
+[{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778671e"
+  },
+  "employee_id": 1,
+  "work_email": "Admin@techcorp.com",
+  "work_phone": "88888927",
+  "first_name": "Admin",
+  "last_name": "Admin",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "admin@mail.com",
+  "private_phone": "12345678",
+  "disc_profile_id": 1,
+  "department_id": 4,
+  "position_id": 1,
+  "UserRoleId": 1,
+  "current_project_ids": [
+    1
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778671f"
+  },
+  "employee_id": 2,
+  "work_email": "alice@techcorp.com",
+  "work_phone": "88887777",
+  "first_name": "Alice",
+  "last_name": "Jensen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "alice@mail.com",
+  "private_phone": "12328678",
+  "disc_profile_id": 1,
+  "department_id": 1,
+  "position_id": 1,
+  "UserRoleId": 3,
+  "current_project_ids": []
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786720"
+  },
+  "employee_id": 3,
+  "work_email": "mikkel@techcorp.com",
+  "work_phone": "88881234",
+  "first_name": "Mikkel",
+  "last_name": "Andersen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "mikkel@mail.com",
+  "private_phone": "23454989",
+  "disc_profile_id": 4,
+  "department_id": 2,
+  "position_id": 3,
+  "UserRoleId": 3,
+  "current_project_ids": []
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786721"
+  },
+  "employee_id": 4,
+  "work_email": "sofie@techcorp.com",
+  "work_phone": "88884567",
+  "first_name": "Sofie",
+  "last_name": "Nielsen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "sofie@mail.com",
+  "private_phone": "83742934",
+  "disc_profile_id": 1,
+  "department_id": 3,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    1
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786722"
+  },
+  "employee_id": 5,
+  "work_email": "jonas@techcorp.com",
+  "work_phone": "88885678",
+  "first_name": "Jonas",
+  "last_name": "Pedersen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "jonas@mail.com",
+  "private_phone": "45678901",
+  "disc_profile_id": 3,
+  "department_id": 4,
+  "position_id": 1,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    2
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786723"
+  },
+  "employee_id": 6,
+  "work_email": "emma@techcorp.com",
+  "work_phone": "88886789",
+  "first_name": "Emma",
+  "last_name": "Christensen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "emma@mail.com",
+  "private_phone": "56789012",
+  "disc_profile_id": 2,
+  "department_id": 1,
+  "position_id": 4,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    2
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786724"
+  },
+  "employee_id": 7,
+  "work_email": "noaah@techcorp.com",
+  "work_phone": "88887890",
+  "first_name": "Noaah",
+  "last_name": "Larsaen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "noaah@mail.com",
+  "private_phone": "67890123",
+  "disc_profile_id": 1,
+  "department_id": 6,
+  "position_id": 6,
+  "UserRoleId": 2,
+  "current_project_ids": [
+    1,
+    5
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786725"
+  },
+  "employee_id": 8,
+  "work_email": "freja@techcorp.com",
+  "work_phone": "88888901",
+  "first_name": "Freja",
+  "last_name": "Mortensen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "freja@mail.com",
+  "private_phone": "78901234",
+  "disc_profile_id": 2,
+  "department_id": 3,
+  "position_id": 3,
+  "UserRoleId": 4,
+  "current_project_ids": [
+    1
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786726"
+  },
+  "employee_id": 9,
+  "work_email": "lucas@techcorp.com",
+  "work_phone": "88889012",
+  "first_name": "Lucas",
+  "last_name": "Olsen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "lucas@mail.com",
+  "private_phone": "89012345",
+  "disc_profile_id": 3,
+  "department_id": 4,
+  "position_id": 4,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    1
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786727"
+  },
+  "employee_id": 10,
+  "work_email": "ida@techcorp.com",
+  "work_phone": "88880123",
+  "first_name": "Ida",
+  "last_name": "Thomsen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "ida@mail.com",
+  "private_phone": "90123456",
+  "disc_profile_id": 4,
+  "department_id": 1,
+  "position_id": 5,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    2
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786728"
+  },
+  "employee_id": 11,
+  "work_email": "william@techcorp.com",
+  "work_phone": "88881235",
+  "first_name": "William",
+  "last_name": "Rasmussen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "william@mail.com",
+  "private_phone": "01854567",
+  "disc_profile_id": 3,
+  "department_id": 5,
+  "position_id": 1,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    2
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786729"
+  },
+  "employee_id": 12,
+  "work_email": "clara@techcorp.com",
+  "work_phone": "88882345",
+  "first_name": "Clara",
+  "last_name": "Hansen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "clara@mail.com",
+  "private_phone": "11234567",
+  "disc_profile_id": 1,
+  "department_id": 3,
+  "position_id": 4,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    2
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778672a"
+  },
+  "employee_id": 13,
+  "work_email": "Adminn@techcorp.com",
+  "work_phone": "88888917",
+  "first_name": "Adminn",
+  "last_name": "Adminn",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "adminn@mail.com",
+  "private_phone": "12345678",
+  "disc_profile_id": 1,
+  "department_id": 1,
+  "position_id": 1,
+  "UserRoleId": 1,
+  "current_project_ids": []
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778672b"
+  },
+  "employee_id": 14,
+  "work_email": "oliver.skov@techcorp.com",
+  "work_phone": "77770001",
+  "first_name": "Oliver",
+  "last_name": "Skov",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "oliver@mail.com",
+  "private_phone": "70010001",
+  "disc_profile_id": 4,
+  "department_id": 2,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    3
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778672c"
+  },
+  "employee_id": 15,
+  "work_email": "laura.hvid@techcorp.com",
+  "work_phone": "77770002",
+  "first_name": "Laura",
+  "last_name": "Hvid",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "laura@mail.com",
+  "private_phone": "70020002",
+  "disc_profile_id": 2,
+  "department_id": 4,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    4
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778672d"
+  },
+  "employee_id": 16,
+  "work_email": "tobias.lund@techcorp.com",
+  "work_phone": "77770003",
+  "first_name": "Tobias",
+  "last_name": "Lund",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "tobias@mail.com",
+  "private_phone": "70030003",
+  "disc_profile_id": 2,
+  "department_id": 4,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    4
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778672e"
+  },
+  "employee_id": 17,
+  "work_email": "sara.dam@techcorp.com",
+  "work_phone": "77770004",
+  "first_name": "Sara",
+  "last_name": "Dam",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "sara@mail.com",
+  "private_phone": "70040004",
+  "disc_profile_id": 4,
+  "department_id": 4,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    4
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db778672f"
+  },
+  "employee_id": 18,
+  "work_email": "victor.holm@techcorp.com",
+  "work_phone": "77770005",
+  "first_name": "Victor",
+  "last_name": "Holm",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "victor@mail.com",
+  "private_phone": "70050005",
+  "disc_profile_id": 2,
+  "department_id": 2,
+  "position_id": 2,
+  "UserRoleId": 2,
+  "current_project_ids": [
+    5
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786730"
+  },
+  "employee_id": 19,
+  "work_email": "julie.moller@techcorp.com",
+  "work_phone": "77770006",
+  "first_name": "Julie",
+  "last_name": "Møller",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "julie@mail.com",
+  "private_phone": "70060006",
+  "disc_profile_id": 4,
+  "department_id": 2,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    6
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786731"
+  },
+  "employee_id": 20,
+  "work_email": "anders.bro@techcorp.com",
+  "work_phone": "77770007",
+  "first_name": "Anders",
+  "last_name": "Bro",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "anders@mail.com",
+  "private_phone": "70070007",
+  "disc_profile_id": 4,
+  "department_id": 2,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    6
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786732"
+  },
+  "employee_id": 21,
+  "work_email": "maja.frisk@techcorp.com",
+  "work_phone": "77770008",
+  "first_name": "Maja",
+  "last_name": "Frisk",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "maja@mail.com",
+  "private_phone": "70080008",
+  "disc_profile_id": 2,
+  "department_id": 4,
+  "position_id": 2,
+  "UserRoleId": 3,
+  "current_project_ids": [
+    2
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786733"
+  },
+  "employee_id": 22,
+  "work_email": "sebastian.krag@techcorp.com",
+  "work_phone": "77770009",
+  "first_name": "Sebastian",
+  "last_name": "Krag",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "sebastian@mail.com",
+  "private_phone": "70090009",
+  "disc_profile_id": 3,
+  "department_id": 2,
+  "position_id": 2,
+  "UserRoleId": 2,
+  "current_project_ids": [
+    6
+  ]
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db7786734"
+  },
+  "employee_id": 23,
+  "work_email": "nanna.poulsen@techcorp.com",
+  "work_phone": "77770010",
+  "first_name": "Nanna",
+  "last_name": "Poulsen",
+  "image_path": "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+  "private_email": "nanna@mail.com",
+  "private_phone": "70100010",
+  "disc_profile_id": 3,
+  "department_id": 4,
+  "position_id": 2,
+  "UserRoleId": 2,
+  "current_project_ids": [
+    3
+  ]
+}]

@@ -37,21 +37,19 @@ namespace backend_disc.Repositories.Mongo
                 var filterBuilder = Builders<EmployeeMongo>.Filter;
                 var filters = new List<FilterDefinition<EmployeeMongo>>();
 
-                // Build filters dynamically
                 if (departmentId.HasValue)
                 {
-                    filters.Add(filterBuilder.Eq(e => e.Department.DepartmentId, departmentId.Value));
+                    filters.Add(filterBuilder.Eq(e => e.DepartmentId, departmentId.Value));
                 }
 
                 if (discProfileId.HasValue)
                 {
-                    // Get the DiscProfileMongo ObjectId for the given int discProfileId
                     filters.Add(filterBuilder.Eq(e => e.DiscProfileId, discProfileId.Value));
                 }
 
                 if (positionId.HasValue)
                 {
-                    filters.Add(filterBuilder.Eq(e => e.Position.PositionId, positionId.Value));
+                    filters.Add(filterBuilder.Eq(e => e.PositionId, positionId.Value));
                 }
 
                 if (!string.IsNullOrWhiteSpace(search))
@@ -63,15 +61,12 @@ namespace backend_disc.Repositories.Mongo
                     filters.Add(searchFilter);
                 }
 
-                // Combine all filters with AND
                 var combinedFilter = filters.Count > 0
                     ? filterBuilder.And(filters)
                     : filterBuilder.Empty;
 
-                // Get total count
                 var totalCount = (int)await _employeesCollection.CountDocumentsAsync(combinedFilter);
 
-                // Get paginated results
                 var skip = (pageIndex - 1) * pageSize;
                 var mongoEmployees = await _employeesCollection
                     .Find(combinedFilter)
@@ -79,14 +74,12 @@ namespace backend_disc.Repositories.Mongo
                     .Limit(pageSize)
                     .ToListAsync();
 
-                // Get all disc profiles for lookup
                 var discProfiles = await _discProfilesCollection
                     .Find(FilterDefinition<DiscProfileMongo>.Empty)
                     .ToListAsync();
 
                 var discProfileMap = discProfiles.ToDictionary(dp => dp.DiscProfileId, dp => dp);
 
-                // Map EmployeeMongo to Employee
                 var employees = mongoEmployees.Select(me => 
                 {
                     var discProfile = me.DiscProfileId.HasValue && discProfileMap.ContainsKey(me.DiscProfileId.Value)
@@ -101,8 +94,8 @@ namespace backend_disc.Repositories.Mongo
                         WorkEmail = me.WorkEmail,
                         WorkPhone = me.WorkPhone,
                         ImagePath = me.ImagePath,
-                        DepartmentId = me.Department.DepartmentId,
-                        PositionId = me.Position?.PositionId,
+                        DepartmentId = me.DepartmentId,
+                        PositionId = me?.PositionId,
                         DiscProfileId = me.DiscProfileId,
                         DiscProfile = discProfile != null ? new DiscProfile
                         {

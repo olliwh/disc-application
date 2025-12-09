@@ -1,0 +1,32 @@
+[{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24222"
+  },
+  "user_role_id": 1,
+  "name": "Admin",
+  "description": "Manage users, change roles, view all data, configure settings"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24223"
+  },
+  "user_role_id": 2,
+  "name": "Manager",
+  "description": "Approve requests, view team data, manage employees under them"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24224"
+  },
+  "user_role_id": 3,
+  "name": "Employee",
+  "description": "Basic access, view and update own data"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24225"
+  },
+  "user_role_id": 4,
+  "name": "ReadOnly",
+  "description": "Can view data but not modify it"
+}]

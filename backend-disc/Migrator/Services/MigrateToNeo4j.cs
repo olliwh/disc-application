@@ -151,6 +151,30 @@ namespace Migrator.Services
             }
             Console.WriteLine($"{nodeName} migration completed");
         }
+
+        public async Task MigrateUserRolesAsync(FetchedData data)
+        {
+            string nodeName = "UserRole";
+            Console.WriteLine($"Migrating {data.UserRoles.Count} {nodeName} to Neo4j...");
+            foreach (var d in data.UserRoles)
+            {
+                var dict = new Dictionary<string, object?>
+                {
+                    { "id", d.Id },
+                    { "name", d.Name },
+                    { "description", d.Description }
+                };
+                await _neo4j.CreateNodeAsync(nodeName, dict);
+                foreach( var user in d.Users)
+                {
+                    await _neo4j.CreateRelationshipAsync("User", user.EmployeeId, "HAS_PERMISSION_AS", "UserRole", d.Id);
+
+                }
+
+
+            }
+            Console.WriteLine($"{nodeName} migration completed");
+        }
         public async Task MigrateProjectTasksAsync(FetchedData data)
         {
             string nodeName = "ProjectTask";
@@ -239,10 +263,7 @@ namespace Migrator.Services
                 {
                     await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "BELONGS_TO", "DiscProfile", employee.DiscProfileId);
                 }
-                else
-                {
-                    Console.WriteLine("Error between employee and DiscProfile");
-                }
+
                 if (employee.Department != null)
                 {
                     await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "WORKS_IN", "Department", employee.DepartmentId);
@@ -255,10 +276,7 @@ namespace Migrator.Services
                 {
                     await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "OCCUPIES", "Position", employee.PositionId);
                 }
-                else
-                {
-                    Console.WriteLine("Error between employee and Position");
-                }
+
                 if (employee.EmployeePrivateDatum != null)
                 {
                     await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS", "EmployeePrivateData", employee.EmployeePrivateDatum.EmployeeId);
@@ -277,46 +295,19 @@ namespace Migrator.Services
                 }
                 if (employee.User != null)
                 {
-                    if (employee.User.UserRoleId == 1) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_ADMIN_ROLE", "User", employee.User.EmployeeId);
-                    else if (employee.User.UserRoleId == 2) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_MANAGER_ROLE", "User", employee.User.EmployeeId);
-                    else if (employee.User.UserRoleId == 3) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_EMPLOYEE_ROLE", "User", employee.User.EmployeeId);
-                    else if (employee.User.UserRoleId == 4) await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "HAS_READONLY_ROLE", "User", employee.User.EmployeeId);
-                    else Console.WriteLine("Error between employee and user");
+                    await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "IS_A", "User", employee.User.EmployeeId);
+                    
+                }
+                else
+                {
+                    Console.WriteLine("Error between employee and user");
                 }
             }
             Console.WriteLine($"{nodeName} migration completed");
         }
 
 
-        public async Task CreateRelationships(FetchedData data)
-        {
-            foreach (var item in data.Employees)
-            {
-                foreach (var nested in item.ProjectTasksEmployees)
-                {
-                    if (!nested.Task.Completed)
-                    {
-                        await _neo4j.CreateRelationshipAsync("Employee", item.Id, "IN_PROGRESS", "ProjectTask", nested.TaskId);
-                    }
-                    else
-                    {
-                        await _neo4j.CreateRelationshipAsync("Employee", item.Id, "HAS_COMPLETED", "ProjectTask", nested.TaskId);
-                    }
-                }
-                foreach (var nested in item.StressMeasures)
-                {
-                    await _neo4j.CreateRelationshipAsync("StressMeassure", nested.Id, "MEASSURED_BY", "Employee", item.Id);
-                }
-            }
-            foreach (var item in data.ProjectTasks)
-            {
-                foreach (var nested in item.StressMeasures)
-                {
-                    await _neo4j.CreateRelationshipAsync("StressMeassure", nested.Id, "MEASSURES_TO", "ProjectTask", item.Id);
-                }
-            }
-
-        }
+        
         public async Task MigrateDataToNeo4jAsync(FetchedData data)
         {
             Console.WriteLine("MigrateDataToNeo4jAsync function");
@@ -333,6 +324,7 @@ namespace Migrator.Services
             await MigrateEmployeePrivateDataAsync(data);
             await MigratePositionsAsync(data);
             await MigrateUsersAsync(data);
+            await MigrateUserRolesAsync(data);
             await MigrateStressMeasuresAsync(data);
             await MigrateProjectTasksAsync(data);
             await MigrateProjectsAsync(data);

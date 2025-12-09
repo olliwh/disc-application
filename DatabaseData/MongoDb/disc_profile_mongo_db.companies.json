@@ -1,0 +1,9 @@
+[{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24206"
+  },
+  "company_id": 1,
+  "name": "TechCorp",
+  "location": "Copenhagen",
+  "business_field": "Software"
+}]

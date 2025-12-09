@@ -1,0 +1,49 @@
+[{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f2"
+  },
+  "position_id": 1,
+  "name": "Software Engineer",
+  "description": "Designs, develops, tests, and maintains software applications. Collaborates with cross-functional teams to identify and prioritize project requirements."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f3"
+  },
+  "position_id": 2,
+  "name": "HR Specialist",
+  "description": "Provides comprehensive human resource support including recruitment, employee relations, benefits administration, and compliance. Develops and implements HR programs to enhance employee engagement and retention."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f4"
+  },
+  "position_id": 3,
+  "name": "Research Analyst",
+  "description": "Conducts market research and competitive analysis to inform business strategy. Collects, analyzes, and interprets complex data sets to identify trends and patterns."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f5"
+  },
+  "position_id": 4,
+  "name": "Project Manager",
+  "description": "Leads cross-functional teams to deliver projects on time, within budget, and meeting specified requirements. Develops project plans, coordinates resources, and manages stakeholder expectations."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f6"
+  },
+  "position_id": 5,
+  "name": "Financial Analyst",
+  "description": "Analyzes financial data and prepares forecasts to drive business decisions. Develops and maintains financial models, identifies trends, and optimizes business processes."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f7"
+  },
+  "position_id": 6,
+  "name": "Department Manager",
+  "description": "Directs and oversees department operations to achieve strategic objectives. Leads cross-functional teams and manages budgets to optimize resource utilization."
+}]
+

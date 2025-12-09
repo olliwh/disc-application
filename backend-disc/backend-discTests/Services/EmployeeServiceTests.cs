@@ -4,12 +4,9 @@ using backend_disc.Factories;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
-using backend_disc.Services;
 using class_library_disc.Models.Sql;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using System.Globalization;
-using System.Numerics;
 
 namespace backend_disc.Services.Tests
 {

@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24207"
+  },
+  "disc_profile_id": 1,
+  "name": "Dominance",
+  "color": "#008000",
+  "description": "Results-oriented, strong-willed"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24208"
+  },
+  "disc_profile_id": 2,
+  "name": "Influence",
+  "color": "#FF0000",
+  "description": "Enthusiastic, optimistic"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24209"
+  },
+  "disc_profile_id": 3,
+  "name": "Steadiness",
+  "color": "#0000FF",
+  "description": "Patient, empathetic"
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2420a"
+  },
+  "disc_profile_id": 4,
+  "name": "Conscientiousness",
+  "color": "#FFFF00",
+  "description": "Analytical, detail-oriented"
+}]

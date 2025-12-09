@@ -26,6 +26,9 @@ namespace class_library_disc.Models.Mongo
 
     public class DepartmentMongo
     {
+        [BsonId]
+        public ObjectId Id { get; set; }
+
         [BsonElement("department_id")]
         public int DepartmentId { get; set; }
         [BsonElement("name")]
@@ -37,6 +40,8 @@ namespace class_library_disc.Models.Mongo
 
     public class PositionMongo
     {
+        [BsonId]
+        public ObjectId Id { get; set; }
         [BsonElement("position_id")]
         public int? PositionId { get; set; }
         [BsonElement("name")]
@@ -77,12 +82,10 @@ namespace class_library_disc.Models.Mongo
         [BsonElement("disc_profile_id")]
         public int? DiscProfileId { get; set; }
 
-        [BsonElement("department")]
-        public DepartmentMongo Department { get; set; } = null!;
-
-        [BsonElement("position")]
-        public PositionMongo? Position { get; set; }
-        [BsonElement("user_role_id")]
+        [BsonElement("department_id")]
+        public int DepartmentId { get; set; }
+        [BsonElement("position_id")]
+        public int? PositionId { get; set; }
 
         public int UserRoleId { get; set; }
         [BsonElement("current_project_ids")]
@@ -146,7 +149,7 @@ namespace class_library_disc.Models.Mongo
         [BsonElement("time_of_completion")]
         public DateTime? TimeOfCompletion { get; set; }
 
-        [BsonElement("time_to_complete_id")]
+        [BsonElement("time_to_complete")]
         public string? TimeToComplete { get; set; }
 
         [BsonElement("assigned_employee_ids")]
@@ -164,6 +167,8 @@ namespace class_library_disc.Models.Mongo
 
         [BsonElement("measure")]
         public int? Measure { get; set; }
+        [BsonElement("employee_id")]
+        public int EmployeeId { get; set; }
 
     }
     public class UserRoleMongo

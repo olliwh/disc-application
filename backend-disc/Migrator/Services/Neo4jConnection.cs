@@ -94,7 +94,6 @@ public class Neo4JConnection
                 { "properties", properties }
             };
 
-            // Run the query to create the node
             var result = await session.RunAsync(query, parameters);
             var record = await result.SingleAsync();
             record["n"].As<INode>();
@@ -105,7 +104,6 @@ public class Neo4JConnection
         }
         finally
         {
-            // Close the session
             await session.CloseAsync();
         }
     }

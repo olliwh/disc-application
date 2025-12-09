@@ -1,0 +1,48 @@
+[{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866ec"
+  },
+  "department_id": 1,
+  "name": "HR",
+  "description": "Manages all aspects of employee life cycle, including recruitment, benefits, training, and workplace culture."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866ed"
+  },
+  "department_id": 2,
+  "name": "Marketing",
+  "description": "Drives business growth through brand development, advertising, and market engagement strategies."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866ee"
+  },
+  "department_id": 3,
+  "name": "Finance",
+  "description": "Oversees financial planning, accounting, investments, and funding to ensure sustainable business operations."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866ef"
+  },
+  "department_id": 4,
+  "name": "IT",
+  "description": "Provides software solutions and support to enable efficient business operations and innovation."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f0"
+  },
+  "department_id": 5,
+  "name": "Legal",
+  "description": "Safeguards company interests through legal counsel, contract management, and compliance oversight."
+},
+{
+  "_id": {
+    "$oid": "6934095fdd7e9f8db77866f1"
+  },
+  "department_id": 6,
+  "name": "Customer Service",
+  "description": "Delivers exceptional customer experiences through timely support, issue resolution, and relationship building."
+}]

@@ -1,0 +1,207 @@
+[{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2420b"
+  },
+  "employee_id": 1,
+  "username": "admin",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$uclpX8S5LhZgLBTruwFXmQ$UQZjeO+ziT58SUvHLie5SLZVI5h9jPqUM+BxXvIzlfA",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2420c"
+  },
+  "employee_id": 2,
+  "username": "alice",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$RwVS0w4lmni/7EQRa0P2yg$587TA/40h5IAI76xmRvGEiMgcp+PWr+sTamD50pAy5g",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2420d"
+  },
+  "employee_id": 3,
+  "username": "mikkel",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$M7pjd/JzOEzVUKTQ2KwAQA$JWja+ZBQmteiCmICWp5iuJ29DXAB5J8yujeGFC6mrEc",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2420e"
+  },
+  "employee_id": 4,
+  "username": "sofie",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$i8LHfbqOc3T/AvS53hj2Qg$ep8rMGsXBaCPb5/hfFKDHsvJZC+XW+eEwfxABkCB5wY",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2420f"
+  },
+  "employee_id": 5,
+  "username": "jonas",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$JcD7uPdQ3ey8lapNPowUmg$ulD90DajUEOpnbsnmY1Q/pkNeoLArY5XXJlpbRi4QcY",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24210"
+  },
+  "employee_id": 6,
+  "username": "emma",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$juAK/GbhT5I4VKZ6mn1oCQ$QTcNboWjI+8zzRYPpSNN+LVJJQgnIgxKmn2BEzpwJ/U",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24211"
+  },
+  "employee_id": 7,
+  "username": "manager",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$FLGTzptnSRjaNVK067W4RQ$oXnrEef/IEc9mmixH2O5f23NZTwd9oGdx4n5D8D16FI",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24212"
+  },
+  "employee_id": 8,
+  "username": "readonly",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$7tb9VjgW0gNU1Wum0YtREw$fEouKLvVNV7eThELz1kiG9fgVKaK/T1vjjwsIHkSmMY",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24213"
+  },
+  "employee_id": 9,
+  "username": "lucas",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$2PGgInSkQGN8cafL2KVziw$fSz9lK0zFPa9IEZxfB6H6Q9IHGk1jkghnSdXjTiGxRs",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24214"
+  },
+  "employee_id": 10,
+  "username": "ida",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$JkK383CoP2tyS8KskUlqIg$Dg/v4jKvGP5FtyRizPX24tIj1URn490pyDBUwL2jAlU",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24215"
+  },
+  "employee_id": 11,
+  "username": "william",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$Xne/F0ZfOHjenPgyCj3siA$xh4r5vtfYzMnvqiv7Mm2RU5NLAngDXddeZ3R5RZ0Nn0",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24216"
+  },
+  "employee_id": 12,
+  "username": "clara",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$D7OPcfW1hQRmlXBpE69RrQ$dDrVkd4e2WrBYcoAFc9WLPlyHNl/1xUc2oTxDAzzKHw",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24217"
+  },
+  "employee_id": 13,
+  "username": "adminn",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$uclpX8S5LhZgLBTruwFXmQ$UQZjeO+ziT58SUvHLie5SLZVI5h9jPqUM+BxXvIzlfA",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24218"
+  },
+  "employee_id": 14,
+  "username": "olivers",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example1$hash1",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24219"
+  },
+  "employee_id": 15,
+  "username": "laurah",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example2$hash2",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2421a"
+  },
+  "employee_id": 16,
+  "username": "tobiasl",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example3$hash3",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2421b"
+  },
+  "employee_id": 17,
+  "username": "sarad",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example4$hash4",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2421c"
+  },
+  "employee_id": 18,
+  "username": "victorh",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example5$hash5",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2421d"
+  },
+  "employee_id": 19,
+  "username": "juliem",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example6$hash6",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2421e"
+  },
+  "employee_id": 20,
+  "username": "andersb",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example7$hash7",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c2421f"
+  },
+  "employee_id": 21,
+  "username": "majaf",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example8$hash8",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24220"
+  },
+  "employee_id": 22,
+  "username": "sebastiank",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example9$hash9",
+  "requires_reset": true
+},
+{
+  "_id": {
+    "$oid": "6933f0cef130dcdbc1c24221"
+  },
+  "employee_id": 23,
+  "username": "nannap",
+  "password_hash": "$argon2id$v=19$m=65536,t=3,p=1$example10$hash10",
+  "requires_reset": true
+}]

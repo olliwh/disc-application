@@ -115,9 +115,10 @@ builder.Services.AddScoped<IGenericService<DiscProfileDto, CreateDiscProfileDto,
     GenericService<DiscProfile, DiscProfileDto, CreateDiscProfileDto, UpdateDiscProfileDto>>();
 builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, UpdatePositionDto>,
     GenericService<Position, PositionDto, CreatePositionDto, UpdatePositionDto>>();
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-//builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
+builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
 builder.Services.AddScoped<IEmployeeRepositoryFactory, EmployeeRepositoryFactory>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<EmployeesRepository>();
