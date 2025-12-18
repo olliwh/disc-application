@@ -156,12 +156,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// CORS must be placed before Authorization and HttpsRedirection
+app.UseCors("AllowFrontend");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
-//cors
-app.UseCors("AllowFrontend");
 
 app.MapControllers();
 

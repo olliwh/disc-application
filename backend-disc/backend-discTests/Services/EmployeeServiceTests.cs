@@ -20,7 +20,7 @@ namespace backend_disc.Services.Tests
         private Mock<IMapper> _mockMapper = null!;
         private EmployeeService _employeeService = null!;
         private Company _company = null!;
-        private readonly string emailDomain = "@TechCorp.com";
+        private readonly string emailDomain = "@techcorp.com";
         private const int length = 2;
         private readonly string db = "mssql";
 
@@ -51,7 +51,7 @@ namespace backend_disc.Services.Tests
             _mockUserRepository = new Mock<IUserRepository>();
             _mockCompanyRepository = new Mock<IGenericRepository<Company>>();
             _mockMapper = new Mock<IMapper>();
-            _company = new Company { Id = 1, Name = "TechCorp", BusinessField = "Software", Location = "Copenhagen" };
+            _company = new Company { Id = 1, Name = "techcorp", BusinessField = "Software", Location = "Copenhagen" };
             _mockCompanyRepository.Setup(x => x.GetById(1)).ReturnsAsync(_company);
 
             _mockEmployeeRepositoryFactory
