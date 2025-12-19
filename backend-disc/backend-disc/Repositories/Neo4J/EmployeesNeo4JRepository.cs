@@ -76,7 +76,9 @@ namespace backend_disc.Repositories.Neo4J
 
                 var matchClause = string.Join("\n", matchClauses);
                 string countReturn = "RETURN count(e) AS totalCount";
-                string dataReturn = "RETURN e, d, dp, p\nSKIP $skip LIMIT $limit";
+                string dataReturn = "RETURN e, d, dp, p\nORDER BY e.id ASC\nSKIP $skip LIMIT $limit";
+                Console.WriteLine(parameters["skip"]);
+                Console.WriteLine(pageIndex);
 
                 var countResult = await session.RunAsync($"{matchClause}\n{countReturn}", parameters);
                 var countRecord = await countResult.SingleAsync();
@@ -144,7 +146,6 @@ namespace backend_disc.Repositories.Neo4J
         
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
-            // Implementation for Neo4j
             await using var session = _driver.AsyncSession();
             var result = await session.RunAsync(
                 "MATCH (e:Employee) WHERE e.work_phone = $phoneNumber RETURN COUNT(e) > 0 as exists",
@@ -184,13 +185,16 @@ namespace backend_disc.Repositories.Neo4J
                   requires_reset: true
                 })
                 WITH e, epd, u
-                MATCH (pos:Position {id: $positionId}), (dept:Department {id: $departmentId}), (disc:DiscProfile {id: $discProfileId})
+                MATCH (dept:Department {id: $departmentId}), (userRole:UserRole {id: 1})
+                OPTIONAL MATCH (pos:Position {id: $positionId})
+                OPTIONAL MATCH (disc:DiscProfile {id: $discProfileId})
                 CREATE (e)-[:HAS]->(epd)
                 CREATE (e)-[:HAS_EMPLOYEE_ROLE]->(u)
                 CREATE (e)-[:OCCUPIES]->(pos)
                 CREATE (e)-[:WORKS_IN]->(dept)
                 CREATE (e)-[:BELONGS_TO]->(disc)
-                RETURN e, epd, u
+                CREATE (u)-[:HAS_PERMISSION_AS]->(userRole)
+                RETURN e
                 ";
                 var tx = await session.BeginTransactionAsync();
                 var result = await tx.RunAsync(query, new
@@ -208,24 +212,26 @@ namespace backend_disc.Repositories.Neo4J
                     passwordHash = p.PasswordHash,
                     positionId = p.PositionId ?? 0,
                     departmentId = p.DepartmentId,
-                    discProfileId = p.DiscProfileId ?? 0
+                    discProfileId = p.DiscProfileId ?? 0,
+                    userRoleId = p.UserRoleId
                 });
+                var record = await result.SingleAsync();
 
-                var records = await result.ToListAsync();
-                var record = records.FirstOrDefault();
+                await tx.CommitAsync();
 
-                if (record == null)
-                    return null;
+                var employeeNode = record["e"].As<INode>();
 
-                var eNode = record["e"].As<INode>();
                 var employee = new Employee
                 {
-                    Id = eNode["id"].As<int>(),
-                    FirstName = eNode["first_name"].As<string>(),
-                    LastName = eNode["last_name"].As<string>(),
-                    WorkEmail = eNode["work_email"].As<string>(),
-                    WorkPhone = eNode["work_phone"].As<string>(),
-                    ImagePath = eNode["image_path"].As<string>()
+                    Id = employeeNode["id"].As<int>(),
+                    FirstName = employeeNode["first_name"].As<string>(),
+                    LastName = employeeNode["last_name"].As<string>(),
+                    WorkEmail = employeeNode["work_email"].As<string>(),
+                    WorkPhone = employeeNode["work_phone"].As<string>(),
+                    ImagePath = employeeNode["image_path"].As<string>(),
+                    DepartmentId = p.DepartmentId,
+                    DiscProfileId = p.DiscProfileId ?? null,
+                    PositionId = p.PositionId ?? null
                 };
 
                 return employee;
@@ -248,11 +254,12 @@ namespace backend_disc.Repositories.Neo4J
             {
                 var query = @"
                 MATCH (e:Employee {id: $id})
+                MATCH (e)-[:HAS]->(epd:EmployeePrivateData)
+                MATCH (e)-[:IS_A]->(u:User)
                 OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)
                 OPTIONAL MATCH (e)-[:OCCUPIES]->(p:Position)
                 OPTIONAL MATCH (e)-[:WORKS_IN]->(d:Department)
-                OPTIONAL MATCH (e)-[:HAS]->(epd:EmployeePrivateData)
-                OPTIONAL MATCH (e)-[:HAS_ADMIN_ROLE|HAS_EMPLOYEE_ROLE|HAS_MANAGER_ROLE|HAS_READONLY_ROLE]->(u:User)
+                
                 RETURN 
                   e.id as Id,
                   e.work_email as WorkEmail,
@@ -310,8 +317,8 @@ namespace backend_disc.Repositories.Neo4J
             try
             {
                 var query = @"
-                MATCH (e:Employee {id: $id})
-                DETACH DELETE e
+                MATCH (e:Employee {id: $id}), (ep:EmployeePrivateData {id: $id}), (u:User {id: $id})
+                DETACH DELETE e, ep, u
                 RETURN $id as deletedId
                 ";
 

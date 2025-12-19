@@ -42,18 +42,11 @@ namespace backend_disc.Services
         {
             var repo = _factory.GetRepository(dbType);
 
-            if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
-                throw new ArgumentException("First name and last name are required");
-
-            if (dto.DepartmentId <= 0)
-                throw new ArgumentException("Valid department ID is required");
-            if (dto.PositionId <= 0)
-                throw new ArgumentException("Valid position ID is required");
-            if (dto.DiscProfileId <= 0)
-                throw new ArgumentException("Valid disc profile ID is required");
-
             try
             {
+                if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
+                    throw new ArgumentException("First name and last name are required");
+
                 Dictionary<string, string> usernameWorkMailAndPhone =
                     await GenerateUsernameWorkMailAndPhone(repo, dto.FirstName, dto.LastName);
 
@@ -79,21 +72,14 @@ namespace backend_disc.Services
 
                 return employeeDto;
             }
-            catch (KeyNotFoundException)
-            {
-                throw;
-            }
-            catch (InvalidOperationException)
-            {
-                throw;
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error creating employee: {FirstName} {LastName}",
-                    dto.FirstName, dto.LastName);
-                throw new InvalidOperationException("An error occurred while creating the employee", ex);
+                _logger.LogError(ex, "Unexpected critical error creating employee: {FirstName} {LastName}",
+                     dto.FirstName, dto.LastName);
+
+                throw; 
             }
-        }
+}
 
 
         private static string GeneratePasswordHash(string password)

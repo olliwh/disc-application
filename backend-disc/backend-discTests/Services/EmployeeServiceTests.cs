@@ -65,11 +65,8 @@ namespace backend_disc.Services.Tests
                 new Employee {Id = 7, WorkEmail = "noah@techcorp.com", WorkPhone = "88887890", FirstName = "Noah", LastName = "Larsen", ImagePath = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png", DepartmentId = 1, DiscProfileId = 1, PositionId = 1},
             };
 
-
             _mockUserRepository.Setup(x => x.UsernameExists(It.IsAny<string>())).ReturnsAsync(false);
             _mockEmployeeRepository.Setup(x => x.PhoneNumExists(It.IsAny<string>())).ReturnsAsync(false);
-
-
 
             var paginatedList = new PaginatedList<Employee>(employees, 1, employees.Count, 10);
             _mockEmployeeRepository.Setup(x => x.GetAll(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(paginatedList);
@@ -116,7 +113,7 @@ namespace backend_disc.Services.Tests
             Assert.AreEqual(3, result.TotalCount);
         }
         [TestMethod()]
-        [DataRow("Admin", "Admin", "admin", "ad")]
+        [DataRow("Admin", "Jones", "admin", "jo")]
         public async Task GenerateUsernameWorkMailAndPhone_ValueStructure(string firstName, string lastName, string firstNameLower, string lastNameFirstTwo)
         {
 
@@ -133,8 +130,7 @@ namespace backend_disc.Services.Tests
 
                 //Username structure
                 Assert.IsNotNull(username);
-                Assert.IsTrue(username.StartsWith(firstNameLower));
-                Assert.IsTrue(username.Contains(lastNameFirstTwo));
+                Assert.IsTrue(username.StartsWith($"{firstNameLower}.{lastNameFirstTwo}"));
                 Assert.AreEqual(3, digitCountUsername);
                 //Phone number structure
                 Assert.IsNotNull(phoneNumber);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Threading.Tasks;
+﻿using Microsoft.Data.SqlClient;
 
 namespace seeder
 {
@@ -22,16 +19,13 @@ namespace seeder
 
             try
             {
-                // Wait for database to be created
                 await WaitForDatabase(masterConnectionString, DB_NAME);
 
-                // Read SQL files
                 string sqlCreateStoredProc = await ReadSqlFile("createStoredProc.sql");
                 string sqlCreateStoredProcEdit = await ReadSqlFile("createStoredProcEdit.sql");
                 string sqlCreateView = await ReadSqlFile("createView.sql");
                 string sqlInsertData = await ReadSqlFile("insertDataQuery.sql");
 
-                // Wait for tables to exist
                 await WaitForTable(connectionString, "dbo.stress_measures");
                 await WaitForTable(connectionString, "dbo.employees");
                 if (await TableHasData(connectionString, "dbo.employees"))
@@ -40,7 +34,6 @@ namespace seeder
                 }
                 else
                 {
-                    // Execute scripts
                     await ExecuteNonQuery(connectionString, sqlCreateStoredProc);
                     await ExecuteNonQuery(connectionString, sqlCreateStoredProcEdit);
                     await ExecuteNonQuery(connectionString, sqlCreateView);

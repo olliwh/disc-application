@@ -17,7 +17,7 @@ public partial class Employee
 
     public string ImagePath { get; set; } = null!;
 
-    public int DepartmentId { get; set; }
+    public int DepartmentId { get; set; } 
 
     public int? PositionId { get; set; }
 

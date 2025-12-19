@@ -50,7 +50,7 @@ namespace backend_disc.Services
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Password verification failed for user {Username}", dto.Username);
-                    return null; 
+                    return null;
                 }
 
                 if (!isPasswordValid)
@@ -59,7 +59,6 @@ namespace backend_disc.Services
                     return null;
                 }
 
-                // Generate JWT
                 var secretKey = _config["API_SECRET_KEY"]
                     ?? throw new InvalidOperationException("API_SECRET_KEY is not configured");
 
@@ -90,7 +89,7 @@ namespace backend_disc.Services
             }
             catch (InvalidOperationException)
             {
-                
+
                 throw;
             }
             catch (Exception ex)

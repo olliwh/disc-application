@@ -16,7 +16,6 @@ namespace backend_discTests
         private DiscProfileDbContext _context = null!;
         private EmployeesRepository _repository = null!;
         private IConfiguration _configuration = null!;
-        // Valid Values for adding an employee
         private const string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private const string PASSWORD_HASH = "$argon2id$v=19$m=65536,t=3,p=1$JcD7uPdQ3ey8lapNPowUmg$ulD90DajUEOpnbsnmY1Q/pkNeoLArY5XXJlpbRi4QcY";
         private const string VALID_CPR = "12345678";
@@ -31,12 +30,9 @@ namespace backend_discTests
         private const string VALID_PRIVATE_EMAIL = "Timmy@test.com";
         private const string VALID_PRIVATE_PHONE = "73549583";
         private const int VALID_USER_ROLE_ID = 1;
-
-        // Not unique values
         private const string NON_UNIQUE_USERNAME = "Admin";
         private const string NON_UNIQUE_WORK_EMAIL = "Admin@techcorp.com";
         private const string NON_UNIQUE_WORK_PHONE = "88888927";
-
 
         [TestInitialize]
         public async Task Setup()
@@ -55,7 +51,6 @@ namespace backend_discTests
             _context = new DiscProfileDbContext(options);
             _repository = new EmployeesRepository(_context, NullLogger<EmployeesRepository>.Instance);
 
-            // Verify connection - don't create new database
             var canConnect = await _context.Database.CanConnectAsync();
             if (!canConnect)
                 throw new InvalidOperationException("Cannot connect to database. Check connection string.");
@@ -66,9 +61,8 @@ namespace backend_discTests
         {
 
             await _context.DisposeAsync();
-            
-        }
 
+        }
 
         [TestMethod]
         [DataRow(1, "AdminNewEmail@ok.dk", "12345678")]
@@ -76,7 +70,6 @@ namespace backend_discTests
         public async Task UpdatePrivateData_Success(int id, string mail, string phone)
         {
             var result = await _repository.UpdatePrivateData(id, mail, phone);
-
 
             Assert.AreEqual(id, result);
             var updated = await _context.EmployeePrivateData.FirstOrDefaultAsync(e => e.EmployeeId == id);
@@ -142,7 +135,6 @@ namespace backend_discTests
 
             var result = await _repository.AddEmployeeSPAsync(p);
             Assert.IsNotNull(result);
-            Assert.IsNotNull(result.Id);
             Assert.AreEqual(firstName, result.FirstName);
             Assert.AreEqual(lastName, result.LastName);
             Assert.AreEqual(workEmail, result.WorkEmail);
@@ -181,7 +173,7 @@ namespace backend_discTests
         )]
         public async Task AddEmployeeSPAsync_InValidForeignKeys(string cpr, int deptId, int discId, int posId, int userRoleId, string firstName, string lastName, string imagePath, string pwHash, string username, string privateEmail, string privatePhone, string workEmail, string workPhone)
         {
-            
+
             AddEmployeeSpParams p = new AddEmployeeSpParams
             {
                 CPR = cpr,

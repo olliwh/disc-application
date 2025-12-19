@@ -4,7 +4,6 @@ using class_library_disc.Data;
 using class_library_disc.Models.Sql;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace backend_disc.Repositories
 {
@@ -12,13 +11,15 @@ namespace backend_disc.Repositories
     {
         private readonly DiscProfileDbContext _context;
         private readonly ILogger<EmployeesRepository> _logger;
+        private const string ERROR_MESSAGE = "Error adding employee via stored procedure";
 
-        public EmployeesRepository(DiscProfileDbContext context, 
+        public EmployeesRepository(DiscProfileDbContext context,
             ILogger<EmployeesRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
+
         /// <summary>
         /// check if employee with that work phone number exists
         /// </summary>
@@ -40,7 +41,7 @@ namespace backend_disc.Repositories
         /// <exception cref="InvalidOperationException">When database constraints are violated</exception>
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
-            
+
             //check values set be service
             if (string.IsNullOrWhiteSpace(p.WorkPhone) || string.IsNullOrWhiteSpace(p.WorkEmail) ||
                 string.IsNullOrWhiteSpace(p.Username) || string.IsNullOrWhiteSpace(p.ImagePath) ||
@@ -105,13 +106,13 @@ namespace backend_disc.Repositories
             }
             catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Error adding employee via stored procedure");
-                throw new ArgumentException("Error adding employee via stored procedure", ex);
+                _logger.LogError(ex, ERROR_MESSAGE);
+                throw new ArgumentException(ERROR_MESSAGE, ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding employee via stored procedure");
-                throw new InvalidOperationException("Error adding employee via stored procedure", ex);
+                _logger.LogError(ex, ERROR_MESSAGE);
+                throw new InvalidOperationException(ERROR_MESSAGE, ex);
             }
 
         }
@@ -127,7 +128,7 @@ namespace backend_disc.Repositories
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns>Task<PaginatedList<Employee>></returns>
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, 
+        public async Task<PaginatedList<Employee>> GetAll(int? departmentId,
             int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             IQueryable<Employee> query = _context.Employees
@@ -155,6 +156,7 @@ namespace backend_disc.Repositories
             int totalCount = await query.CountAsync();
 
             var employees = await query
+                .OrderBy(e => e.Id)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -166,19 +168,22 @@ namespace backend_disc.Repositories
                     .Where(e => (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch))
                     .ToList();
             }
-
             return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
         }
+
         public async Task<EmployeesOwnProfile?> GetById(int id)
         {
             return await _context.EmployeesOwnProfiles.FirstOrDefaultAsync(e => e.Id == id);
         }
+
         public async Task<int?> Delete(int id)
         {
             var entity = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+            Console.WriteLine("DLETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             if (entity == null) return null;
             _context.Remove(entity);
             await _context.SaveChangesAsync();
+            Console.WriteLine(id);
             return id;
         }
 
@@ -207,10 +212,10 @@ namespace backend_disc.Repositories
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "SQL error updating data: {Message}", ex.Message);
-                
-                if (ex.Number == 50001) 
+
+                if (ex.Number == 50001)
                     throw new KeyNotFoundException("Employee not found", ex);
-                
+
                 throw new InvalidOperationException($"Database error: {ex.Message}", ex);
             }
             catch (Exception ex)
@@ -219,6 +224,5 @@ namespace backend_disc.Repositories
                 throw new InvalidOperationException("Failed to update employee data", ex);
             }
         }
-
     }
 }

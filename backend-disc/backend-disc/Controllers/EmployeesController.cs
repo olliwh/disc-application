@@ -21,19 +21,6 @@ namespace backend_disc.Controllers
             _logger = logger;
         }
 
-        //[HttpGet]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //public async Task<IActionResult> GetAll(
-        //    [FromQuery] int? departmentId = null,
-        //    [FromQuery] int? discProfileId = null,
-        //    [FromQuery] int? positionId = null,
-        //    [FromQuery] string? search = null,
-        //    [FromQuery] int pageIndex = 1,
-        //    [FromQuery] int pageSize = 12)
-        //{
-        //    var employees = await _employeeService.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
-        //    return Ok(employees);
-        //}
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(
@@ -44,10 +31,11 @@ namespace backend_disc.Controllers
         [FromQuery] string? search = null,
         [FromQuery] int pageIndex = 1,
         [FromQuery] int pageSize = 12)
-            {
-                var employees = await _employeeService.GetAll(db, departmentId, discProfileId, positionId, search, pageIndex, pageSize);
-                return Ok(employees);
-            }
+        {
+            var employees = await _employeeService.GetAll(db, departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+            return Ok(employees);
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -56,17 +44,14 @@ namespace backend_disc.Controllers
         [Authorize]
         public virtual async Task<IActionResult> GetById(int id, [FromQuery] string db = "mssql")
         {
-            // Get employeeId from token
             var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
 
-            
             if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
             {
                 _logger.LogWarning("Invalid or missing employeeId in token");
                 return Unauthorized(new { message = "Invalid token - missing employeeId claim" });
             }
 
-            // Check if requested ID matches token ID (unless user is Admin)
             if (id != tokenEmployeeId)
             {
                 _logger.LogWarning("User {TokenEmployeeId} attempted to access employee {EmployeeId}", tokenEmployeeId, id);
@@ -126,6 +111,7 @@ namespace backend_disc.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Admin")]
         public virtual async Task<IActionResult> Delete(int id, [FromQuery] string db = "mssql")
         {
             var deleted = await _employeeService.DeleteAsync(db,id);
@@ -139,22 +125,22 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [Authorize]
+        //[Authorize]
         public virtual async Task<IActionResult> Update(int id, [FromBody] UpdatePrivateDataDto updateDto, [FromQuery] string db = "mssql")
         {
             // Get employeeId from token
-            var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
-            if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
-            {
-                _logger.LogWarning("Invalid or missing employeeId in token");
-                return Unauthorized(new { message = "Invalid token" });
-            }
+            //var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
+            //if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
+            //{
+            //    _logger.LogWarning("Invalid or missing employeeId in token");
+            //    return Unauthorized(new { message = "Invalid token" });
+            //}
 
-            if (id != tokenEmployeeId)
-            {
-                _logger.LogWarning("User {TokenEmployeeId} attempted to update employee {EmployeeId}", tokenEmployeeId, id);
-                return Forbid();
-            }
+            //if (id != tokenEmployeeId)
+            //{
+            //    _logger.LogWarning("User {TokenEmployeeId} attempted to update employee {EmployeeId}", tokenEmployeeId, id);
+            //    return Forbid();
+            //}
 
             try
             {
