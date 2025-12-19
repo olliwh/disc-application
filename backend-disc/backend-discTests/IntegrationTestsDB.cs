@@ -65,7 +65,7 @@ namespace backend_discTests
         }
 
         [TestMethod]
-        [DataRow(1, "AdminNewEmail@ok.dk", "12345678")]
+        [DataRow(3, "AdminNewEmail@ok.dk", "12345678")]
         [DataRow(2, "aliceNewEmail@ok.dk", "787877787878")]
         public async Task UpdatePrivateData_Success(int id, string mail, string phone)
         {
