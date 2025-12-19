@@ -16,6 +16,7 @@ namespace seeder
             string DB_HOST = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
             int DB_PORT = int.Parse(Environment.GetEnvironmentVariable("DB_PORT") ?? "1433");
 
+            Console.WriteLine();
             string connectionString = $"Server={DB_HOST},{DB_PORT};Database={DB_NAME};User Id={DB_USER};Password={DB_PASSWORD};TrustServerCertificate=True;";
             string masterConnectionString = $"Server={DB_HOST},{DB_PORT};Database=master;User Id={DB_USER};Password={DB_PASSWORD};TrustServerCertificate=True;";
 
