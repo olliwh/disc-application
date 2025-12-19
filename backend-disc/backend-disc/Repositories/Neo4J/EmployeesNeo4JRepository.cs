@@ -190,10 +190,15 @@ namespace backend_disc.Repositories.Neo4J
                 OPTIONAL MATCH (disc:DiscProfile {id: $discProfileId})
                 CREATE (e)-[:HAS]->(epd)
                 CREATE (e)-[:HAS_EMPLOYEE_ROLE]->(u)
-                CREATE (e)-[:OCCUPIES]->(pos)
                 CREATE (e)-[:WORKS_IN]->(dept)
-                CREATE (e)-[:BELONGS_TO]->(disc)
                 CREATE (u)-[:HAS_PERMISSION_AS]->(userRole)
+                FOREACH (_ IN CASE WHEN pos IS NOT NULL THEN [1] ELSE [] END |
+                CREATE (e)-[:OCCUPIES]->(pos)
+                )
+
+                FOREACH (_ IN CASE WHEN disc IS NOT NULL THEN [1] ELSE [] END |
+                  CREATE (e)-[:BELONGS_TO]->(disc)
+                )
                 RETURN e
                 ";
                 var tx = await session.BeginTransactionAsync();
@@ -316,6 +321,7 @@ namespace backend_disc.Repositories.Neo4J
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
+                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 var query = @"
                 MATCH (e:Employee {id: $id}), (ep:EmployeePrivateData {id: $id}), (u:User {id: $id})
                 DETACH DELETE e, ep, u
@@ -334,6 +340,7 @@ namespace backend_disc.Repositories.Neo4J
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting employee from Neo4j");
+                Console.WriteLine(ex + "Error deleting employee from Neo4j");
                 throw;
             }
             finally
