@@ -1,4 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using class_library_disc.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Migrator.Services;
+
 
 namespace seeder
 {
@@ -39,6 +43,7 @@ namespace seeder
                     await ExecuteNonQuery(connectionString, sqlCreateView);
                     await ExecuteNonQuery(connectionString, sqlInsertData);
                     Console.WriteLine("Seeder completed successfully!");
+                    await MigrateToNoSqlDatabases(connectionString);
                 }
             }
             catch (Exception ex)
@@ -46,6 +51,56 @@ namespace seeder
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 throw;
+            }
+        }
+        static async Task MigrateToNoSqlDatabases(string connectionString)
+        {
+            Console.WriteLine("Connecting to database for migration...");
+
+            var options = new DbContextOptionsBuilder<DiscProfileDbContext>()
+                .UseSqlServer(connectionString)
+                .Options;
+
+            var dbContext = new DiscProfileDbContext(options);
+            var fetcher = new SqlDataFetcher(dbContext);
+            var data = await fetcher.FetchAllDataAsync();
+
+            try
+            {
+                // Migrate to MongoDB
+                try
+                {
+                    Console.WriteLine("Migrating to MongoDB...");
+                    var mongodb = new MongoConnection();
+                    await mongodb.DropAndRecreateDatabaseAsync();
+                    var mongoMigrator = new MigrateToMongo(mongodb);
+                    await mongoMigrator.MigrateDataToMongoAsync(data);
+                    Console.WriteLine("MongoDB migration completed successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Migration to MongoDB failed: {ex.Message}");
+                }
+
+                // Migrate to Neo4j
+                try
+                {
+                    Console.WriteLine("Migrating to Neo4j...");
+                    var neo4j = new Neo4JConnection();
+                    await neo4j.RecreateDatabaseAsync();
+                    var neo4jMigrator = new MigrateToNeo4J(neo4j);
+                    await neo4jMigrator.MigrateDataToNeo4jAsync(data);
+                    await neo4j.CloseAsync();
+                    Console.WriteLine("Neo4j migration completed successfully!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Migration to Neo4j failed: {ex.Message}");
+                }
+            }
+            finally
+            {
+                await dbContext.DisposeAsync();
             }
         }
 
