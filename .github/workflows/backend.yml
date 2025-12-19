@@ -1,116 +1,161 @@
 name: Backend CI/CD
 
 on:
-  push:
-    branches:
-      - main
-    paths: ["backend-disc/**"]
-  pull_request:
-    branches:
-      - main
-    paths: ["backend-disc/**"]
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths: ["backend-disc/**"]
+    pull_request:
+        branches:
+            - main
+        paths: ["backend-disc/**"]
+    workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
 
-    env:
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Start SQL Server
-        shell: bash
-        run: |
-          docker run \
-            -e ACCEPT_EULA=Y \
-            -e SA_PASSWORD="$DB_PASSWORD" \
-            -p 1433:1433 \
-            --name disc-mssql \
-            -d mcr.microsoft.com/mssql/server:2022-latest
-
-          echo "Waiting for SQL Server..."
-          for i in {1..60}; do
-            if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready"; then
-              echo "SQL Server ready!"
-              break
-            fi
-            sleep 2
-          done
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: Restore dependencies
-        working-directory: backend-disc
-        run: dotnet restore
-
-      - name: Build API
-        working-directory: backend-disc
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Start API
         env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
-          ASPNETCORE_URLS: http://0.0.0.0:5000
-          ASPNETCORE_ENVIRONMENT: Development
-        run: |
-          cd backend-disc
-          dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" > ../backend.log 2>&1 &
-          echo $! > api.pid
-          echo "Backend started with PID: $(cat api.pid)"
-          sleep 5
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+            NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+            API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
 
-      - name: run seeder
-        working-directory: backend-disc/seeder
-        env:
-          DB_HOST: "localhost"
-          DB_PORT: "1433"
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: "sa"
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: |
-          echo "Running seeder..."
-          dotnet run --configuration Release
-          echo "Seeder completed!"
-          sleep 5
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Run .NET tests
-        env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
-        working-directory: backend-disc
-        run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --verbosity normal
+            - name: Start SQL Server
+              shell: bash
+              run: |
+                  docker run \
+                    -e ACCEPT_EULA=Y \
+                    -e SA_PASSWORD="$DB_PASSWORD" \
+                    -p 1433:1433 \
+                    --name disc-mssql \
+                    -d mcr.microsoft.com/mssql/server:2022-latest
 
-      - name: Upload .NET test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-test-results
-          path: "**/test-results.trx"
-          if-no-files-found: warn
+                  echo "Waiting for SQL Server..."
+                  for i in {1..60}; do
+                    if docker logs disc-mssql 2>&1 | grep -q "SQL Server is now ready"; then
+                      echo "SQL Server ready!"
+                      break
+                    fi
+                    sleep 2
+                  done
+            - name: Start MongoDB
+              run: |
+                  docker run -d \
+                    --name disc-mongo \
+                    -p 27018:27017 \
+                    -e MONGO_INITDB_ROOT_USERNAME=root \
+                    -e MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD \
+                    mongo:7
+                  sleep 5 # Mongo is usually very fast to start
 
-      - name: Install Newman
-        run: npm install -g newman
+            - name: Start Neo4j
+              run: |
+                  docker run -d \
+                    --name disc-neo4j \
+                    -p 7474:7474 -p 7687:7687 \
+                    -e NEO4J_AUTH=neo4j/$NEO4J_PASSWORD \
+                    -e NEO4J_ACCEPT_LICENSE_AGREEMENT=yes \
+                    neo4j:latest
 
-      - name: Run Postman tests for mssql
-        working-directory: backend-disc
-        run: |
-          newman run Disc-app-api-postman-final-tests.postman_collection.json \
-            --environment postman-env.json \
-            --reporters cli,json \
-            --reporter-json-export test-results.json
+                  echo "Waiting for Neo4j..."
+                  for i in {1..60}; do
+                    if docker logs disc-neo4j 2>&1 | grep -q "Remote interface available at"; then
+                      echo "Neo4j ready!"
+                      break
+                    fi
+                    sleep 2
+                  done
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: "8.0.x"
 
-      - name: Run Postman tests for neo4j
-        working-directory: backend-disc
-        run: |
-          newman run Disc-app-api-postman-neo4j-tests.postman_collection.json \
-            --environment postman-env.json \
-            --reporters cli,json \
-            --reporter-json-export test-results.json
+            - name: Restore dependencies
+              working-directory: backend-disc
+              run: dotnet restore
+
+            - name: Build API
+              working-directory: backend-disc
+              run: dotnet build --no-restore --configuration Release
+
+            - name: Start API
+              env:
+                  ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+                  API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+                  ASPNETCORE_URLS: http://0.0.0.0:5000
+                  ASPNETCORE_ENVIRONMENT: Development
+              run: |
+                  cd backend-disc
+                  dotnet run --project backend-disc/backend-disc.csproj --configuration Release --urls "http://0.0.0.0:5000" > ../backend.log 2>&1 &
+                  echo $! > api.pid
+                  echo "Backend started with PID: $(cat api.pid)"
+                  sleep 5
+
+            - name: run seeder
+              working-directory: backend-disc/seeder
+              env:
+                  DB_HOST: "localhost"
+                  DB_PORT: "1433"
+                  DB_NAME: ${{ secrets.DB_NAME }}
+                  DB_USER: "sa"
+                  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+              run: |
+                  echo "Running seeder..."
+                  dotnet run --configuration Release
+                  echo "Seeder completed!"
+                  sleep 5
+
+            - name: Run .NET tests
+              env:
+                  ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=${{ secrets.DB_NAME }};User Id=sa;Password=${{ secrets.DB_PASSWORD }};TrustServerCertificate=True;"
+              working-directory: backend-disc
+              run: dotnet test --configuration Release --logger "trx;LogFileName=test-results.trx" --verbosity normal
+
+            - name: Upload .NET test results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: dotnet-test-results
+                  path: "**/test-results.trx"
+                  if-no-files-found: warn
+
+            - name: Install Newman
+              run: npm install -g newman
+
+            - name: Run Postman tests for mssql
+              working-directory: backend-disc
+              run: |
+                  newman run Disc-app-api-mssql-test.postman_collection.json \
+                    --environment postman-env.json \
+                    --reporters cli,json \
+                    --reporter-json-export test-results.json
+
+            - name: Run Postman tests for neo4j
+              working-directory: backend-disc
+              run: |
+                  newman run Disc-app-api-neo4j-test.postman_collection.json \
+                    --environment postman-env.json \
+                    --reporters cli,json \
+                    --reporter-json-export test-results.json
+            - name: Run Postman tests for mongo
+              working-directory: backend-disc
+              run: |
+                  newman run Disc-app-api-mongodb-test.postman_collection.json \
+                    --environment postman-env.json \
+                    --reporters cli,json \
+                    --reporter-json-export test-results.json
+            - name: Upload test results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                name: test-results
+                path: |
+                  **/test-results.trx
+                  **/test-results.json
+                  backend.log
+                if-no-files-found: warn
