@@ -18,13 +18,7 @@ using Neo4j.Driver;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Create a logger early (before app.Build)
-var startupLogger = LoggerFactory.Create(config =>
-{
-    config.AddConsole();
-}).CreateLogger("Startup");
-
+builder.Configuration.AddEnvironmentVariables();
 
 // Add logging configuration
 builder.Services.AddLogging(config =>
@@ -33,8 +27,6 @@ builder.Services.AddLogging(config =>
     config.AddDebug();
     config.SetMinimumLevel(LogLevel.Debug);
 });
-
-// Add services to the container.
 
 //Cors
 builder.Services.AddCors(options =>
@@ -85,8 +77,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddDbContext<DiscProfileDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<DiscProfileDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddAutoMapper(
     cfg => { }, // optional config lambda 
     typeof(AutoMapperProfile) // where to find mappers
