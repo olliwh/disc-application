@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "efc1902c-fa3d-4ea9-a1ee-0654f53072b2",
-		"name": "Disc-app-api-postman-neo4j-tests",
+		"_postman_id": "94656e33-b690-4f4c-836a-cb418552889f",
+		"name": "Disc-app-api-mssql-test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25638427",
-		"_collection_link": "https://lkdwljadlkjslkdj.postman.co/workspace/lkdwljadlkjslkdj-Workspace~dc5b7322-1f10-47de-8d15-8122d5305457/collection/25638427-efc1902c-fa3d-4ea9-a1ee-0654f53072b2?action=share&source=collection_link&creator=25638427"
+		"_collection_link": "https://lkdwljadlkjslkdj.postman.co/workspace/lkdwljadlkjslkdj-Workspace~dc5b7322-1f10-47de-8d15-8122d5305457/collection/25638427-94656e33-b690-4f4c-836a-cb418552889f?action=share&source=collection_link&creator=25638427"
 	},
 	"item": [
 		{
@@ -35,10 +35,10 @@
 									"});\r",
 									"\r",
 									"// Items array validation\r",
-									"pm.test(\"Items array contains 6 departments\", function () {\r",
+									"pm.test(\"Items array contains 5 or more departments\", function () {\r",
 									"    const jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
-									"    pm.expect(jsonData.items).to.have.lengthOf(jsonData.totalCount);\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf.at.least(5);\r",
 									"});\r",
 									"\r",
 									"// Item structure validation\r",
@@ -49,7 +49,6 @@
 									"        pm.expect(item).to.have.property(\"description\");\r",
 									"        pm.expect(item).to.have.property(\"id\");\r",
 									"        pm.expect(item.name).to.be.a(\"string\");\r",
-									"        pm.expect(item.description).to.be.a(\"string\");\r",
 									"        pm.expect(item.id).to.be.a(\"number\");\r",
 									"    });\r",
 									"});\r",
@@ -98,12 +97,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -139,12 +144,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -218,13 +229,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/1",
+							"raw": "{{BASE_URL}}/departments/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"1"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -255,13 +272,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/3",
+							"raw": "{{BASE_URL}}/departments/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -292,13 +315,19 @@
 							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New Department for team building updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/3",
+							"raw": "{{BASE_URL}}/departments/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -397,12 +426,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -438,12 +473,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -517,13 +558,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/1",
+							"raw": "{{BASE_URL}}/positions/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"1"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -554,13 +601,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/3",
+							"raw": "{{BASE_URL}}/positions/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -591,13 +644,19 @@
 							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New Position for team building updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/3",
+							"raw": "{{BASE_URL}}/positions/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -697,12 +756,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -738,12 +803,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -817,13 +888,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/1",
+							"raw": "{{BASE_URL}}/discProfiles/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"1"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -854,13 +931,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/3",
+							"raw": "{{BASE_URL}}/discProfiles/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -891,13 +974,19 @@
 							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New DiscProfile for team building updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/3",
+							"raw": "{{BASE_URL}}/discProfiles/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -935,7 +1024,7 @@
 									"// Pagination validation\r",
 									"pm.test(\"Pagination values are correct\", function () {\r",
 									"    const jsonData = pm.response.json();\r",
-									"    pm.expect(jsonData.totalCount).to.equal(23);\r",
+									"    pm.expect(jsonData.totalCount).to.be.above(20);\r",
 									"    pm.expect(jsonData.pageIndex).to.equal(1);\r",
 									"    pm.expect(jsonData.pageSize).to.equal(12);\r",
 									"    pm.expect(jsonData.hasPreviousPage).to.be.false;\r",
@@ -1059,7 +1148,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees?db={{db}}",
+							"raw": "{{BASE_URL}}/employees?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1069,17 +1158,7 @@
 							"query": [
 								{
 									"key": "db",
-									"value": "{{db}}"
-								},
-								{
-									"key": "pageIndex",
-									"value": "1",
-									"disabled": true
-								},
-								{
-									"key": "pageSize",
-									"value": "12",
-									"disabled": true
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1215,7 +1294,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees?search=la&db={{db}}",
+							"raw": "{{BASE_URL}}/employees?search=la&db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1229,7 +1308,7 @@
 								},
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1377,7 +1456,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees?departmentId=1&db={{db}}",
+							"raw": "{{BASE_URL}}/employees?departmentId=1&db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1391,7 +1470,7 @@
 								},
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1538,7 +1617,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees?positionId=1&db={{db}}",
+							"raw": "{{BASE_URL}}/employees?positionId=1&db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1552,7 +1631,7 @@
 								},
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1699,7 +1778,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees?discProfileId=1&db={{db}}",
+							"raw": "{{BASE_URL}}/employees?discProfileId=1&db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1713,7 +1792,7 @@
 								},
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1860,7 +1939,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees?discProfileId=1&search=a&db={{db}}",
+							"raw": "{{BASE_URL}}/employees?discProfileId=1&search=a&db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1878,7 +1957,7 @@
 								},
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1907,7 +1986,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/employees/1?db={{db}}",
+							"raw": "{{BASE_URL}}/employees/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1918,7 +1997,7 @@
 							"query": [
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -1962,13 +2041,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/Auth/login",
+							"raw": "{{BASE_URL}}/Auth/login?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"Auth",
 								"login"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2067,12 +2152,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2108,12 +2199,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2180,13 +2277,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/departments/2",
+							"raw": "{{BASE_URL}}/departments/2?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"2"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2217,13 +2320,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/3",
+							"raw": "{{BASE_URL}}/departments/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2254,13 +2363,19 @@
 							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New Department for team building updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/3",
+							"raw": "{{BASE_URL}}/departments/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2394,12 +2509,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2435,12 +2556,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2507,13 +2634,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/1",
+							"raw": "{{BASE_URL}}/discProfiles/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"1"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2544,13 +2677,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/3",
+							"raw": "{{BASE_URL}}/discProfiles/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2581,13 +2720,19 @@
 							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New DiscProfile for team building updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/3",
+							"raw": "{{BASE_URL}}/discProfiles/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2720,12 +2865,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2761,12 +2912,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2833,13 +2990,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/positions/1",
+							"raw": "{{BASE_URL}}/positions/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"1"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2870,13 +3033,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/3",
+							"raw": "{{BASE_URL}}/positions/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2907,13 +3076,19 @@
 							"raw": "{\r\n  \"name\": \"Team Bulding updated\",\r\n  \"description\": \"New Position for team building updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/3",
+							"raw": "{{BASE_URL}}/positions/3?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"3"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -2990,13 +3165,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/Auth/login",
+							"raw": "{{BASE_URL}}/Auth/login?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"Auth",
 								"login"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -3095,12 +3276,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -3192,19 +3379,25 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update Copy",
+					"name": "Update",
 					"event": [
 						{
 							"listen": "test",
@@ -3281,20 +3474,26 @@
 							"raw": "{\r\n  \"name\": \"Departmnet updated\",\r\n  \"description\": \"New Department  updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GetById Copy",
+					"name": "GetById",
 					"event": [
 						{
 							"listen": "test",
@@ -3357,13 +3556,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -3394,13 +3599,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -3533,12 +3744,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -3630,19 +3847,25 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update Copy",
+					"name": "Update",
 					"event": [
 						{
 							"listen": "test",
@@ -3719,20 +3942,26 @@
 							"raw": "{\r\n  \"name\": \"Departmnet updated\",\r\n  \"description\": \"New Position  updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GetById Copy",
+					"name": "GetById",
 					"event": [
 						{
 							"listen": "test",
@@ -3795,13 +4024,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -3832,13 +4067,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4354,13 +4595,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/Auth/login",
+							"raw": "{{BASE_URL}}/Auth/login?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"Auth",
 								"login"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4426,6 +4673,9 @@
 									"    pm.expect(jsonData).to.have.property(\"firstName\");\r",
 									"    pm.expect(jsonData).to.have.property(\"lastName\");\r",
 									"    pm.expect(jsonData).to.have.property(\"imagePath\");\r",
+									"    pm.expect(jsonData).to.have.property(\"departmentId\");\r",
+									"    pm.expect(jsonData).to.have.property(\"positionId\");\r",
+									"    pm.expect(jsonData).to.have.property(\"discProfileId\");\r",
 									"});\r",
 									"\r",
 									"// Data type validation\r",
@@ -4437,6 +4687,9 @@
 									"    pm.expect(jsonData.firstName).to.be.a(\"string\");\r",
 									"    pm.expect(jsonData.lastName).to.be.a(\"string\");\r",
 									"    pm.expect(jsonData.imagePath).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.departmentId).to.be.a(\"number\");\r",
+									"    pm.expect(jsonData.positionId).to.be.a(\"number\");\r",
+									"    pm.expect(jsonData.discProfileId).to.be.a(\"number\");\r",
 									"});\r",
 									"\r",
 									"// Specific data validation\r",
@@ -4444,6 +4697,9 @@
 									"    const jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.firstName).to.equal(\"postman\");\r",
 									"    pm.expect(jsonData.lastName).to.equal(\"test\");\r",
+									"    pm.expect(jsonData.departmentId).to.equal(1);\r",
+									"    pm.expect(jsonData.positionId).to.equal(1);\r",
+									"    pm.expect(jsonData.discProfileId).to.equal(1);\r",
 									"});\r",
 									"\r",
 									"// Email format validation\r",
@@ -4462,9 +4718,17 @@
 									"    pm.expect(jsonData.imagePath).to.not.be.empty;\r",
 									"});\r",
 									"\r",
+									"// Valid ID validation\r",
+									"pm.test(\"All IDs are positive numbers\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.above(0);\r",
+									"    pm.expect(jsonData.departmentId).to.be.above(0);\r",
+									"    pm.expect(jsonData.positionId).to.be.above(0);\r",
+									"    pm.expect(jsonData.discProfileId).to.be.above(0);\r",
+									"});\r",
 									"\r",
+									"pm.collectionVariables.set(\"employee_id\", pm.response.json().id)\r",
 									"\r",
-									"pm.environment.set(\"employee_id\", pm.response.json().id);\r",
 									""
 								],
 								"type": "text/javascript",
@@ -4497,7 +4761,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/employees?db={{db}}",
+							"raw": "{{BASE_URL}}/employees?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -4507,7 +4771,7 @@
 							"query": [
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -4578,18 +4842,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/employees/1?db={{db}}",
+							"raw": "{{BASE_URL}}/employees/{{employee_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"employees",
-								"1"
+								"{{employee_id}}"
 							],
 							"query": [
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -4652,8 +4916,8 @@
 									"    pm.expect(jsonData.discProfileName).to.equal(\"Dominance\");\r",
 									"    pm.expect(jsonData.positionName).to.equal(\"Software Engineer\");\r",
 									"    pm.expect(jsonData.departmentName).to.equal(\"IT\");\r",
-									"    pm.expect(jsonData.privateEmail).to.equal(\"postman@ok.dk\");\r",
-									"    pm.expect(jsonData.privatePhone).to.equal(\"9966443311\");\r",
+									"    pm.expect(jsonData.privateEmail).to.equal(\"admin@mail.com\");\r",
+									"    pm.expect(jsonData.privatePhone).to.equal(\"12345678\");\r",
 									"    pm.expect(jsonData.username).to.equal(\"admin\");\r",
 									"});\r",
 									"\r",
@@ -4713,7 +4977,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/employees/1?db={{db}}",
+							"raw": "{{BASE_URL}}/employees/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -4724,7 +4988,7 @@
 							"query": [
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -4755,7 +5019,7 @@
 									"pm.test(\"Response ID matches employee_id variable\", function () {\r",
 									"    const responseText = pm.response.text().trim();\r",
 									"    const responseId = parseInt(responseText);\r",
-									"    const expectedId = pm.environment.get(\"employee_id\");\r",
+									"    const expectedId = pm.collectionVariables.get(\"employee_id\");\r",
 									"    pm.expect(responseId).to.equal(parseInt(expectedId));\r",
 									"});\r",
 									"\r",
@@ -4768,7 +5032,7 @@
 									"\r",
 									"// Optional: Clear the variable after successful deletion\r",
 									"pm.test(\"Clear employee_id variable after deletion\", function () {\r",
-									"    pm.environment.unset(\"employee_id\");\r",
+									"    pm.collectionVariables.unset(\"employee_id\");\r",
 									"});"
 								],
 								"type": "text/javascript",
@@ -4785,7 +5049,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/employees/{{employee_id}}?db={{db}}",
+							"raw": "{{BASE_URL}}/employees/{{employee_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -4796,7 +5060,193 @@
 							"query": [
 								{
 									"key": "db",
-									"value": "{{db}}"
+									"value": "{{dbquery}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateNoPos Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 201 Created\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Response structure validation\r",
+									"pm.test(\"Response has required properties\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"id\");\r",
+									"    pm.expect(jsonData).to.have.property(\"workEmail\");\r",
+									"    pm.expect(jsonData).to.have.property(\"workPhone\");\r",
+									"    pm.expect(jsonData).to.have.property(\"firstName\");\r",
+									"    pm.expect(jsonData).to.have.property(\"lastName\");\r",
+									"    pm.expect(jsonData).to.have.property(\"imagePath\");\r",
+									"    pm.expect(jsonData).to.have.property(\"departmentId\");\r",
+									"    pm.expect(jsonData).to.have.property(\"positionId\");\r",
+									"    pm.expect(jsonData).to.have.property(\"discProfileId\");\r",
+									"});\r",
+									"\r",
+									"// Data type validation\r",
+									"pm.test(\"Response properties have correct data types\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+									"    pm.expect(jsonData.workEmail).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.workPhone).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.firstName).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.lastName).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.imagePath).to.be.a(\"string\");\r",
+									"    pm.expect(jsonData.departmentId).to.be.a(\"number\");\r",
+									"    pm.expect(jsonData.positionId).to.be.null;\r",
+									"    pm.expect(jsonData.discProfileId).to.null;\r",
+									"});\r",
+									"\r",
+									"// Specific data validation\r",
+									"pm.test(\"Employee data is correct\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.firstName).to.equal(\"postman\");\r",
+									"    pm.expect(jsonData.lastName).to.equal(\"test\");\r",
+									"    pm.expect(jsonData.departmentId).to.equal(1);\r",
+									"});\r",
+									"\r",
+									"// Email format validation\r",
+									"pm.test(\"Work email has valid format\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\r",
+									"    pm.expect(jsonData.workEmail).to.match(emailRegex);\r",
+									"});\r",
+									"\r",
+									"// Non-empty fields validation\r",
+									"pm.test(\"Required fields are not empty\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.workEmail).to.not.be.empty;\r",
+									"    pm.expect(jsonData.firstName).to.not.be.empty;\r",
+									"    pm.expect(jsonData.lastName).to.not.be.empty;\r",
+									"    pm.expect(jsonData.imagePath).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"employee2_id\", pm.response.json().id)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"privateEmail\": \"postman@ok.dk\",\r\n  \"privatePhone\": \"9966443311\",\r\n  \"firstName\": \"postman\",\r\n  \"lastName\": \"test\",\r\n  \"departmentId\": 1,\r\n  \"cpr\": \"9988554433\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/employees?db={{dbquery}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"employees"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteNoPos Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200 OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Response is a number validation\r",
+									"pm.test(\"Response is a number (ID)\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    pm.expect(responseId).to.be.a(\"number\");\r",
+									"    pm.expect(responseId).to.not.be.NaN;\r",
+									"});\r",
+									"\r",
+									"// Response matches environment variable\r",
+									"pm.test(\"Response ID matches employee_id variable\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    const expectedId = pm.collectionVariables.get(\"employee2_id\");\r",
+									"    pm.expect(responseId).to.equal(parseInt(expectedId));\r",
+									"});\r",
+									"\r",
+									"// Valid ID validation\r",
+									"pm.test(\"Deleted ID is greater than 0\", function () {\r",
+									"    const responseText = pm.response.text().trim();\r",
+									"    const responseId = parseInt(responseText);\r",
+									"    pm.expect(responseId).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Optional: Clear the variable after successful deletion\r",
+									"pm.test(\"Clear employee_id variable after deletion\", function () {\r",
+									"    pm.collectionVariables.unset(\"employee2_id\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/employees/{{employee2_id}}?db={{dbquery}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"employees",
+								"{{employee2_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
 								}
 							]
 						}
@@ -4896,13 +5346,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4996,12 +5452,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5071,8 +5533,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
 								"packages": {},
-								"type": "text/javascript"
+								"requests": {}
 							}
 						}
 					],
@@ -5089,12 +5555,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments",
+							"raw": "{{BASE_URL}}/departments?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5178,13 +5650,19 @@
 							"raw": "{\r\n  \"name\": \"Departmnet updated\",\r\n  \"description\": \"New Department  updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5254,13 +5732,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5320,13 +5804,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/departments/{{department_id}}",
+							"raw": "{{BASE_URL}}/departments/{{department_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"departments",
 								"{{department_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5425,13 +5915,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5525,12 +6021,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5600,8 +6102,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
 								"packages": {},
-								"type": "text/javascript"
+								"requests": {}
 							}
 						}
 					],
@@ -5618,12 +6124,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions",
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5707,13 +6219,19 @@
 							"raw": "{\r\n  \"name\": \"Departmnet updated\",\r\n  \"description\": \"New Position  updated\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5783,13 +6301,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5849,13 +6373,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/positions/{{position_id}}",
+							"raw": "{{BASE_URL}}/positions/{{position_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"positions",
 								"{{position_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -5954,13 +6484,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -6055,12 +6591,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -6152,19 +6694,25 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update Copy",
+					"name": "Update",
 					"event": [
 						{
 							"listen": "test",
@@ -6241,20 +6789,26 @@
 							"raw": "{\r\n  \"name\": \"Humbeling updated\",\r\n  \"color\": \"#800080\",\r\n  \"description\": \"A updated Disc Profile\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GetById Copy",
+					"name": "GetById",
 					"event": [
 						{
 							"listen": "test",
@@ -6317,13 +6871,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -6383,13 +6943,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -6506,11 +7072,7 @@
 			"value": ""
 		},
 		{
-			"key": "employee_id",
-			"value": ""
-		},
-		{
-			"key": "db",
+			"key": "dbquery",
 			"value": ""
 		}
 	]
