@@ -130,7 +130,7 @@ jobs:
             - name: Run Postman tests for mssql
               working-directory: backend-disc
               run: |
-                  newman run Disc-app-api-postman-final-tests.postman_collection.json \
+                  newman run Disc-app-api-mssql-test.postman_collection.json \
                     --environment postman-env.json \
                     --reporters cli,json \
                     --reporter-json-export test-results.json
@@ -138,7 +138,24 @@ jobs:
             - name: Run Postman tests for neo4j
               working-directory: backend-disc
               run: |
-                  newman run Disc-app-api-postman-neo4j-tests.postman_collection.json \
+                  newman run Disc-app-api-neo4j-test.postman_collection.json \
                     --environment postman-env.json \
                     --reporters cli,json \
                     --reporter-json-export test-results.json
+            - name: Run Postman tests for mongo
+              working-directory: backend-disc
+              run: |
+                  newman run Disc-app-api-mongodb-test.postman_collection.json \
+                    --environment postman-env.json \
+                    --reporters cli,json \
+                    --reporter-json-export test-results.json
+            - name: Upload test results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                name: test-results
+                path: |
+                  **/test-results.trx
+                  **/test-results.json
+                  backend.log
+                if-no-files-found: warn
