@@ -11,6 +11,7 @@ CREATE RANGE INDEX FOR (n:Project) ON (n.id);
 CREATE RANGE INDEX FOR (n:ProjectTask) ON (n.id);
 CREATE RANGE INDEX FOR (n:StressMeassure) ON (n.id);
 CREATE RANGE INDEX FOR (n:User) ON (n.id);
+CREATE RANGE INDEX FOR (n:User) ON (n.password_hash);
 CREATE RANGE INDEX FOR (n:UserRole) ON (n.id);
 CREATE CONSTRAINT company_id_exists FOR (node:Company) REQUIRE (node.id) IS NOT NULL;
 CREATE CONSTRAINT company_name_exists FOR (node:Company) REQUIRE (node.name) IS NOT NULL;

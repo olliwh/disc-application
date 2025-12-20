@@ -1,0 +1,439 @@
+db.departments.createIndex({ "department_id": 1 }, {name: "idx_department_id"})
+db.disc_profiles.createIndex({ "disc_profile_id": 1 }, {name: "idx_dp_id"})
+db.employee_private_data.createIndex({ "employee_id": 1 }, {name: "idx_epd_id"})
+db.users.createIndex({ "employee_id": 1 }, {name: "idx_user_id"})
+db.users.createIndex({ "password_hash": 1 }, {name: "idx_user_psw"})
+db.users.createIndex({ "username": 1 }, {name: "idx_user_username"})
+db.positions.createIndex({ "position_id": 1 }, {name: "idx_position_id"})
+db.projects.createIndex({ "project_id": 1 }, {name: "idx_project_id"})
+db.user_roles.createIndex({ "user_role_id": 1 }, {name: "idx_user_role_id"})
+
+
+
+
+
+db.employees.createIndex({ "work_phone": 1 }, {name: "idx_phone"})
+
+
+db.employees.createIndex({ 
+  "department_id": 1, 
+  "position_id": 1, 
+  "disc_profile_id": 1 
+}, { name: "idx_employee_filters_combined" })
+
+db.employees.createIndex(
+  { "first_name": "text", "last_name": "text" },
+  { name: "idx_employee_search_text" }
+)
+users:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'employee_id',
+      'password_hash',
+      'requires_reset',
+      'username'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      employee_id: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      password_hash: {
+        bsonType: 'string'
+      },
+      requires_reset: {
+        bsonType: 'bool'
+      },
+      username: {
+        bsonType: 'string'
+      }
+    }
+  }
+}
+user_roles:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'name',
+      'user_role_id'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      description: {
+        bsonType: [
+          'string',
+          'null'
+        ]
+      },
+      name: {
+        bsonType: 'string'
+      },
+      user_role_id: {
+        bsonType: 'int',
+        minimum: 1
+      }
+    }
+  }
+}
+
+projects:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'completed',
+      'name',
+      'project_id'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      completed: {
+        bsonType: 'bool'
+      },
+      deadline: {
+        bsonType: [
+          'date',
+          'null'
+        ]
+      },
+      description: {
+        bsonType: [
+          'string',
+          'null'
+        ]
+      },
+      disc_profile_ids: {
+        bsonType: 'array',
+        items: {
+          bsonType: 'int'
+        }
+      },
+      employee_ids: {
+        bsonType: 'array',
+        items: {
+          bsonType: 'int'
+        }
+      },
+      employees_needed: {
+        bsonType: [
+          'int',
+          'null'
+        ],
+        minimum: 1
+      },
+      name: {
+        bsonType: 'string'
+      },
+      project_id: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      project_tasks: {
+        bsonType: 'array',
+        items: {
+          bsonType: 'object',
+          properties: {
+            assigned_employee_ids: {
+              bsonType: 'array',
+              items: {
+                bsonType: 'int'
+              }
+            },
+            completed: {
+              bsonType: 'bool'
+            },
+            name: {
+              bsonType: 'string'
+            },
+            project_task_id: {
+              bsonType: 'int',
+              minimum: 1
+            },
+            stress_measures: {
+              bsonType: 'array',
+              items: {
+                bsonType: 'object',
+                properties: {
+                  description: {
+                    bsonType: 'string'
+                  },
+                  employee_id: {
+                    bsonType: 'int'
+                  },
+                  measure: {
+                    bsonType: 'int'
+                  },
+                  stress_measure_id: {
+                    bsonType: 'int',
+                    minimum: 1
+                  }
+                },
+                required: [
+                  'employee_id',
+                  'measure',
+                  'stress_measure_id'
+                ]
+              }
+            },
+            time_of_completion: {
+              bsonType: [
+                'null',
+                'date'
+              ]
+            },
+            time_to_complete: {
+              bsonType: 'string'
+            }
+          },
+          required: [
+            'completed',
+            'name',
+            'project_task_id'
+          ]
+        }
+      }
+    }
+  }
+}
+positions:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'name',
+      'position_id'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      description: {
+        bsonType: [
+          'string',
+          'null'
+        ]
+      },
+      name: {
+        bsonType: 'string'
+      },
+      position_id: {
+        bsonType: 'int',
+        minimum: 1
+      }
+    }
+  }
+}
+
+employees{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'department_id',
+      'employee_id',
+      'first_name',
+      'image_path',
+      'last_name',
+      'private_email',
+      'private_phone',
+      'UserRoleId',
+      'work_email'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      current_project_ids: {
+        bsonType: 'array',
+        items: {
+          bsonType: 'int',
+          minimum: 1
+        }
+      },
+      department_id: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      disc_profile_id: {
+        bsonType: [
+          'int',
+          'null'
+        ],
+        minimum: 1,
+        description: 'If an ID is provided, it must be 1 or greater; otherwise, it can be null.'
+      },
+      employee_id: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      first_name: {
+        bsonType: 'string'
+      },
+      image_path: {
+        bsonType: 'string'
+      },
+      last_name: {
+        bsonType: 'string'
+      },
+      position_id: {
+        bsonType: [
+          'int',
+          'null'
+        ],
+        minimum: 1,
+        description: 'If an ID is provided, it must be 1 or greater; otherwise, it can be null.'
+      },
+      private_email: {
+        bsonType: 'string'
+      },
+      private_phone: {
+        bsonType: 'string'
+      },
+      UserRoleId: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      work_email: {
+        bsonType: 'string'
+      },
+      work_phone: {
+        bsonType: [
+          'string',
+          'null'
+        ]
+      }
+    }
+  }
+}
+pivatedata:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'cpr',
+      'employee_id'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      cpr: {
+        bsonType: 'string'
+      },
+      employee_id: {
+        bsonType: 'int',
+        minimum: 0
+      }
+    }
+  }
+}
+dp:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'color',
+      'description',
+      'disc_profile_id',
+      'name'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      color: {
+        bsonType: 'string'
+      },
+      description: {
+        bsonType: 'string'
+      },
+      disc_profile_id: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      name: {
+        bsonType: 'string'
+      }
+    }
+  }
+}
+company
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      'company_id',
+      'name'
+    ],
+    properties: {
+      company_id: {
+        bsonType: 'int',
+        minimum: 1,
+        description: 'company_id must be an integer and is required'
+      },
+      name: {
+        bsonType: 'string',
+        description: 'name must be a string and is required'
+      },
+      location: {
+        bsonType: [
+          'string',
+          'null'
+        ],
+        description: 'location must be a string if provided'
+      },
+      business_field: {
+        bsonType: [
+          'string',
+          'null'
+        ],
+        description: 'business_field must be a string if provided'
+      }
+    }
+  }
+}
+departments:
+{
+  $jsonSchema: {
+    bsonType: 'object',
+    required: [
+      '_id',
+      'department_id',
+      'name'
+    ],
+    properties: {
+      _id: {
+        bsonType: 'objectId'
+      },
+      department_id: {
+        bsonType: 'int',
+        minimum: 1
+      },
+      description: {
+        bsonType: [
+          'string',
+          'null'
+        ]
+      },
+      name: {
+        bsonType: 'string'
+      }
+    }
+  }
+}

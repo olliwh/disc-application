@@ -1,18 +1,7 @@
 {
     "$jsonSchema": {
         "bsonType": "object",
-        "required": [
-            "_id",
-            "completed",
-            "deadline",
-            "description",
-            "disc_profile_ids",
-            "employee_ids",
-            "employees_needed",
-            "name",
-            "project_id",
-            "project_tasks"
-        ],
+        "required": ["_id", "completed", "name", "project_id"],
         "properties": {
             "_id": {
                 "bsonType": "objectId"
@@ -21,10 +10,10 @@
                 "bsonType": "bool"
             },
             "deadline": {
-                "bsonType": ["null", "date"]
+                "bsonType": "date"
             },
             "description": {
-                "bsonType": ["null", "string"]
+                "bsonType": "string"
             },
             "disc_profile_ids": {
                 "bsonType": "array",
@@ -39,13 +28,15 @@
                 }
             },
             "employees_needed": {
-                "bsonType": ["null", "int"]
+                "bsonType": "int",
+                "minimum": 0
             },
             "name": {
                 "bsonType": "string"
             },
             "project_id": {
-                "bsonType": "int"
+                "bsonType": "int",
+                "minimum": 0
             },
             "project_tasks": {
                 "bsonType": "array",
@@ -86,7 +77,6 @@
                                     }
                                 },
                                 "required": [
-                                    "description",
                                     "employee_id",
                                     "measure",
                                     "stress_measure_id"
@@ -97,18 +87,10 @@
                             "bsonType": ["null", "date"]
                         },
                         "time_to_complete": {
-                            "bsonType": ["null", "string"]
+                            "bsonType": "string"
                         }
                     },
-                    "required": [
-                        "assigned_employee_ids",
-                        "completed",
-                        "name",
-                        "project_task_id",
-                        "stress_measures",
-                        "time_of_completion",
-                        "time_to_complete_id"
-                    ]
+                    "required": ["completed", "name", "project_task_id"]
                 }
             }
         }
