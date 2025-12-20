@@ -1,12 +1,13 @@
 ﻿using class_library_disc.Models.Sql;
-using Migrator.Data;
+using Seeder.Data;
 
 
-namespace Migrator.Services
+namespace Seeder.Services
 {
     public class MigrateToNeo4J
     {
         private readonly Neo4JConnection _neo4j;
+        private readonly TimeSpan utcPlusOne = TimeSpan.FromHours(1);
 
         public MigrateToNeo4J(Neo4JConnection neo4j)
         {
@@ -186,7 +187,9 @@ namespace Migrator.Services
                     { "id", pt.Id },
                     { "name", pt.Name },
                     { "completed", pt.Completed },
-                    { "time_of_completion", pt.TimeOfCompletion }
+                    { "time_of_completion", pt.TimeOfCompletion.HasValue
+                        ? new DateTimeOffset(pt.TimeOfCompletion.Value, utcPlusOne)
+                        : null}
                 };
                 await _neo4j.CreateNodeAsync(nodeName, dict);
                 foreach (var sm in pt.StressMeasures)
@@ -212,7 +215,9 @@ namespace Migrator.Services
                     { "id", project.Id },
                     { "name", project.Name },
                     { "description", project.Description },
-                    { "deadline", project.Deadline },
+                    { "deadline", project.Deadline.HasValue
+                        ? new DateTimeOffset(project.Deadline.Value, utcPlusOne) 
+                        : null },
                     { "completed", project.Completed },
                     { "employees_needed", project.EmployeesNeeded }
                 };

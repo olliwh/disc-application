@@ -7,6 +7,7 @@ namespace Migrator.Services
     public class MigrateToNeo4J
     {
         private readonly Neo4JConnection _neo4j;
+        private readonly TimeSpan utcPlusOne = TimeSpan.FromHours(1);
 
         public MigrateToNeo4J(Neo4JConnection neo4j)
         {
@@ -165,7 +166,7 @@ namespace Migrator.Services
                     { "description", d.Description }
                 };
                 await _neo4j.CreateNodeAsync(nodeName, dict);
-                foreach( var user in d.Users)
+                foreach (var user in d.Users)
                 {
                     await _neo4j.CreateRelationshipAsync("User", user.EmployeeId, "HAS_PERMISSION_AS", "UserRole", d.Id);
 
@@ -186,7 +187,9 @@ namespace Migrator.Services
                     { "id", pt.Id },
                     { "name", pt.Name },
                     { "completed", pt.Completed },
-                    { "time_of_completion", pt.TimeOfCompletion }
+                    { "time_of_completion", pt.TimeOfCompletion.HasValue
+                        ? new DateTimeOffset(pt.TimeOfCompletion.Value, utcPlusOne)
+                        : null}
                 };
                 await _neo4j.CreateNodeAsync(nodeName, dict);
                 foreach (var sm in pt.StressMeasures)
@@ -212,7 +215,9 @@ namespace Migrator.Services
                     { "id", project.Id },
                     { "name", project.Name },
                     { "description", project.Description },
-                    { "deadline", project.Deadline },
+                    { "deadline", project.Deadline.HasValue
+                        ? new DateTimeOffset(project.Deadline.Value, utcPlusOne)
+                        : null },
                     { "completed", project.Completed },
                     { "employees_needed", project.EmployeesNeeded }
                 };
@@ -296,7 +301,7 @@ namespace Migrator.Services
                 if (employee.User != null)
                 {
                     await _neo4j.CreateRelationshipAsync("Employee", employee.Id, "IS_A", "User", employee.User.EmployeeId);
-                    
+
                 }
                 else
                 {
@@ -307,7 +312,7 @@ namespace Migrator.Services
         }
 
 
-        
+
         public async Task MigrateDataToNeo4jAsync(FetchedData data)
         {
             Console.WriteLine("MigrateDataToNeo4jAsync function");

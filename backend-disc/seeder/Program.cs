@@ -1,7 +1,7 @@
 ﻿using class_library_disc.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Migrator.Services;
+using Seeder.Services;
 
 namespace seeder
 {

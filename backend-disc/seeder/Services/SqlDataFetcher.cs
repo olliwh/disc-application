@@ -1,9 +1,9 @@
 using class_library_disc.Data;
 using class_library_disc.Models.Sql;
 using Microsoft.EntityFrameworkCore;
-using Migrator.Data;
+using Seeder.Data;
 
-namespace Migrator.Services;
+namespace Seeder.Services;
 
 public class SqlDataFetcher
 {

@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Migrator.Services;
+namespace Seeder.Services;
 
 public class MongoConnection
 {

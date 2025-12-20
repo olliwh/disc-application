@@ -446,21 +446,20 @@ CREATE
     (e2)-[:HAS_COMPLETED]->(pt9),
     (e2)-[:HAS_COMPLETED]->(pt10);
     
-// UNIQUE CONSTRAINTS
-CREATE CONSTRAINT employee_work_phone
-FOR (emp:Employee) REQUIRE emp.work_phone IS UNIQUE;
 
-// KEY CONSTRAINTS
-CREATE CONSTRAINT employee_work_email_key
-FOR (emp:Employee) REQUIRE emp.work_email IS NODE KEY;
-
-CREATE CONSTRAINT user_username_key
-FOR (user:User) REQUIRE user.username IS NODE KEY;
 
 
 // COMPANY CONSTRAINTS
+CREATE CONSTRAINT company_id_type IF NOT EXISTS
+FOR (c:Company) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX company_id IF NOT EXISTS FOR (c:Company) ON (c.id);
+CREATE CONSTRAINT company_id_exists IF NOT EXISTS
+FOR (c:Company) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT company_name_type IF NOT EXISTS
 FOR (c:Company) REQUIRE c.name IS :: STRING;
+CREATE CONSTRAINT company_name_exists IF NOT EXISTS
+FOR (c:Company) REQUIRE c.name IS NOT NULL;
 
 CREATE CONSTRAINT company_location_type IF NOT EXISTS
 FOR (c:Company) REQUIRE c.location IS :: STRING;
@@ -468,132 +467,169 @@ FOR (c:Company) REQUIRE c.location IS :: STRING;
 CREATE CONSTRAINT company_business_field_type IF NOT EXISTS
 FOR (c:Company) REQUIRE c.business_field IS :: STRING;
 
-// EXISTENCE
-CREATE CONSTRAINT company_name_exists IF NOT EXISTS
-FOR (c:Company) REQUIRE c.name IS NOT NULL;
 
 // DEPARTMENT CONSTRAINTS
+CREATE CONSTRAINT department_id_type IF NOT EXISTS
+FOR (c:Department) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX department_id IF NOT EXISTS FOR (c:Department) ON (c.id);
+CREATE CONSTRAINT department_id_exists IF NOT EXISTS
+FOR (c:Department) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT department_name_type IF NOT EXISTS
 FOR (d:Department) REQUIRE d.name IS :: STRING;
+CREATE CONSTRAINT department_name_exists IF NOT EXISTS
+FOR (d:Department) REQUIRE d.name IS NOT NULL;
 
 CREATE CONSTRAINT department_description_type IF NOT EXISTS
 FOR (d:Department) REQUIRE d.description IS :: STRING;
 
-// EXISTENCE
-CREATE CONSTRAINT department_name_exists IF NOT EXISTS
-FOR (d:Department) REQUIRE d.name IS NOT NULL;
 
 // DISC PROFILE CONSTRAINTS
+CREATE CONSTRAINT disc_profile_id_type IF NOT EXISTS
+FOR (c:DiscProfile) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX disc_profile_id IF NOT EXISTS FOR (c:DiscProfile) ON (c.id);
+CREATE CONSTRAINT disc_profile_id_exists IF NOT EXISTS
+FOR (c:DiscProfile) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT disc_profile_name_type IF NOT EXISTS
 FOR (dp:DiscProfile) REQUIRE dp.name IS :: STRING;
-
-CREATE CONSTRAINT disc_profile_color_type IF NOT EXISTS
-FOR (dp:DiscProfile) REQUIRE dp.color IS :: STRING;
-
-CREATE CONSTRAINT disc_profile_description_type IF NOT EXISTS
-FOR (dp:DiscProfile) REQUIRE dp.description IS :: STRING;
-
-// EXISTENCE
 CREATE CONSTRAINT disc_profile_name_exists IF NOT EXISTS
 FOR (dp:DiscProfile) REQUIRE dp.name IS NOT NULL;
 
+CREATE CONSTRAINT disc_profile_color_type IF NOT EXISTS
+FOR (dp:DiscProfile) REQUIRE dp.color IS :: STRING;
 CREATE CONSTRAINT disc_profile_color_exists IF NOT EXISTS
 FOR (dp:DiscProfile) REQUIRE dp.color IS NOT NULL;
 
+CREATE CONSTRAINT disc_profile_description_type IF NOT EXISTS
+FOR (dp:DiscProfile) REQUIRE dp.description IS :: STRING;
 CREATE CONSTRAINT disc_profile_description_exists IF NOT EXISTS
 FOR (dp:DiscProfile) REQUIRE dp.description IS NOT NULL;
 
+
 // POSITION CONSTRAINTS
+CREATE CONSTRAINT position_id_type IF NOT EXISTS
+FOR (c:Position) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX position_id IF NOT EXISTS FOR (c:Position) ON (c.id);
+CREATE CONSTRAINT position_id_exists IF NOT EXISTS
+FOR (c:Position) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT position_name_type IF NOT EXISTS
 FOR (p:Position) REQUIRE p.name IS :: STRING;
+CREATE CONSTRAINT position_name_exists IF NOT EXISTS
+FOR (p:Position) REQUIRE p.name IS NOT NULL;
 
 CREATE CONSTRAINT position_description_type IF NOT EXISTS
 FOR (p:Position) REQUIRE p.description IS :: STRING;
 
-// EXISTENCE
-CREATE CONSTRAINT position_name_exists IF NOT EXISTS
-FOR (p:Position) REQUIRE p.name IS NOT NULL;
-
-CREATE CONSTRAINT position_description_exists IF NOT EXISTS
-FOR (p:Position) REQUIRE p.description IS NOT NULL;
 
 // USER ROLE CONSTRAINTS
+CREATE CONSTRAINT user_role_id_type IF NOT EXISTS
+FOR (c:UserRole) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX user_role_id IF NOT EXISTS FOR (c:UserRole) ON (c.id);
+CREATE CONSTRAINT user_role_id_exists IF NOT EXISTS
+FOR (c:UserRole) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT user_role_name_type IF NOT EXISTS
 FOR (ur:UserRole) REQUIRE ur.name IS :: STRING;
+CREATE CONSTRAINT user_role_name_exists IF NOT EXISTS
+FOR (ur:UserRole) REQUIRE ur.name IS NOT NULL;
 
 CREATE CONSTRAINT user_role_description_type IF NOT EXISTS
 FOR (ur:UserRole) REQUIRE ur.description IS :: STRING;
 
-// EXISTENCE
-CREATE CONSTRAINT user_role_name_exists IF NOT EXISTS
-FOR (ur:UserRole) REQUIRE ur.name IS NOT NULL;
+
 
 // EMPLOYEE CONSTRAINTS
+CREATE CONSTRAINT employee_id_type IF NOT EXISTS
+FOR (c:Employee) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX employee_id IF NOT EXISTS FOR (c:Employee) ON (c.id);
+CREATE CONSTRAINT employee_id_exists IF NOT EXISTS
+FOR (c:Employee) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT employee_work_email_type IF NOT EXISTS
 FOR (e:Employee) REQUIRE e.work_email IS :: STRING;
+CREATE CONSTRAINT employee_work_email_key IF NOT EXISTS
+FOR (emp:Employee) REQUIRE emp.work_email IS NODE KEY;
 
 CREATE CONSTRAINT employee_work_phone_type IF NOT EXISTS
 FOR (e:Employee) REQUIRE e.work_phone IS :: STRING;
+CREATE CONSTRAINT employee_work_phone IF NOT EXISTS
+FOR (emp:Employee) REQUIRE emp.work_phone IS UNIQUE;
 
 CREATE CONSTRAINT employee_first_name_type IF NOT EXISTS
 FOR (e:Employee) REQUIRE e.first_name IS :: STRING;
-
-CREATE CONSTRAINT employee_last_name_type IF NOT EXISTS
-FOR (e:Employee) REQUIRE e.last_name IS :: STRING;
-
-CREATE CONSTRAINT employee_image_path_type IF NOT EXISTS
-FOR (e:Employee) REQUIRE e.image_path IS :: STRING;
-
-// EXISTENCE
 CREATE CONSTRAINT employee_first_name_exists IF NOT EXISTS
 FOR (e:Employee) REQUIRE e.first_name IS NOT NULL;
 
+CREATE CONSTRAINT employee_last_name_type IF NOT EXISTS
+FOR (e:Employee) REQUIRE e.last_name IS :: STRING;
 CREATE CONSTRAINT employee_last_name_exists IF NOT EXISTS
 FOR (e:Employee) REQUIRE e.last_name IS NOT NULL;
 
+CREATE FULLTEXT INDEX employee_search IF NOT EXISTS FOR (e:Employees) ON EACH [e.first_name, e.last_name];
+
+CREATE CONSTRAINT employee_image_path_type IF NOT EXISTS
+FOR (e:Employee) REQUIRE e.image_path IS :: STRING;
 CREATE CONSTRAINT employee_image_path_exists IF NOT EXISTS
 FOR (e:Employee) REQUIRE e.image_path IS NOT NULL;
 
+
 // EMPLOYEE PRIVATE DATA CONSTRAINTS
+CREATE CONSTRAINT employee_private_id_type IF NOT EXISTS
+FOR (c:EmployeePrivateData) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX employee_private_id IF NOT EXISTS FOR (c:EmployeePrivateData) ON (c.id);
+CREATE CONSTRAINT employee_private_id_exists IF NOT EXISTS
+FOR (c:EmployeePrivateData) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT employee_private_email_type IF NOT EXISTS
 FOR (ep:EmployeePrivateData) REQUIRE ep.private_email IS :: STRING;
-
-CREATE CONSTRAINT employee_private_phone_type IF NOT EXISTS
-FOR (ep:EmployeePrivateData) REQUIRE ep.private_phone IS :: STRING;
-
-CREATE CONSTRAINT employee_cpr_type IF NOT EXISTS
-FOR (ep:EmployeePrivateData) REQUIRE ep.cpr IS :: STRING;
-
-// EXISTENCE
 CREATE CONSTRAINT employee_private_email_exists IF NOT EXISTS
 FOR (ep:EmployeePrivateData) REQUIRE ep.private_email IS NOT NULL;
 
+CREATE CONSTRAINT employee_private_phone_type IF NOT EXISTS
+FOR (ep:EmployeePrivateData) REQUIRE ep.private_phone IS :: STRING;
 CREATE CONSTRAINT employee_private_phone_exists IF NOT EXISTS
 FOR (ep:EmployeePrivateData) REQUIRE ep.private_phone IS NOT NULL;
 
+CREATE CONSTRAINT employee_cpr_type IF NOT EXISTS
+FOR (ep:EmployeePrivateData) REQUIRE ep.cpr IS :: STRING;
 CREATE CONSTRAINT employee_cpr_exists IF NOT EXISTS
 FOR (ep:EmployeePrivateData) REQUIRE ep.cpr IS NOT NULL;
 
 // USER CONSTRAINTS
+CREATE CONSTRAINT user_id_type IF NOT EXISTS
+FOR (c:User) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX user_id IF NOT EXISTS FOR (c:User) ON (c.id);
+CREATE CONSTRAINT user_id_exists IF NOT EXISTS
+FOR (c:User) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT user_username_type IF NOT EXISTS
 FOR (u:User) REQUIRE u.username IS :: STRING;
+CREATE CONSTRAINT user_username_key IF NOT EXISTS
+FOR (user:User) REQUIRE user.username IS NODE KEY;
 
 CREATE CONSTRAINT user_password_hash_type IF NOT EXISTS
 FOR (u:User) REQUIRE u.password_hash IS :: STRING;
-
-CREATE CONSTRAINT user_requires_reset_type IF NOT EXISTS
-FOR (u:User) REQUIRE u.requires_reset IS :: BOOLEAN;
-
-// EXISTENCE
 CREATE CONSTRAINT user_password_hash_exists IF NOT EXISTS
 FOR (u:User) REQUIRE u.password_hash IS NOT NULL;
 
+CREATE CONSTRAINT user_requires_reset_type IF NOT EXISTS
+FOR (u:User) REQUIRE u.requires_reset IS :: BOOLEAN;
 CREATE CONSTRAINT user_requires_reset_exists IF NOT EXISTS
 FOR (u:User) REQUIRE u.requires_reset IS NOT NULL;
 
 // PROJECT CONSTRAINTS
+CREATE CONSTRAINT project_id_type IF NOT EXISTS
+FOR (c:Project) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX project_id IF NOT EXISTS FOR (c:Project) ON (c.id);
+CREATE CONSTRAINT project_id_exists IF NOT EXISTS
+FOR (c:Project) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT project_name_type IF NOT EXISTS
 FOR (p:Project) REQUIRE p.name IS :: STRING;
+CREATE CONSTRAINT project_name_exists IF NOT EXISTS
+FOR (p:Project) REQUIRE p.name IS NOT NULL;
 
 CREATE CONSTRAINT project_description_type IF NOT EXISTS
 FOR (p:Project) REQUIRE p.description IS :: STRING;
@@ -603,31 +639,40 @@ FOR (p:Project) REQUIRE p.deadline IS :: ZONED DATETIME;
 
 CREATE CONSTRAINT project_completed_type IF NOT EXISTS
 FOR (p:Project) REQUIRE p.completed IS :: BOOLEAN;
+CREATE CONSTRAINT project_completed_exists IF NOT EXISTS
+FOR (p:Project) REQUIRE p.completed IS NOT NULL;
 
 CREATE CONSTRAINT project_employees_needed_type IF NOT EXISTS
 FOR (p:Project) REQUIRE p.employees_needed IS :: INTEGER;
 
-// EXISTENCE
-CREATE CONSTRAINT project_name_exists IF NOT EXISTS
-FOR (p:Project) REQUIRE p.name IS NOT NULL;
-
-CREATE CONSTRAINT project_completed_exists IF NOT EXISTS
-FOR (p:Project) REQUIRE p.completed IS NOT NULL;
-
 // COMPLETION INTERVAL CONSTRAINTS
+CREATE CONSTRAINT completion_interval_id_type IF NOT EXISTS
+FOR (c:CompletionInterval) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX completion_interval_id IF NOT EXISTS FOR (c:CompletionInterval) ON (c.id);
+CREATE CONSTRAINT completion_interval_id_exists IF NOT EXISTS
+FOR (c:CompletionInterval) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT completion_interval_time_type IF NOT EXISTS
 FOR (ci:CompletionInterval) REQUIRE ci.time_to_complete IS :: STRING;
-
-// EXISTENCE
 CREATE CONSTRAINT completion_interval_time_exists IF NOT EXISTS
 FOR (ci:CompletionInterval) REQUIRE ci.time_to_complete IS NOT NULL;
 
 // PROJECT TASK CONSTRAINTS
+CREATE CONSTRAINT project_task_id_type IF NOT EXISTS
+FOR (c:ProjectTask) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX project_task_id IF NOT EXISTS FOR (c:ProjectTask) ON (c.id);
+CREATE CONSTRAINT project_task_id_exists IF NOT EXISTS
+FOR (c:ProjectTask) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT project_task_name_type IF NOT EXISTS
 FOR (pt:ProjectTask) REQUIRE pt.name IS :: STRING;
+CREATE CONSTRAINT project_task_name_exists IF NOT EXISTS
+FOR (pt:ProjectTask) REQUIRE pt.name IS NOT NULL;
 
 CREATE CONSTRAINT project_task_completed_type IF NOT EXISTS
 FOR (pt:ProjectTask) REQUIRE pt.completed IS :: BOOLEAN;
+CREATE CONSTRAINT project_task_completed_exists IF NOT EXISTS
+FOR (pt:ProjectTask) REQUIRE pt.completed IS NOT NULL;
 
 CREATE CONSTRAINT project_task_time_of_completion_type IF NOT EXISTS
 FOR (pt:ProjectTask) REQUIRE pt.time_of_completion IS :: ZONED DATETIME;
@@ -635,40 +680,35 @@ FOR (pt:ProjectTask) REQUIRE pt.time_of_completion IS :: ZONED DATETIME;
 CREATE CONSTRAINT project_task_evaluation_type IF NOT EXISTS
 FOR (pt:ProjectTask) REQUIRE pt.evaluation IS :: STRING;
 
-// EXISTENCE
-CREATE CONSTRAINT project_task_name_exists IF NOT EXISTS
-FOR (pt:ProjectTask) REQUIRE pt.name IS NOT NULL;
-
-CREATE CONSTRAINT project_task_completed_exists IF NOT EXISTS
-FOR (pt:ProjectTask) REQUIRE pt.completed IS NOT NULL;
 
 // STRESS MEASURE CONSTRAINTS
+CREATE CONSTRAINT stress_meassure_id_type IF NOT EXISTS
+FOR (c:StressMeassure) REQUIRE c.id IS :: INTEGER;
+CREATE INDEX stress_meassure_id IF NOT EXISTS FOR (c:StressMeassure) ON (c.id);
+CREATE CONSTRAINT stress_meassure_id_exists IF NOT EXISTS
+FOR (c:StressMeassure) REQUIRE c.id IS NOT NULL;
+
 CREATE CONSTRAINT stress_measure_description_type IF NOT EXISTS
 FOR (sm:StressMeasure) REQUIRE sm.description IS :: STRING;
 
 CREATE CONSTRAINT stress_measure_measure_type IF NOT EXISTS
 FOR (sm:StressMeasure) REQUIRE sm.measure IS :: INTEGER;
-
-// EXISTENCE
 CREATE CONSTRAINT stress_measure_measure_exists IF NOT EXISTS
 FOR (sm:StressMeasure) REQUIRE sm.measure IS NOT NULL;
 
-// INDEXES
-CREATE FULLTEXT INDEX employee_search FOR (e:Employees) ON EACH [e.first_name, e.last_name, e.work_email];
 
-//BACKGROUND JOB
 CALL apoc.periodic.repeat(
   'deleteOldProjects',
   '
   MATCH (p:Project)
-  WHERE p.deadline < datetime() - duration({days: 365})
+  WHERE p.deadline < datetime({timezone: "+01:00"}) - duration({days: 365})
   DETACH DELETE p
   ',
-  86400, //24 hours
-  {}
-)
+  86400
+) YIELD name, delay, rate;
 
 // TRIGGER (must be created in system database)
+:use system
 CALL apoc.trigger.install(
   'discprofilegraphdb',
   'autoCompleteTask',
@@ -678,9 +718,9 @@ CALL apoc.trigger.install(
   WHERE type(rel) = "FINNISHED_IN"
   WITH startNode(rel) AS task
   SET task.completed = true,
-      task.time_of_completion = datetime()
+      task.time_of_completion = datetime({timezone: "+01:00"})
   ',
   {phase: 'after'}
-)
+) YIELD name, query, installed;
 //TO TRIGGER TRIGGER
 MATCH (task:ProjectTask {id: 1}) MATCH (interval:CompletionInterval {id: 3}) CREATE (task)-[:FINNISHED_IN]->(interval)

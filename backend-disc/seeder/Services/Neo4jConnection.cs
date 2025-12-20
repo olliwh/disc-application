@@ -1,7 +1,7 @@
-using Migrator.Data;
+using Seeder.Data;
 using Neo4j.Driver;
 
-namespace Migrator.Services;
+namespace Seeder.Services;
 
 public class Neo4JConnection
 {
