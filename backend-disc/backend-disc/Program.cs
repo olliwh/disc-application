@@ -122,6 +122,11 @@ builder.Services.AddScoped<EmployeesRepository>();
 builder.Services.AddScoped<EmployeesMongoRepository>();
 builder.Services.AddScoped<EmployeesNeo4JRepository>();
 builder.Services.AddScoped<IGenericRepository<Department>, DepartmentsNeo4JRepository>();
+builder.Services.AddScoped<IGenericRepository<DiscProfile>, DiscProfilesNeo4JRepository>();
+builder.Services.AddScoped<IGenericRepository<Position>, PositionsNeo4JRepository>();
+builder.Services.AddScoped<IGenericRepository<Department>, DepartmentsMongoRepository>();
+builder.Services.AddScoped<IGenericRepository<DiscProfile>, DiscProfilesMongoRepository>();
+builder.Services.AddScoped<IGenericRepository<Position>, PositionsMongoRepository>();
 
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();

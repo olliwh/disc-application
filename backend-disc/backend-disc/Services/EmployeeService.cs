@@ -44,7 +44,6 @@ namespace backend_disc.Services
         public async Task<EmployeeDto?> CreateEmployee(string dbType, CreateNewEmployee dto)
         {
             var repo = _factory.GetRepository(dbType);
-            var companyRepo = _genericFactory.GetRepository<Company>(dbType);
 
             try
             {
@@ -52,7 +51,7 @@ namespace backend_disc.Services
                     throw new ArgumentException("First name and last name are required");
 
                 Dictionary<string, string> usernameWorkMailAndPhone =
-                    await GenerateUsernameWorkMailAndPhone(repo, companyRepo, dto.FirstName, dto.LastName);
+                    await GenerateUsernameWorkMailAndPhone(repo, dto.FirstName, dto.LastName);
 
                 dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
                 dto.WorkPhone = usernameWorkMailAndPhone["phoneNumber"];
@@ -108,11 +107,9 @@ namespace backend_disc.Services
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>Dictionary<string, string></returns>
-        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo, IGenericRepository<Company> companiesRepository, string firstName, string lastName)
+        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo,string firstName, string lastName)
         {
-            var company = await companiesRepository.GetById(1);
-            if (company == null)
-            { throw new KeyNotFoundException($"Company with ID {1} not found"); }
+
             string username;
             bool usernameAlreadyExists;
             int attempts = 0;
@@ -131,7 +128,7 @@ namespace backend_disc.Services
 
             } while (usernameAlreadyExists);
 
-            string workEmail = $"{username}@{company.Name}.com";
+            string workEmail = $"{username}@techcorp.com";
             string phoneNumber;
             bool phoneNumberAlreadyExists;
             attempts = 0;

@@ -220,17 +220,22 @@ namespace backend_disc.Repositories.Mongo
 
         public async Task<int?> UpdatePrivateData(int id, string mail, string phone)
         {
-            var filter = Builders<EmployeeMongo>.Filter.Eq(e => e.EmployeeId, id);
+            try
+            {
+                var filter = Builders<EmployeeMongo>.Filter.Eq(e => e.EmployeeId, id);
+                Console.WriteLine("hello");
+                var update = Builders<EmployeeMongo>.Update
+                    .Set(e => e.PrivateEmail, mail)
+                    .Set(e => e.PrivatePhone, phone);
 
-            var update = Builders<EmployeeMongo>.Update
-                .Set(e => e.PrivateEmail, mail)
-                .Set(e => e.PrivatePhone, phone);
-
-            var result = await _employeesCollection.UpdateOneAsync(filter, update);
-            Console.WriteLine(id);
-            Console.WriteLine(result.ModifiedCount);
-
-            return result.ModifiedCount > 0 ? id : null;
+                var result = await _employeesCollection.UpdateOneAsync(filter, update);
+                return result.MatchedCount > 0 ? id : null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Mongo Update Error: {ex.Message}");
+                throw;
+            }
         }
     }
 }

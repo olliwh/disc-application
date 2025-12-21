@@ -1,30 +1,32 @@
 ﻿using class_library_disc.Models.Sql;
 using Neo4j.Driver;
+using System.Drawing;
 using System.Xml.Linq;
 
 namespace backend_disc.Repositories.Neo4J
 {
-    public class DepartmentsNeo4JRepository : IGenericRepository<Department>
+    public class DiscProfilesNeo4JRepository : IGenericRepository<DiscProfile>
     {
         private readonly IDriver _driver;
         private readonly string dbName = Environment.GetEnvironmentVariable("NEO4J_DBNAME") ?? "neo4j";
 
-        public DepartmentsNeo4JRepository(IDriver driver)
+        public DiscProfilesNeo4JRepository(IDriver driver)
         {
             _driver = driver;
         }
-        private Department MapNode(IReadOnlyDictionary<string, object> props)
+        private DiscProfile MapNode(IReadOnlyDictionary<string, object> props)
         {
-            return new Department
+            return new DiscProfile
             {
                 Id = Convert.ToInt32(props["id"]),
                 Name = props["name"]?.ToString() ?? "",
                 Description = props["description"]?.ToString() ?? "",
+                Color = props["color"]?.ToString() ?? ""
             };
         }
-        public async Task<Department?> Add(Department entity)
+        public async Task<DiscProfile?> Add(DiscProfile entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.Name))
+            if (string.IsNullOrWhiteSpace(entity.Name) || string.IsNullOrWhiteSpace(entity.Color))
             {
                 return null;
             }
@@ -35,7 +37,7 @@ namespace backend_disc.Repositories.Neo4J
             {
                 return await session.ExecuteWriteAsync(async tx =>
                 {
-                    var idQuery = "MATCH (d:Department) RETURN max(d.id) as maxId";
+                    var idQuery = "MATCH (d:DiscProfile) RETURN max(d.id) as maxId";
                     var idCursor = await tx.RunAsync(idQuery);
                     var idRecord = await idCursor.SingleAsync();
 
@@ -43,14 +45,15 @@ namespace backend_disc.Repositories.Neo4J
                     nextId++;
 
                     var createQuery = @"
-                CREATE (d:Department { id: $id, name: $name, description: $description }) 
+                CREATE (d:DiscProfile { id: $id, name: $name, description: $description, color: $color }) 
                 RETURN d";
 
                     var parameters = new
                     {
                         id = nextId,
                         name = entity.Name,
-                        description = entity.Description ?? "" 
+                        description = entity.Description ?? "" ,
+                        color = entity.Color
                     };
 
                     var cursor = await tx.RunAsync(createQuery, parameters);
@@ -58,6 +61,11 @@ namespace backend_disc.Repositories.Neo4J
 
                     return MapNode(record["d"].As<INode>().Properties);
                 });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
             }
             finally
             {
@@ -72,7 +80,7 @@ namespace backend_disc.Repositories.Neo4J
             try
             {
                 var query = @"
-                MATCH (d:Department {id: $id})
+                MATCH (d:DiscProfile {id: $id})
                 DETACH DELETE d
                 RETURN $id as deletedId
                 ";
@@ -97,7 +105,7 @@ namespace backend_disc.Repositories.Neo4J
             }
         }
 
-        public async Task<(List<Department>, int totalCount)> GetAll(int pageIndex, int pageSize)
+        public async Task<(List<DiscProfile>, int totalCount)> GetAll(int pageIndex, int pageSize)
         {
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
 
@@ -105,13 +113,13 @@ namespace backend_disc.Repositories.Neo4J
             {
                 return await session.ExecuteReadAsync(async tx =>
                 {
-                    var countCursor = await tx.RunAsync("MATCH (n:Department) RETURN count(n) as total");
+                    var countCursor = await tx.RunAsync("MATCH (n:DiscProfile) RETURN count(n) as total");
                     var countRecord = await countCursor.SingleAsync();
                     int totalCount = countRecord["total"].As<int>();
 
                     int skip = (pageIndex - 1) * pageSize;
                     var dataCursor = await tx.RunAsync(@"
-                MATCH (n:Department) 
+                MATCH (n:DiscProfile) 
                 RETURN n 
                 SKIP $skip 
                 LIMIT $limit",
@@ -119,9 +127,9 @@ namespace backend_disc.Repositories.Neo4J
 
                     var records = await dataCursor.ToListAsync();
 
-                    var departments = records.Select(record => MapNode(record["n"].As<INode>().Properties)).ToList();
+                    var discProfiles = records.Select(record => MapNode(record["n"].As<INode>().Properties)).ToList();
 
-                    return (departments, totalCount);
+                    return (discProfiles, totalCount);
                 });
             }
             finally
@@ -129,14 +137,14 @@ namespace backend_disc.Repositories.Neo4J
                 await session.CloseAsync();
             }
         }
-        public async Task<Department?> GetById(int id)
+        public async Task<DiscProfile?> GetById(int id)
         {
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
                 return await session.ExecuteReadAsync(async tx =>
                 {
-                    var query = "MATCH (d:Department {id: $id}) RETURN d";
+                    var query = "MATCH (d:DiscProfile {id: $id}) RETURN d";
                     var cursor = await tx.RunAsync(query, new { id });
 
                     if (await cursor.FetchAsync())
@@ -150,7 +158,7 @@ namespace backend_disc.Repositories.Neo4J
             finally { await session.CloseAsync(); }
         }
 
-        public async Task<Department?> Update(int id, Department entity)
+        public async Task<DiscProfile?> Update(int id, DiscProfile entity)
         {
             if (string.IsNullOrWhiteSpace(entity.Name)) return null;
 
@@ -161,15 +169,16 @@ namespace backend_disc.Repositories.Neo4J
                 return await session.ExecuteWriteAsync(async tx =>
                 {
                     var query = @"
-                MATCH (d:Department {id: $id})
-                SET d += {name: $name, description: $description}
+                MATCH (d:DiscProfile {id: $id})
+                SET d += {name: $name, description: $description, color: $color}
                 RETURN d";
 
                     var parameters = new
                     {
                         id,
                         name = entity.Name,
-                        description = entity.Description
+                        description = entity.Description,
+                        color = entity.Color
                     };
 
                     var cursor = await tx.RunAsync(query, parameters);
@@ -181,6 +190,11 @@ namespace backend_disc.Repositories.Neo4J
                     }
                     return null;
                 });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
             }
             finally { await session.CloseAsync(); }
         }

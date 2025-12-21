@@ -18,7 +18,7 @@ namespace backend_disc.Factories
             return dbType.ToLower() switch
             {
                 "mssql" => _serviceProvider.GetRequiredService<GenericRepository<T>>(),
-                "mongodb" => _serviceProvider.GetRequiredService<GenericMongoRepository<T>>(),
+                "mongodb" => _serviceProvider.GetRequiredService<IGenericRepository<T>>(),
                 "neo4j" => GetNeo4JRepository<T>(),
                 _ => _serviceProvider.GetRequiredService<GenericRepository<T>>()
             };

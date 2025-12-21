@@ -179,7 +179,6 @@ namespace backend_disc.Repositories
         public async Task<int?> Delete(int id)
         {
             var entity = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
-            Console.WriteLine("DLETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             if (entity == null) return null;
             _context.Remove(entity);
             await _context.SaveChangesAsync();
