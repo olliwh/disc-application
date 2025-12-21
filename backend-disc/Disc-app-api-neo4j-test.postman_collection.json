@@ -3871,6 +3871,63 @@
 					"response": []
 				},
 				{
+					"name": "GetAll Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Items array validation\r",
+									"pm.test(\"Items array contains 7 departments\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf(7);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/positions?db={{dbquery}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"positions"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update",
 					"event": [
 						{
@@ -4219,12 +4276,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4316,12 +4379,75 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAll Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Status code validation\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Items array validation\r",
+									"pm.test(\"Items array contains 5 departments\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.items).to.be.an(\"array\");\r",
+									"    pm.expect(jsonData.items).to.have.lengthOf(5);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4405,13 +4531,19 @@
 							"raw": "{\r\n  \"name\": \"Humbeling updates\",\r\n  \"color\": \"#800080\",\r\n  \"description\": \"A updated Disc Profile\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4481,13 +4613,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4518,13 +4656,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4839,7 +4983,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"privateEmail\": \"postman@ok.dk\",\r\n  \"privatePhone\": \"9966443311\",\r\n  \"firstName\": \"postman updated\",\r\n  \"lastName\": \"test updated\",\r\n  \"departmentId\": 1,\r\n  \"positionId\": 1,\r\n  \"discProfileId\": 1,\r\n  \"cpr\": \"9988554433\"\r\n}",
+							"raw": "{\r\n  \"privateEmail\": \"postmanupdated@techcorp.com\",\r\n  \"privatePhone\": \"9966443311\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4847,13 +4991,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/employees/{{employee_id}}?db={{dbquery}}",
+							"raw": "{{BASE_URL}}/employees/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"employees",
-								"{{employee_id}}"
+								"1"
 							],
 							"query": [
 								{
@@ -4921,8 +5065,8 @@
 									"    pm.expect(jsonData.discProfileName).to.equal(\"Dominance\");\r",
 									"    pm.expect(jsonData.positionName).to.equal(\"Software Engineer\");\r",
 									"    pm.expect(jsonData.departmentName).to.equal(\"IT\");\r",
-									"    pm.expect(jsonData.privateEmail).to.equal(\"admin@mail.com\");\r",
-									"    pm.expect(jsonData.privatePhone).to.equal(\"12345678\");\r",
+									"    pm.expect(jsonData.privateEmail).to.equal(\"postmanupdated@techcorp.com\");\r",
+									"    pm.expect(jsonData.privatePhone).to.equal(\"9966443311\");\r",
 									"    pm.expect(jsonData.username).to.equal(\"admin\");\r",
 									"});\r",
 									"\r",

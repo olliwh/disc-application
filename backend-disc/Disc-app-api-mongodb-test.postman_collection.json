@@ -4213,12 +4213,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4298,6 +4304,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Im1hbmFnZXIiLCJlbXBsb3llZUlkIjoiNyIsInJvbGUiOiJNYW5hZ2VyIiwibmJmIjoxNzY2MzIyNzc3LCJleHAiOjE3NjYzMjMzNzcsImlhdCI6MTc2NjMyMjc3N30.cyKnwypHMcjSKyxILQBWSw3HEM8_DhxS4IJMRvcYA10",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -4310,12 +4326,18 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles",
+							"raw": "{{BASE_URL}}/discProfiles?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4399,13 +4421,19 @@
 							"raw": "{\r\n  \"name\": \"Humbeling updates\",\r\n  \"color\": \"#800080\",\r\n  \"description\": \"A updated Disc Profile\"\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4475,13 +4503,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4512,13 +4546,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}",
+							"raw": "{{BASE_URL}}/discProfiles/{{discProfile_id}}?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"discProfiles",
 								"{{discProfile_id}}"
+							],
+							"query": [
+								{
+									"key": "db",
+									"value": "{{dbquery}}"
+								}
 							]
 						}
 					},
@@ -4833,7 +4873,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"privateEmail\": \"postn@ok.dk\",\r\n  \"privatePhone\": \"9966003311\",\r\n  \"firstName\": \"postman updated\",\r\n  \"lastName\": \"test updated\",\r\n  \"departmentId\": 1,\r\n  \"positionId\": 1,\r\n  \"discProfileId\": 1,\r\n  \"cpr\": \"9988554433\"\r\n}",
+							"raw": "{\r\n  \"privateEmail\": \"postmanupdated@techcorp.com\",\r\n  \"privatePhone\": \"9966443311\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4841,13 +4881,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/employees/{{employee_id}}?db={{dbquery}}",
+							"raw": "{{BASE_URL}}/employees/1?db={{dbquery}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"employees",
-								"{{employee_id}}"
+								"1"
 							],
 							"query": [
 								{
@@ -4915,8 +4955,8 @@
 									"    pm.expect(jsonData.discProfileName).to.equal(\"Dominance\");\r",
 									"    pm.expect(jsonData.positionName).to.equal(\"Software Engineer\");\r",
 									"    pm.expect(jsonData.departmentName).to.equal(\"IT\");\r",
-									"    pm.expect(jsonData.privateEmail).to.equal(\"admin@mail.com\");\r",
-									"    pm.expect(jsonData.privatePhone).to.equal(\"12345678\");\r",
+									"    pm.expect(jsonData.privateEmail).to.equal(\"postmanupdated@techcorp.com\");\r",
+									"    pm.expect(jsonData.privatePhone).to.equal(\"9966443311\");\r",
 									"    pm.expect(jsonData.username).to.equal(\"admin\");\r",
 									"});\r",
 									"\r",
