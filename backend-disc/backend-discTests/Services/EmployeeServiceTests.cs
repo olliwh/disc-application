@@ -14,12 +14,11 @@ namespace backend_disc.Services.Tests
     public class EmployeeServiceTests
     {
         private Mock<IEmployeeRepositoryFactory> _mockEmployeeRepositoryFactory = null!;
+        private Mock<IGenericRepositoryFactory> _mockGenericFactory = null!;
         private Mock<IEmployeesRepository> _mockEmployeeRepository = null!;
         private Mock<IUserRepository> _mockUserRepository = null!;
-        private Mock<IGenericRepository<Company>> _mockCompanyRepository = null!;
         private Mock<IMapper> _mockMapper = null!;
         private EmployeeService _employeeService = null!;
-        private Company _company = null!;
         private readonly string emailDomain = "@techcorp.com";
         private const int length = 2;
         private readonly string db = "mssql";
@@ -33,7 +32,7 @@ namespace backend_disc.Services.Tests
         private const string VALID_LAST_NAME = "Doe";
         private const int VALID_POSITION_ID = 1;
         private const string VALID_USERNAME = "test.user";
-        private const string VALID_WORK_EMAIL = "work@test.com";
+        private const string VALID_WORK_EMAIL = "work@techcorp.com";
         private const string VALID_WORK_PHONE = "87654321";
         private const string VALID_PRIVATE_EMAIL = "private@test.com";
         private const string VALID_PRIVATE_PHONE = "12345678";
@@ -47,12 +46,11 @@ namespace backend_disc.Services.Tests
         public void Setup()
         {
             _mockEmployeeRepositoryFactory = new Mock<IEmployeeRepositoryFactory>();
+            _mockGenericFactory = new Mock<IGenericRepositoryFactory>();
             _mockEmployeeRepository = new Mock<IEmployeesRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
-            _mockCompanyRepository = new Mock<IGenericRepository<Company>>();
             _mockMapper = new Mock<IMapper>();
-            _company = new Company { Id = 1, Name = "techcorp", BusinessField = "Software", Location = "Copenhagen" };
-            _mockCompanyRepository.Setup(x => x.GetById(1)).ReturnsAsync(_company);
+
 
             _mockEmployeeRepositoryFactory
              .Setup(f => f.GetRepository(It.IsAny<string>()))
@@ -68,11 +66,11 @@ namespace backend_disc.Services.Tests
             _mockUserRepository.Setup(x => x.UsernameExists(It.IsAny<string>())).ReturnsAsync(false);
             _mockEmployeeRepository.Setup(x => x.PhoneNumExists(It.IsAny<string>())).ReturnsAsync(false);
 
-            var paginatedList = new PaginatedList<Employee>(employees, 1, employees.Count, 10);
-            _mockEmployeeRepository.Setup(x => x.GetAll(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(paginatedList);
+            var getAllReturn = (employees, employees.Count);
+            _mockEmployeeRepository.Setup(x => x.GetAll(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(getAllReturn);
 
 
-            _employeeService = new EmployeeService(_mockUserRepository.Object, _mockCompanyRepository.Object, _mockMapper.Object, NullLogger<EmployeeService>.Instance, _mockEmployeeRepositoryFactory.Object);
+            _employeeService = new EmployeeService(_mockUserRepository.Object, _mockMapper.Object, NullLogger<EmployeeService>.Instance, _mockEmployeeRepositoryFactory.Object, _mockGenericFactory.Object);
 
             _validDtoEmployee = new CreateNewEmployee()
             {
@@ -119,7 +117,7 @@ namespace backend_disc.Services.Tests
 
             for (int i = 0; i < length; i++)
             {
-                var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, firstName, lastName);
+                var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object ,firstName, lastName);
                 string username = result["username"];
                 int digitCountUsername = username.Count(char.IsDigit);
                 string phoneNumber = result["phoneNumber"];
@@ -156,7 +154,6 @@ namespace backend_disc.Services.Tests
         [DataRow("Anna", "Williams")]
         public async Task GenerateUsernameWorkMailAndPhone_DictionaryStructure(string firstName, string lastName)
         {
-
             var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, firstName, lastName);
             string username = result["username"];
             string phoneNumber = result["phoneNumber"];

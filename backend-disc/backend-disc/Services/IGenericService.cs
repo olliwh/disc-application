@@ -10,11 +10,11 @@ namespace backend_disc.Services
         where TUpdateDto : IUpdateDtoBase
 
     {
-        Task<PaginatedList<TDto>> GetAllAsync(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize);
-        Task<TDto?> GetByIdAsync(int id);
-        Task<TDto> CreateAsync(TCreateDto createDto);
-        Task<TDto?> UpdateAsync(int id, TUpdateDto updateDto);
-        Task<int?> DeleteAsync(int id);
+        Task<PaginatedList<TDto>> GetAllAsync(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize, string db);
+        Task<TDto?> GetByIdAsync(int id, string db);
+        Task<TDto> CreateAsync(TCreateDto createDto, string db);
+        Task<TDto?> UpdateAsync(int id, TUpdateDto updateDto, string db);
+        Task<int?> DeleteAsync(int id, string db);
 
 
     }

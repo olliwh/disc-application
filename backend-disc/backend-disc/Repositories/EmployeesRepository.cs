@@ -128,7 +128,7 @@ namespace backend_disc.Repositories
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns>Task<PaginatedList<Employee>></returns>
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId,
+        public async Task<(List<Employee>, int totalCount)> GetAll(int? departmentId,
             int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             IQueryable<Employee> query = _context.Employees
@@ -153,7 +153,7 @@ namespace backend_disc.Repositories
                 );
             }
 
-            int totalCount = await query.CountAsync();
+            int employeesTotalCount = await query.CountAsync();
 
             var employees = await query
                 .OrderBy(e => e.Id)
@@ -168,7 +168,7 @@ namespace backend_disc.Repositories
                     .Where(e => (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch))
                     .ToList();
             }
-            return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
+            return (employees, employeesTotalCount);
         }
 
         public async Task<EmployeesOwnProfile?> GetById(int id)
@@ -179,7 +179,6 @@ namespace backend_disc.Repositories
         public async Task<int?> Delete(int id)
         {
             var entity = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
-            Console.WriteLine("DLETE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             if (entity == null) return null;
             _context.Remove(entity);
             await _context.SaveChangesAsync();

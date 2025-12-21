@@ -6,27 +6,20 @@ namespace backend_disc.Factories
 {
     public class EmployeeRepositoryFactory : IEmployeeRepositoryFactory
     {
-        private readonly EmployeesRepository _sqlRepo;
-        private readonly EmployeesMongoRepository _mongoRepo;
-        private readonly EmployeesNeo4JRepository _neoRepo;
+        private readonly IServiceProvider _serviceProvider;
 
-        public EmployeeRepositoryFactory(
-            EmployeesRepository sqlRepo,
-            EmployeesMongoRepository mongoRepo,
-            EmployeesNeo4JRepository neoRepo)
+        public EmployeeRepositoryFactory(IServiceProvider serviceProvider)
         {
-            _sqlRepo = sqlRepo;
-            _mongoRepo = mongoRepo;
-            _neoRepo = neoRepo;
+            _serviceProvider = serviceProvider;
         }
 
         public IEmployeesRepository GetRepository(string dbType) =>
             dbType.ToLower() switch
             {
-                "mssql" => _sqlRepo,
-                "mongodb" => _mongoRepo,
-                "neo4j" => _neoRepo,
-                _ => _sqlRepo    
+                "mssql" => _serviceProvider.GetRequiredService<EmployeesRepository>(),
+                "mongodb" => _serviceProvider.GetRequiredService<EmployeesMongoRepository>(),
+                "neo4j" => _serviceProvider.GetRequiredService<EmployeesNeo4JRepository>(),
+                _ => _serviceProvider.GetRequiredService<EmployeesRepository>()
             };
     }
 }

@@ -31,19 +31,15 @@ namespace backend_disc.Repositories
             return id;
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<(List<T>, int totalCount)> GetAll(int pageIndex, int pageSize)
         {
-            return await _dbSet.ToListAsync();
+            List<T> items = await _dbSet.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            return (items, items.Count);
         }
 
         public async Task<T?> GetById(int id)
         {
             return await _dbSet.FindAsync(id);
-        }
-
-        public IQueryable<T> Query()
-        {
-            return _dbSet.AsQueryable();
         }
 
         public async Task<T?> Update(int id, T entity)

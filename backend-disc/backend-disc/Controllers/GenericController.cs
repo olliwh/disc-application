@@ -31,22 +31,23 @@ namespace backend_disc.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual async Task<IActionResult> GetAll([FromQuery] int? departmentId = null,
+            [FromQuery] string db = "mssql",
             [FromQuery] int? discProfileId = null,
             [FromQuery] int? positionId = null,
             [FromQuery] string? search = null,
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10)
         {
-            var entities = await _service.GetAllAsync(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+            var entities = await _service.GetAllAsync(departmentId, discProfileId, positionId, search, pageIndex, pageSize, db);
             return Ok(entities);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public virtual async Task<IActionResult> GetById(int id)
+        public virtual async Task<IActionResult> GetById(int id, [FromQuery] string db = "mssql")
         {
-            var dto = await _service.GetByIdAsync(id);
+            var dto = await _service.GetByIdAsync(id, db);
             if (dto == null) return NotFound();
             return Ok(dto);
         }
@@ -57,11 +58,11 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
         [Authorize(Roles = "Admin,Manager")]
-        public virtual async Task<IActionResult> Create([FromBody] TCreateDto createDto)
+        public virtual async Task<IActionResult> Create([FromBody] TCreateDto createDto, [FromQuery] string db = "mssql")
         {
             try
             {
-                var created = await _service.CreateAsync(createDto);
+                var created = await _service.CreateAsync(createDto, db);
                 return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
             }
             catch (ArgumentException ex)
@@ -89,11 +90,11 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
         [Authorize(Roles = "Admin,Manager")]
-        public virtual async Task<IActionResult> Update(int id, [FromBody] TUpdateDto updateDto)
+        public virtual async Task<IActionResult> Update(int id, [FromBody] TUpdateDto updateDto, [FromQuery] string db = "mssql")
         {
             try
             {
-                var updated = await _service.UpdateAsync(id, updateDto);
+                var updated = await _service.UpdateAsync(id, updateDto, db);
                 if (updated == null) return NotFound();
                 return Ok(updated);
             }
@@ -121,9 +122,9 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
         [Authorize(Roles = "Admin")]
-        public virtual async Task<IActionResult> Delete(int id)
+        public virtual async Task<IActionResult> Delete(int id, [FromQuery] string db = "mssql")
         {
-            var deleted = await _service.DeleteAsync(id);
+            var deleted = await _service.DeleteAsync(id, db);
             if (deleted == null) return NotFound();
             return Ok(deleted);
         }

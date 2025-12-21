@@ -94,7 +94,7 @@ namespace backend_disc.Repositories.Mongo
             return id;
         }
 
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<(List<Employee>, int totalCount)> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace backend_disc.Repositories.Mongo
                     ? filterBuilder.And(filters)
                     : filterBuilder.Empty;
 
-                var totalCount = (int)await _employeesCollection.CountDocumentsAsync(combinedFilter);
+                var employeesTotalCount = (int)await _employeesCollection.CountDocumentsAsync(combinedFilter);
 
                 var skip = (pageIndex - 1) * pageSize;
                 var mongoEmployees = await _employeesCollection
@@ -160,7 +160,7 @@ namespace backend_disc.Repositories.Mongo
                         ImagePath = me.ImagePath,
                         DepartmentId = me.DepartmentId,
                         PositionId = me?.PositionId,
-                        DiscProfileId = me.DiscProfileId,
+                        DiscProfileId = me?.DiscProfileId,
                         DiscProfile = discProfile != null ? new DiscProfile
                         {
                             Id = discProfile.DiscProfileId,
@@ -170,7 +170,7 @@ namespace backend_disc.Repositories.Mongo
                     };
                 }).ToList();
 
-                return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
+                return (employees, employeesTotalCount);
             }
             catch (Exception ex)
             {
@@ -220,17 +220,22 @@ namespace backend_disc.Repositories.Mongo
 
         public async Task<int?> UpdatePrivateData(int id, string mail, string phone)
         {
-            var filter = Builders<EmployeeMongo>.Filter.Eq(e => e.EmployeeId, id);
+            try
+            {
+                var filter = Builders<EmployeeMongo>.Filter.Eq(e => e.EmployeeId, id);
+                Console.WriteLine("hello");
+                var update = Builders<EmployeeMongo>.Update
+                    .Set(e => e.PrivateEmail, mail)
+                    .Set(e => e.PrivatePhone, phone);
 
-            var update = Builders<EmployeeMongo>.Update
-                .Set(e => e.PrivateEmail, mail)
-                .Set(e => e.PrivatePhone, phone);
-
-            var result = await _employeesCollection.UpdateOneAsync(filter, update);
-            Console.WriteLine(id);
-            Console.WriteLine(result.ModifiedCount);
-
-            return result.ModifiedCount > 0 ? id : null;
+                var result = await _employeesCollection.UpdateOneAsync(filter, update);
+                return result.MatchedCount > 0 ? id : null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Mongo Update Error: {ex.Message}");
+                throw;
+            }
         }
     }
 }

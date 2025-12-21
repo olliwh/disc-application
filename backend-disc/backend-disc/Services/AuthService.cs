@@ -14,12 +14,12 @@ namespace backend_disc.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _config;
-        private readonly IGenericRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             IConfiguration config,
-            IGenericRepository<User> userRepository,
+            IUserRepository userRepository,
             ILogger<AuthService> logger)
         {
             _config = config;
@@ -31,10 +31,7 @@ namespace backend_disc.Services
         {
             try
             {
-                var user = await _userRepository.Query()
-                    .Include(u => u.Employee)
-                    .Include(u => u.UserRole)
-                    .FirstOrDefaultAsync(u => u.Username == dto.Username);
+                var user = await _userRepository.GetUserByUsername(dto.Username);
 
                 if (user == null)
                 {

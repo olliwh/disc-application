@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.BaseDtos;
+using backend_disc.Factories;
 using backend_disc.Models;
 using backend_disc.Repositories;
+using System.Data;
 
 namespace backend_disc.Services
 {
@@ -11,18 +13,21 @@ namespace backend_disc.Services
         where TCreateDto : ICreateDtoBase
         where TUpdateDto : IUpdateDtoBase
     {
-        private readonly IGenericRepository<TEntity> _repository;
+        private readonly IGenericRepositoryFactory _factory;
         private readonly IMapper _mapper;
 
 
-        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
+        public GenericService(IGenericRepositoryFactory factory, IMapper mapper)
         {
-            _repository = repository;
+            _factory = factory;
             _mapper = mapper;
         }
 
-        public async Task<PaginatedList<TDto>> GetAllAsync(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<PaginatedList<TDto>> GetAllAsync(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize, string db)
         {
+            var repo = _factory.GetRepository<TEntity>(db);
+
+
             if (pageIndex < 1)
             {
                 pageIndex = 1;
@@ -37,29 +42,28 @@ namespace backend_disc.Services
             {
                 pageSize = 50; // max page size
             }
-            var entities = await _repository.GetAll();
+            var (entities, totalCount) = await repo.GetAll(pageIndex, pageSize);
             var mapped = _mapper.Map<List<TDto>>(entities);
-            return new PaginatedList<TDto>(mapped, pageIndex, entities.Count, pageSize);
+            return new PaginatedList<TDto>(mapped, pageIndex, totalCount, pageSize);
         }
 
-        public async Task<List<TDto>> GetAllAsync2()
-        {
-            var entities = await _repository.GetAll();
-            return _mapper.Map<List<TDto>>(entities);
-        }
 
-        public async Task<TDto?> GetByIdAsync(int id)
+        public async Task<TDto?> GetByIdAsync(int id, string db)
         {
-            var entity = await _repository.GetById(id);
+            var repo = _factory.GetRepository<TEntity>(db);
+
+            var entity = await repo.GetById(id);
             return _mapper.Map<TDto?>(entity);
         }
 
-        public virtual async Task<TDto> CreateAsync(TCreateDto createDto)
+        public virtual async Task<TDto> CreateAsync(TCreateDto createDto, string db)
         {
             try
             {
+                var repo = _factory.GetRepository<TEntity>(db);
+
                 var entity = _mapper.Map<TEntity>(createDto);
-                var created = await _repository.Add(entity);
+                var created = await repo.Add(entity);
                 return _mapper.Map<TDto>(created);
             }
             catch (KeyNotFoundException)
@@ -76,18 +80,22 @@ namespace backend_disc.Services
             }
         }
 
-        public async Task<int?> DeleteAsync(int id)
+        public async Task<int?> DeleteAsync(int id, string db)
         {
-            var deleted = await _repository.Delete(id);
+            var repo = _factory.GetRepository<TEntity>(db);
+
+            var deleted = await repo.Delete(id);
             return deleted;
         }
 
-        public async Task<TDto?> UpdateAsync(int id, TUpdateDto updateDto)
+        public async Task<TDto?> UpdateAsync(int id, TUpdateDto updateDto, string db)
         {
             try
             {
+                var repo = _factory.GetRepository<TEntity>(db);
+
                 var entity = _mapper.Map<TEntity>(updateDto);
-                var updated = await _repository.Update(id, entity);
+                var updated = await repo.Update(id, entity);
                 return _mapper.Map<TDto?>(updated);
             }
             catch (KeyNotFoundException)

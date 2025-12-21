@@ -6,6 +6,7 @@ using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Models.Sql;
 using Isopoh.Cryptography.Argon2;
+using Neo4j.Driver;
 using System.Text;
 
 namespace backend_disc.Services
@@ -13,7 +14,8 @@ namespace backend_disc.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IGenericRepository<Company> _companiesRepository;
+        private readonly IGenericRepositoryFactory _genericFactory;
+
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private static readonly Random _random = new();
         private static readonly object _randomLock = new();
@@ -22,14 +24,15 @@ namespace backend_disc.Services
         private readonly IEmployeeRepositoryFactory _factory;
 
         public EmployeeService(IUserRepository userRepository,
-            IGenericRepository<Company> companiesRepository, IMapper mapper, ILogger<EmployeeService> logger,
-            IEmployeeRepositoryFactory factory)
+            IMapper mapper, ILogger<EmployeeService> logger,
+            IEmployeeRepositoryFactory factory,
+            IGenericRepositoryFactory genericFactory)
         {
             _userRepository = userRepository;
-            _companiesRepository = companiesRepository;
             _mapper = mapper;
             _logger = logger;
             _factory = factory;
+            _genericFactory = genericFactory;
         }
 
         /// <summary>
@@ -104,11 +107,9 @@ namespace backend_disc.Services
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>Dictionary<string, string></returns>
-        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo, string firstName, string lastName)
+        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo,string firstName, string lastName)
         {
-            var company = await _companiesRepository.GetById(1);
-            if (company == null)
-            { throw new KeyNotFoundException($"Company with ID {1} not found"); }
+
             string username;
             bool usernameAlreadyExists;
             int attempts = 0;
@@ -127,7 +128,7 @@ namespace backend_disc.Services
 
             } while (usernameAlreadyExists);
 
-            string workEmail = $"{username}@{company.Name}.com";
+            string workEmail = $"{username}@techcorp.com";
             string phoneNumber;
             bool phoneNumberAlreadyExists;
             attempts = 0;
@@ -189,9 +190,9 @@ namespace backend_disc.Services
             {
                 pageSize = 50;
             }
-            var employees = await repo.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
+            var (employees, totalCount) = await repo.GetAll(departmentId, discProfileId, positionId, search, pageIndex, pageSize);
 
-            var mapped = employees.Items.Select(e => new ReadEmployee
+            var mapped = employees.Select(e => new ReadEmployee
             {
                 Id = e.Id,
                 FirstName = e.FirstName,
@@ -206,7 +207,7 @@ namespace backend_disc.Services
             }).ToList();
 
 
-            return new PaginatedList<ReadEmployee>(mapped, employees.PageIndex, employees.TotalCount, employees.PageSize);
+            return new PaginatedList<ReadEmployee>(mapped, pageIndex, totalCount, pageSize);
         }
         
         public async Task<int?> DeleteAsync(string dbType, int id)

@@ -43,7 +43,7 @@ namespace class_library_disc.Models.Mongo
         [BsonId]
         public ObjectId Id { get; set; }
         [BsonElement("position_id")]
-        public int? PositionId { get; set; }
+        public int PositionId { get; set; }
         [BsonElement("name")]
         public string Name { get; set; } = null!;
 
