@@ -73,7 +73,7 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]//not admin role
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]//in valid token
         //NullReferenceException if fk doesnt exist
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateNewEmployee dto, [FromQuery] string db = "mssql")
         {
             try
@@ -125,22 +125,22 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        //[Authorize]
+        [Authorize]
         public virtual async Task<IActionResult> Update(int id, [FromBody] UpdatePrivateDataDto updateDto, [FromQuery] string db = "mssql")
         {
-            // Get employeeId from token
-            //var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
-            //if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
-            //{
-            //    _logger.LogWarning("Invalid or missing employeeId in token");
-            //    return Unauthorized(new { message = "Invalid token" });
-            //}
+            //Get employeeId from token
+           var employeeIdFromToken = User.FindFirst("employeeId")?.Value;
+            if (!int.TryParse(employeeIdFromToken, out var tokenEmployeeId))
+            {
+                _logger.LogWarning("Invalid or missing employeeId in token");
+                return Unauthorized(new { message = "Invalid token" });
+            }
 
-            //if (id != tokenEmployeeId)
-            //{
-            //    _logger.LogWarning("User {TokenEmployeeId} attempted to update employee {EmployeeId}", tokenEmployeeId, id);
-            //    return Forbid();
-            //}
+            if (id != tokenEmployeeId)
+            {
+                _logger.LogWarning("User {TokenEmployeeId} attempted to update employee {EmployeeId}", tokenEmployeeId, id);
+                return Forbid();
+            }
 
             try
             {

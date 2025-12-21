@@ -110,13 +110,18 @@ builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, Updat
     GenericService<Position, PositionDto, CreatePositionDto, UpdatePositionDto>>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IGenericRepositoryFactory, GenericRepositoryFactory>();
+builder.Services.AddScoped(typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(GenericMongoRepository<>));
+builder.Services.AddScoped(typeof(GenericNeo4JRepository<>));
+
 builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
 builder.Services.AddScoped<IEmployeeRepositoryFactory, EmployeeRepositoryFactory>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<EmployeesRepository>();
 builder.Services.AddScoped<EmployeesMongoRepository>();
 builder.Services.AddScoped<EmployeesNeo4JRepository>();
+builder.Services.AddScoped<IGenericRepository<Department>, DepartmentsNeo4JRepository>();
 
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();

@@ -12,6 +12,15 @@ namespace backend_disc.Repositories
         {
             _context = context;
         }
+
+        public async Task<User?> GetUserByUsername(string username)
+        {
+            return await _context.Users
+                .Include(u => u.Employee)
+                .Include(u => u.UserRole)
+                .FirstOrDefaultAsync(u => u.Username == username);
+        }
+
         public async Task<bool> UsernameExists(string username)
         {
             return await _context.Users.AnyAsync(u => u.Username == username);

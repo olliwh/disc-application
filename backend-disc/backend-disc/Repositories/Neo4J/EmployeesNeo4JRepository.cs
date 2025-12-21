@@ -1,29 +1,24 @@
-﻿using backend_disc.Models;
-using backend_disc.Repositories.StoredProcedureParams;
-using class_library_disc.Data;
+﻿using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Models.Sql;
 using Neo4j.Driver;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace backend_disc.Repositories.Neo4J
 {
     public class EmployeesNeo4JRepository : IEmployeesRepository
     {
+        private const string Message = "Error querying Neo4j database: {dbName}";
         private readonly IDriver _driver;
         private readonly ILogger<EmployeesNeo4JRepository> _logger;
-        private readonly string dbName = "neo4j";
+        private readonly string dbName = Environment.GetEnvironmentVariable("NEO4J_DBNAME") ?? "neo4j";
 
         public EmployeesNeo4JRepository(IDriver driver, ILogger<EmployeesNeo4JRepository> logger)
         {
             _driver = driver;
             _logger = logger;
         }
-        public async Task<PaginatedList<Employee>> GetAll(
-             int? departmentId, int? discProfileId, int? positionId,
-             string? search, int pageIndex, int pageSize)
+        public async Task<(List<Employee>, int totalCount)> GetAll(
+     int? departmentId, int? discProfileId, int? positionId,
+     string? search, int pageIndex, int pageSize)
         {
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
@@ -35,115 +30,82 @@ namespace backend_disc.Repositories.Neo4J
                 };
 
                 var matchClauses = new List<string> { "MATCH (e:Employee)" };
-                var whereClause = "";
-                // need to be reight after match employee
+
                 if (!string.IsNullOrWhiteSpace(search))
                 {
-                    whereClause = "WHERE (toLower(e.first_name) CONTAINS toLower($search) OR toLower(e.last_name) CONTAINS toLower($search))";
+                    matchClauses.Add("WHERE (toLower(e.first_name) CONTAINS toLower($search) OR toLower(e.last_name) CONTAINS toLower($search))");
                     parameters["search"] = search;
                 }
-                matchClauses.Add(whereClause);
 
-                if (departmentId.HasValue)
+                matchClauses.Add(departmentId.HasValue
+                    ? "MATCH (e)-[:WORKS_IN]->(d:Department {id: $departmentId})"
+                    : "OPTIONAL MATCH (e)-[:WORKS_IN]->(d:Department)");
+                if (departmentId.HasValue) parameters["departmentId"] = departmentId.Value;
+
+                matchClauses.Add(discProfileId.HasValue
+                    ? "MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile {id: $discProfileId})"
+                    : "OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)");
+                if (discProfileId.HasValue) parameters["discProfileId"] = discProfileId.Value;
+
+                matchClauses.Add(positionId.HasValue
+                    ? "MATCH (e)-[:OCCUPIES]->(p:Position {id: $positionId})"
+                    : "OPTIONAL MATCH (e)-[:OCCUPIES]->(p:Position)");
+                if (positionId.HasValue) parameters["positionId"] = positionId.Value;
+
+                var baseQuery = string.Join("\n", matchClauses);
+                var countQuery = $"{baseQuery}\nRETURN count(e) AS totalCount";
+                var dataQuery = $"{baseQuery}\nRETURN e, d, dp, p\nORDER BY e.id ASC\nSKIP $skip LIMIT $limit";
+
+                return await session.ExecuteReadAsync(async tx =>
                 {
-                    matchClauses.Add("MATCH (e)-[:WORKS_IN]->(d:Department {id: $departmentId})");
-                    parameters["departmentId"] = departmentId.Value;
-                }
-                else
-                {
-                    matchClauses.Add("OPTIONAL MATCH (e)-[:WORKS_IN]->(d:Department)");
-                }
+                    var countResult = await tx.RunAsync(countQuery, parameters);
+                    var countRecord = await countResult.SingleAsync();
+                    var totalCount = countRecord["totalCount"].As<int>();
 
-                if (discProfileId.HasValue)
-                {
-                    matchClauses.Add("MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile {id: $discProfileId})");
-                    parameters["discProfileId"] = discProfileId.Value;
-                }
-                else
-                {
-                    matchClauses.Add("OPTIONAL MATCH (e)-[:BELONGS_TO]->(dp:DiscProfile)");
-                }
+                    var dataResult = await tx.RunAsync(dataQuery, parameters);
+                    var records = await dataResult.ToListAsync();
+                    var employees = new List<Employee>();
 
-                if (positionId.HasValue)
-                {
-                    matchClauses.Add("MATCH (e)-[:OCCUPIES]->(p:Position {id: $positionId})");
-                    parameters["positionId"] = positionId.Value;
-                }
-                else
-                {
-                    matchClauses.Add("OPTIONAL MATCH (e)-[:OCCUPIES]->(p:Position)");
-                }
-
-                var matchClause = string.Join("\n", matchClauses);
-                string countReturn = "RETURN count(e) AS totalCount";
-                string dataReturn = "RETURN e, d, dp, p\nORDER BY e.id ASC\nSKIP $skip LIMIT $limit";
-                Console.WriteLine(parameters["skip"]);
-                Console.WriteLine(pageIndex);
-
-                var countResult = await session.RunAsync($"{matchClause}\n{countReturn}", parameters);
-                var countRecord = await countResult.SingleAsync();
-                var totalCount = countRecord["totalCount"].As<int>();
-
-                var dataResult = await session.RunAsync($"{matchClause}\n{dataReturn}", parameters);
-                var employees = new List<Employee>();
-
-                await foreach (var record in dataResult)
-                {
-                    var eNode = record["e"].As<INode>();
-
-                    INode? dNode = null;
-                    if (record["d"] != null && record["d"].As<object>() != null)
+                    foreach (var record in records)
                     {
-                        dNode = record["d"].As<INode>();
-                    }
+                        var eNode = record["e"].As<INode>();
+                        var dNode = record["d"] as INode;
+                        var dpNode = record["dp"] as INode;
+                        var pNode = record["p"] as INode;
 
-                    INode? dpNode = null;
-                    if (record["dp"] != null && record["dp"].As<object>() != null)
-                    {
-                        dpNode = record["dp"].As<INode>();
-                    }
-
-                    INode? pNode = null;
-                    if (record["p"] != null && record["p"].As<object>() != null)
-                    {
-                        pNode = record["p"].As<INode>();
-                    }
-
-                    var employee = new Employee
-                    {
-                        Id = eNode["id"].As<int>(),
-                        FirstName = eNode["first_name"].As<string>(),
-                        LastName = eNode["last_name"].As<string>(),
-                        WorkEmail = eNode["work_email"].As<string>(),
-                        WorkPhone = eNode["work_phone"].As<string>(),
-                        ImagePath = eNode["image_path"].As<string>(),
-                        DepartmentId = dNode["id"].As<int>(),
-                        PositionId = pNode?["id"].As<int?>(),
-                        DiscProfileId = dpNode?["id"].As<int?>(),
-                        DiscProfile = dpNode == null ? null : new DiscProfile
+                        employees.Add(new Employee
                         {
-                            Id = dpNode["id"].As<int>(),
-                            Name = dpNode["name"].As<string>(),
-                            Color = dpNode["color"].As<string>()
-                        }
-                    };
-                    employees.Add(employee);
-                }
+                            Id = eNode["id"].As<int>(),
+                            FirstName = eNode["first_name"].As<string>(),
+                            LastName = eNode["last_name"].As<string>(),
+                            WorkEmail = eNode["work_email"].As<string>(),
+                            WorkPhone = eNode["work_phone"].As<string>(),
+                            ImagePath = eNode["image_path"].As<string>(),
 
-                return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
+                            DepartmentId = dNode?["id"].As<int?>() ?? 0,
+                            PositionId = pNode?["id"].As<int?>(),
+                            DiscProfileId = dpNode?["id"].As<int?>(),
+
+                            DiscProfile = dpNode == null ? null : new DiscProfile
+                            {
+                                Id = dpNode["id"].As<int>(),
+                                Name = dpNode["name"].As<string>(),
+                                Color = dpNode["color"].As<string>()
+                            }
+                        });
+                    }
+                    return (employees, totalCount);
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error querying Neo4j");
+                _logger.LogError(ex, Message, dbName);
                 throw;
             }
-            finally
-            {
-                await session.CloseAsync();
-            }
+            finally { await session.CloseAsync(); }
         }
 
-        
+
         public async Task<bool> PhoneNumExists(string phoneNumber)
         {
             await using var session = _driver.AsyncSession();
@@ -158,8 +120,7 @@ namespace backend_disc.Repositories.Neo4J
         public async Task<Employee?> AddEmployeeSPAsync(AddEmployeeSpParams p)
         {
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
-            var random = new Random();
-            var uniqueId = random.Next(1, int.MaxValue);
+
 
             try
             {
@@ -202,9 +163,14 @@ namespace backend_disc.Repositories.Neo4J
                 RETURN e
                 ";
                 var tx = await session.BeginTransactionAsync();
+                var idQuery = "MATCH(n: Employee) RETURN max(n.id) as maxId";
+                var idCursor = await tx.RunAsync(idQuery);
+                var idRecord = await idCursor.SingleAsync();
+                int nextId = idRecord["maxId"].As<int?>() ?? 0;
+                nextId++;
                 var result = await tx.RunAsync(query, new
                 {
-                    id = uniqueId,
+                    id = nextId,
                     firstName = p.FirstName,
                     lastName = p.LastName,
                     workEmail = p.WorkEmail,
@@ -297,10 +263,10 @@ namespace backend_disc.Repositories.Neo4J
                     DiscProfileName = record["DiscProfileName"].As<string?>(),
                     DiscProfileColor = record["DiscProfileColor"].As<string?>(),
                     PositionName = record["PositionName"].As<string?>(),
-                    DepartmentName = record["DepartmentName"].As<string?>(),
-                    PrivateEmail = record["PrivateEmail"].As<string?>(),
-                    PrivatePhone = record["PrivatePhone"].As<string?>(),
-                    Username = record["username"].As<string?>()
+                    DepartmentName = record["DepartmentName"].As<string>(),
+                    PrivateEmail = record["PrivateEmail"].As<string>(),
+                    PrivatePhone = record["PrivatePhone"].As<string>(),
+                    Username = record["username"].As<string>()
                 };
 
                 return employeeProfile;
@@ -321,7 +287,6 @@ namespace backend_disc.Repositories.Neo4J
             var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
             try
             {
-                Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 var query = @"
                 MATCH (e:Employee {id: $id}), (ep:EmployeePrivateData {id: $id}), (u:User {id: $id})
                 DETACH DELETE e, ep, u
@@ -340,7 +305,6 @@ namespace backend_disc.Repositories.Neo4J
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting employee from Neo4j");
-                Console.WriteLine(ex + "Error deleting employee from Neo4j");
                 throw;
             }
             finally

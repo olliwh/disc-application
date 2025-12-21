@@ -94,7 +94,7 @@ namespace backend_disc.Repositories.Mongo
             return id;
         }
 
-        public async Task<PaginatedList<Employee>> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
+        public async Task<(List<Employee>, int totalCount)> GetAll(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace backend_disc.Repositories.Mongo
                     ? filterBuilder.And(filters)
                     : filterBuilder.Empty;
 
-                var totalCount = (int)await _employeesCollection.CountDocumentsAsync(combinedFilter);
+                var employeesTotalCount = (int)await _employeesCollection.CountDocumentsAsync(combinedFilter);
 
                 var skip = (pageIndex - 1) * pageSize;
                 var mongoEmployees = await _employeesCollection
@@ -160,7 +160,7 @@ namespace backend_disc.Repositories.Mongo
                         ImagePath = me.ImagePath,
                         DepartmentId = me.DepartmentId,
                         PositionId = me?.PositionId,
-                        DiscProfileId = me.DiscProfileId,
+                        DiscProfileId = me?.DiscProfileId,
                         DiscProfile = discProfile != null ? new DiscProfile
                         {
                             Id = discProfile.DiscProfileId,
@@ -170,7 +170,7 @@ namespace backend_disc.Repositories.Mongo
                     };
                 }).ToList();
 
-                return new PaginatedList<Employee>(employees, pageIndex, totalCount, pageSize);
+                return (employees, employeesTotalCount);
             }
             catch (Exception ex)
             {
