@@ -4304,16 +4304,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Im1hbmFnZXIiLCJlbXBsb3llZUlkIjoiNyIsInJvbGUiOiJNYW5hZ2VyIiwibmJmIjoxNzY2MzIyNzc3LCJleHAiOjE3NjYzMjMzNzcsImlhdCI6MTc2NjMyMjc3N30.cyKnwypHMcjSKyxILQBWSw3HEM8_DhxS4IJMRvcYA10",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
