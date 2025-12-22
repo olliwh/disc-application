@@ -199,6 +199,8 @@ namespace class_library_disc.Models.Mongo
 
         [BsonElement("password_hash")]
         public string PasswordHash { get; set; } = null!;
+        [BsonElement("user_role_id")]
+        public int UserRoleId { get; set; } 
 
         [BsonElement("requires_reset")]
         public bool RequiresReset { get; set; }

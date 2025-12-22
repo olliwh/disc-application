@@ -1,6 +1,4 @@
 ﻿using backend_disc.Repositories;
-using backend_disc.Repositories.Mongo;
-using backend_disc.Repositories.Neo4J;
 
 namespace backend_disc.Factories
 {
@@ -16,10 +14,9 @@ namespace backend_disc.Factories
         public IEmployeesRepository GetRepository(string dbType) =>
             dbType.ToLower() switch
             {
-                "mssql" => _serviceProvider.GetRequiredService<EmployeesRepository>(),
-                "mongodb" => _serviceProvider.GetRequiredService<EmployeesMongoRepository>(),
-                "neo4j" => _serviceProvider.GetRequiredService<EmployeesNeo4JRepository>(),
-                _ => _serviceProvider.GetRequiredService<EmployeesRepository>()
+                "mongodb" => _serviceProvider.GetRequiredKeyedService<IEmployeesRepository>("mongodb"),
+                "neo4j" => _serviceProvider.GetRequiredKeyedService<IEmployeesRepository>("neo4j"),
+                _ => _serviceProvider.GetRequiredService<IEmployeesRepository>()
             };
     }
 }

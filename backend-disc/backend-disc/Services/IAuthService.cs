@@ -4,6 +4,6 @@ namespace backend_disc.Services
 {
     public interface IAuthService
     {
-        Task<LoginResponseDto?> Login(LoginDto dto);
+        Task<LoginResponseDto?> Login(LoginDto dto, string db);
     }
 }
