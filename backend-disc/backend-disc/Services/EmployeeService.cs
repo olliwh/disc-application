@@ -4,6 +4,7 @@ using backend_disc.Factories;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
+using class_library_disc.Models.Sql;
 using Isopoh.Cryptography.Argon2;
 using System.Text;
 
@@ -11,21 +12,20 @@ namespace backend_disc.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IUserRepository _userRepository;
-
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private static readonly Random _random = new();
         private static readonly object _randomLock = new();
         private readonly IMapper _mapper;
         private readonly ILogger<EmployeeService> _logger;
         private readonly IEmployeeRepositoryFactory _factory;
+        private readonly IGenericRepositoryFactory _genFactory;
 
-        public EmployeeService(IUserRepository userRepository,
+
+        public EmployeeService(IGenericRepositoryFactory genFactory,
             IMapper mapper, ILogger<EmployeeService> logger,
-            IEmployeeRepositoryFactory factory,
-            IGenericRepositoryFactory genericFactory)
+            IEmployeeRepositoryFactory factory)
         {
-            _userRepository = userRepository;
+            _genFactory = genFactory;
             _mapper = mapper;
             _logger = logger;
             _factory = factory;
@@ -47,7 +47,7 @@ namespace backend_disc.Services
                     throw new ArgumentException("First name and last name are required");
 
                 Dictionary<string, string> usernameWorkMailAndPhone =
-                    await GenerateUsernameWorkMailAndPhone(repo, dto.FirstName, dto.LastName);
+                    await GenerateUsernameWorkMailAndPhone(repo, dto.FirstName, dto.LastName, dbType);
 
                 dto.WorkEmail = usernameWorkMailAndPhone["workEmail"];
                 dto.WorkPhone = usernameWorkMailAndPhone["phoneNumber"];
@@ -103,8 +103,11 @@ namespace backend_disc.Services
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <returns>Dictionary<string, string></returns>
-        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo,string firstName, string lastName)
+        internal async Task<Dictionary<string, string>> GenerateUsernameWorkMailAndPhone(IEmployeesRepository repo,string firstName, string lastName, string dbType)
         {
+            var userRepo = _genFactory.GetRepository<User>(dbType);
+            var _userRepository = (userRepo as IUserRepository)!;//! to romove posible null reff warning
+
 
             string username;
             bool usernameAlreadyExists;
