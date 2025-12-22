@@ -63,13 +63,14 @@ namespace backend_disc.Services.Tests
             };
 
             _mockUserRepository.Setup(x => x.UsernameExists(It.IsAny<string>())).ReturnsAsync(false);
+            _mockGenericFactory.Setup(x => x.GetRepository<User>(It.IsAny<string>())).Returns(_mockUserRepository.Object);
             _mockEmployeeRepository.Setup(x => x.PhoneNumExists(It.IsAny<string>())).ReturnsAsync(false);
 
             var getAllReturn = (employees, employees.Count);
             _mockEmployeeRepository.Setup(x => x.GetAll(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(getAllReturn);
 
 
-            _employeeService = new EmployeeService(_mockUserRepository.Object, _mockMapper.Object, NullLogger<EmployeeService>.Instance, _mockEmployeeRepositoryFactory.Object, _mockGenericFactory.Object);
+            _employeeService = new EmployeeService(_mockGenericFactory.Object, _mockMapper.Object, NullLogger<EmployeeService>.Instance, _mockEmployeeRepositoryFactory.Object);
 
             _validDtoEmployee = new CreateNewEmployee()
             {
@@ -116,7 +117,7 @@ namespace backend_disc.Services.Tests
 
             for (int i = 0; i < length; i++)
             {
-                var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object ,firstName, lastName);
+                var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object ,firstName, lastName, db);
                 string username = result["username"];
                 int digitCountUsername = username.Count(char.IsDigit);
                 string phoneNumber = result["phoneNumber"];
@@ -153,7 +154,7 @@ namespace backend_disc.Services.Tests
         [DataRow("Anna", "Williams")]
         public async Task GenerateUsernameWorkMailAndPhone_DictionaryStructure(string firstName, string lastName)
         {
-            var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, firstName, lastName);
+            var result = await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, firstName, lastName, db);
             string username = result["username"];
             string phoneNumber = result["phoneNumber"];
             string workEmail = result["workEmail"];
@@ -179,7 +180,7 @@ namespace backend_disc.Services.Tests
             string fName = "Bob";
             string lName = "Marley";
             await Assert.ThrowsExceptionAsync<InvalidOperationException>(
-                async () => await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, fName, lName)
+                async () => await _employeeService.GenerateUsernameWorkMailAndPhone(_mockEmployeeRepository.Object, fName, lName, db)
             );
         }
         [TestMethod()]

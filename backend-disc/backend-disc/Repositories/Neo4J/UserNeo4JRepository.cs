@@ -91,9 +91,28 @@ namespace backend_disc.Repositories.Neo4J
             throw new NotImplementedException();
         }
 
-        public Task<bool> UsernameExists(string username)
+        public async Task<bool> UsernameExists(string username)
         {
-            throw new NotImplementedException();
+            var session = _driver.AsyncSession(o => o.WithDatabase(dbName));
+            try
+            {
+                return await session.ExecuteReadAsync(async tx =>
+                {
+                    var query = "MATCH (u:User {username: $username}) RETURN COUNT(u) > 0 AS exists";
+                    var cursor = await tx.RunAsync(query, new { username });
+
+                    if (await cursor.FetchAsync())
+                    {
+                        return cursor.Current["exists"].As<bool>();
+                    }
+
+                    return false;
+                });
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
         }
     }
 }
