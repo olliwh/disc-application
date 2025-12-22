@@ -18,9 +18,9 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto, [FromQuery] string db = "mssql")
         {
-            var result = await _authService.Login(dto);
+            var result = await _authService.Login(dto, db);
             if(result == null)
             {
                 return Unauthorized("Invalid username or password.");

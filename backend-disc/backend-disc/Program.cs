@@ -111,20 +111,24 @@ builder.Services.AddScoped<IGenericService<PositionDto, CreatePositionDto, Updat
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 builder.Services.AddScoped<IGenericRepositoryFactory, GenericRepositoryFactory>();
-builder.Services.AddScoped(typeof(GenericRepository<>));
-
-builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
 builder.Services.AddScoped<IEmployeeRepositoryFactory, EmployeeRepositoryFactory>();
+
+// --- Standard/Default Registrations (SQL) ---
+builder.Services.AddScoped(typeof(GenericRepository<>));
+builder.Services.AddScoped<IEmployeesRepository, EmployeesRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<EmployeesRepository>();
-builder.Services.AddScoped<EmployeesMongoRepository>();
-builder.Services.AddScoped<EmployeesNeo4JRepository>();
-builder.Services.AddScoped<IGenericRepository<Department>, DepartmentsNeo4JRepository>();
-builder.Services.AddScoped<IGenericRepository<DiscProfile>, DiscProfilesNeo4JRepository>();
-builder.Services.AddScoped<IGenericRepository<Position>, PositionsNeo4JRepository>();
-builder.Services.AddScoped<IGenericRepository<Department>, DepartmentsMongoRepository>();
-builder.Services.AddScoped<IGenericRepository<DiscProfile>, DiscProfilesMongoRepository>();
-builder.Services.AddScoped<IGenericRepository<Position>, PositionsMongoRepository>();
+// --- Neo4j Registrations ---
+builder.Services.AddKeyedScoped<IGenericRepository<Department>, DepartmentsNeo4JRepository>("neo4j");
+builder.Services.AddKeyedScoped<IGenericRepository<DiscProfile>, DiscProfilesNeo4JRepository>("neo4j");
+builder.Services.AddKeyedScoped<IGenericRepository<Position>, PositionsNeo4JRepository>("neo4j");
+builder.Services.AddKeyedScoped<IUserRepository, UserNeo4JRepository>("neo4j");
+builder.Services.AddKeyedScoped<IEmployeesRepository, EmployeesNeo4JRepository>("neo4j");
+// --- MongoDB Registrations ---
+builder.Services.AddKeyedScoped<IGenericRepository<Department>, DepartmentsMongoRepository>("mongodb");
+builder.Services.AddKeyedScoped<IGenericRepository<DiscProfile>, DiscProfilesMongoRepository>("mongodb");
+builder.Services.AddKeyedScoped<IGenericRepository<Position>, PositionsMongoRepository>("mongodb");
+builder.Services.AddKeyedScoped<IUserRepository, UserMongoRepository>("mongodb");
+builder.Services.AddKeyedScoped<IEmployeesRepository, EmployeesMongoRepository>("mongodb");
 
 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();

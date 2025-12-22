@@ -74,7 +74,8 @@ internal class MigrateToMongo
             EmployeeId = user.EmployeeId,
             Username = user.Username,
             PasswordHash = user.PasswordHash,
-            RequiresReset = user.RequiresReset
+            RequiresReset = user.RequiresReset,
+            UserRoleId = user.UserRoleId
         }).ToList();
 
         await usersCollection.InsertManyAsync(userDocuments);

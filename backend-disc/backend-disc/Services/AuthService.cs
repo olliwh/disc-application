@@ -1,5 +1,7 @@
 ﻿using backend_disc.Dtos.Auth;
+using backend_disc.Factories;
 using backend_disc.Repositories;
+using class_library_disc.Models.Sql;
 using Isopoh.Cryptography.Argon2;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,23 +13,29 @@ namespace backend_disc.Services
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _config;
-        private readonly IUserRepository _userRepository;
         private readonly ILogger<AuthService> _logger;
+        private readonly IGenericRepositoryFactory _factory;
 
         public AuthService(
             IConfiguration config,
-            IUserRepository userRepository,
+            IGenericRepositoryFactory factory,
             ILogger<AuthService> logger)
         {
             _config = config;
-            _userRepository = userRepository;
             _logger = logger;
+            _factory = factory;
         }
 
-        public async Task<LoginResponseDto?> Login(LoginDto dto)
+        public async Task<LoginResponseDto?> Login(LoginDto dto, string db)
         {
+            var repo = _factory.GetRepository<User>(db);
             try
             {
+                var _userRepository = repo as IUserRepository;
+                if (_userRepository == null)
+                {
+                    return null;
+                }
                 var user = await _userRepository.GetUserByUsername(dto.Username);
 
                 if (user == null)
