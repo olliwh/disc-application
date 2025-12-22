@@ -1,4 +1,3 @@
-using Seeder.Data;
 using Neo4j.Driver;
 
 namespace Seeder.Services;

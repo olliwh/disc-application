@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using backend_disc.Dtos.Employees;
 using backend_disc.Factories;
-using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Models.Sql;

@@ -1,7 +1,5 @@
 ﻿using class_library_disc.Models.Sql;
 using Neo4j.Driver;
-using System.Drawing;
-using System.Xml.Linq;
 
 namespace backend_disc.Repositories.Neo4J
 {
@@ -56,10 +54,16 @@ namespace backend_disc.Repositories.Neo4J
                         color = entity.Color
                     };
 
+                    //cursor is a pointer to the results thats commong back
                     var cursor = await tx.RunAsync(createQuery, parameters);
-                    var record = await cursor.SingleAsync();
+                    if (await cursor.FetchAsync())
+                    {
+                        //expects one record to be returned else tt will throw an InvalidOperationException 
+                        var record = cursor.Current;
+                        return MapNode(record["d"].As<INode>().Properties);
+                    }
+                    return null;
 
-                    return MapNode(record["d"].As<INode>().Properties);
                 });
             }
             catch (Exception ex)

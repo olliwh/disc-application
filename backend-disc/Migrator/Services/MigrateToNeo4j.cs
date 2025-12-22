@@ -1,5 +1,4 @@
-﻿using class_library_disc.Models.Sql;
-using Migrator.Data;
+﻿using Migrator.Data;
 
 
 namespace Migrator.Services

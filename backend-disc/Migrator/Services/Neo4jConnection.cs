@@ -1,4 +1,3 @@
-using Migrator.Data;
 using Neo4j.Driver;
 
 namespace Migrator.Services;

@@ -1,7 +1,6 @@
 ﻿using class_library_disc.Models.Mongo;
 using class_library_disc.Models.Sql;
 using MongoDB.Driver;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace backend_disc.Repositories.Mongo
 {

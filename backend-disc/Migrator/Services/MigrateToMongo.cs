@@ -1,8 +1,6 @@
 ﻿using class_library_disc.Models.Mongo;
-using class_library_disc.Models.Sql;
 using Migrator.Data;
 using MongoDB.Driver;
-using System.Runtime.Intrinsics.Arm;
 
 namespace Migrator.Services;
 

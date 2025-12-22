@@ -1,6 +1,5 @@
 ﻿using class_library_disc.Models.Sql;
 using Neo4j.Driver;
-using System.Xml.Linq;
 
 namespace backend_disc.Repositories.Neo4J
 {

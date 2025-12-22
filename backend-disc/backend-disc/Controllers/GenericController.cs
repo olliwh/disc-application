@@ -1,8 +1,6 @@
 ﻿using backend_disc.Dtos.BaseDtos;
-using backend_disc.Repositories;
 using backend_disc.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend_disc.Controllers

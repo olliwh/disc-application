@@ -1,5 +1,4 @@
-﻿using class_library_disc.Models.Sql;
-using Seeder.Data;
+﻿using Seeder.Data;
 
 
 namespace Seeder.Services

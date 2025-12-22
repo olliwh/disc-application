@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace backend_disc.Models
+﻿namespace backend_disc.Models
 {
     public class PaginatedList<T>
     {

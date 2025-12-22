@@ -1,6 +1,5 @@
 ﻿using class_library_disc.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace backend_disc.Repositories
 {
@@ -15,7 +14,7 @@ namespace backend_disc.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<T> Add(T entity)
+        public async Task<T?> Add(T entity)
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();

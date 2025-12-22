@@ -1,5 +1,4 @@
-﻿using backend_disc.Models;
-using backend_disc.Repositories.StoredProcedureParams;
+﻿using backend_disc.Repositories.StoredProcedureParams;
 using class_library_disc.Models.Sql;
 
 namespace backend_disc.Repositories

@@ -2,8 +2,6 @@
 using backend_disc.Dtos.BaseDtos;
 using backend_disc.Factories;
 using backend_disc.Models;
-using backend_disc.Repositories;
-using System.Data;
 
 namespace backend_disc.Services
 {

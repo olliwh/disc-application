@@ -112,8 +112,6 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 builder.Services.AddScoped<IGenericRepositoryFactory, GenericRepositoryFactory>();
 builder.Services.AddScoped(typeof(GenericRepository<>));
-builder.Services.AddScoped(typeof(GenericMongoRepository<>));
-builder.Services.AddScoped(typeof(GenericNeo4JRepository<>));
 
 builder.Services.AddScoped<IEmployeesRepository, EmployeesMongoRepository>();
 builder.Services.AddScoped<IEmployeeRepositoryFactory, EmployeeRepositoryFactory>();

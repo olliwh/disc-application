@@ -1,6 +1,5 @@
 ﻿using backend_disc.Dtos.Auth;
 using backend_disc.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend_disc.Controllers

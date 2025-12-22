@@ -1,6 +1,4 @@
 ﻿using backend_disc.Repositories;
-using backend_disc.Repositories.Mongo;
-using backend_disc.Repositories.Neo4J;
 
 namespace backend_disc.Factories
 {

@@ -4,9 +4,7 @@ using backend_disc.Factories;
 using backend_disc.Models;
 using backend_disc.Repositories;
 using backend_disc.Repositories.StoredProcedureParams;
-using class_library_disc.Models.Sql;
 using Isopoh.Cryptography.Argon2;
-using Neo4j.Driver;
 using System.Text;
 
 namespace backend_disc.Services
@@ -14,7 +12,6 @@ namespace backend_disc.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IGenericRepositoryFactory _genericFactory;
 
         private readonly string DEFAULT_IMAGE_PATH = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
         private static readonly Random _random = new();
@@ -32,7 +29,6 @@ namespace backend_disc.Services
             _mapper = mapper;
             _logger = logger;
             _factory = factory;
-            _genericFactory = genericFactory;
         }
 
         /// <summary>
