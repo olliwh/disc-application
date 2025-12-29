@@ -129,21 +129,26 @@ internal class MigrateToMongo
             WorkEmail = employee.WorkEmail,
             WorkPhone = employee.WorkPhone ?? "",
             ImagePath = employee.ImagePath,
-            DiscProfileId = employee.DiscProfileId,
+            DiscProfile = employee.DiscProfile != null ? new DiscProfileMongo
+            {
+                DiscProfileId = employee.DiscProfile.Id,
+                Name = employee.DiscProfile.Name,
+                Color = employee.DiscProfile.Color,
+                Description = employee.DiscProfile.Description
+            } : null, 
             PrivateEmail = employee.EmployeePrivateDatum?.PrivateEmail ?? "",
             PrivatePhone = employee.EmployeePrivateDatum?.PrivatePhone ?? "",
             UserRoleId = employee.User?.UserRoleId ?? 0,
             CurrentProjectIds = employee.EmployeesProjects
-                .Where(ep => ep.CurrentlyWorkingOn)
-                .Select(ep => (int?)ep.ProjectId)
-                .ToList(),
+        .Where(ep => ep.CurrentlyWorkingOn)
+        .Select(ep => (int?)ep.ProjectId)
+        .ToList(),
             DepartmentId = employee.DepartmentId,
             PositionId = employee.PositionId,
         }).ToList();
 
         await employeesCollection.InsertManyAsync(employeeDocuments);
         Console.WriteLine($"Created {employeeDocuments.Count} {collectionName} in MongoDB");
-
     }
 
     public async Task MigrateProjectsAsync(FetchedData data)

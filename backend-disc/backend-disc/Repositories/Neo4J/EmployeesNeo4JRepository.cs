@@ -53,46 +53,53 @@ namespace backend_disc.Repositories.Neo4J
                 if (positionId.HasValue) parameters["positionId"] = positionId.Value;
 
                 var baseQuery = string.Join("\n", matchClauses);
-                var countQuery = $"{baseQuery}\nRETURN count(e) AS totalCount";
-                var dataQuery = $"{baseQuery}\nRETURN e, d, dp, p\nORDER BY e.id ASC\nSKIP $skip LIMIT $limit";
+                var unifiedQuery = $@"
+                    {baseQuery}
+                    WITH count(e) AS totalCount, collect({{e: e, d: d, dp: dp, p: p}}) AS allResults
+                    UNWIND allResults AS result
+                    WITH totalCount, result.e AS e, result.d AS d, result.dp AS dp, result.p AS p
+                    ORDER BY e.id ASC
+                    SKIP $skip LIMIT $limit
+                    RETURN e, d, dp, p, totalCount";
 
                 return await session.ExecuteReadAsync(async tx =>
                 {
-                    var countResult = await tx.RunAsync(countQuery, parameters);
-                    var countRecord = await countResult.SingleAsync();
-                    var totalCount = countRecord["totalCount"].As<int>();
-
-                    var dataResult = await tx.RunAsync(dataQuery, parameters);
+                    var dataResult = await tx.RunAsync(unifiedQuery, parameters);
                     var records = await dataResult.ToListAsync();
+
                     var employees = new List<Employee>();
-
-                    foreach (var record in records)
+                    int totalCount = 0;
+                    if (records.Any())
                     {
-                        var eNode = record["e"].As<INode>();
-                        var dNode = record["d"] as INode;
-                        var dpNode = record["dp"] as INode;
-                        var pNode = record["p"] as INode;
-
-                        employees.Add(new Employee
+                        totalCount = records[0]["totalCount"].As<int>();
+                        foreach (var record in records)
                         {
-                            Id = eNode["id"].As<int>(),
-                            FirstName = eNode["first_name"].As<string>(),
-                            LastName = eNode["last_name"].As<string>(),
-                            WorkEmail = eNode["work_email"].As<string>(),
-                            WorkPhone = eNode["work_phone"].As<string>(),
-                            ImagePath = eNode["image_path"].As<string>(),
+                            var eNode = record["e"].As<INode>();
+                            var dNode = record["d"] as INode;
+                            var dpNode = record["dp"] as INode;
+                            var pNode = record["p"] as INode;
 
-                            DepartmentId = dNode?["id"].As<int?>() ?? 0,
-                            PositionId = pNode?["id"].As<int?>(),
-                            DiscProfileId = dpNode?["id"].As<int?>(),
-
-                            DiscProfile = dpNode == null ? null : new DiscProfile
+                            employees.Add(new Employee
                             {
-                                Id = dpNode["id"].As<int>(),
-                                Name = dpNode["name"].As<string>(),
-                                Color = dpNode["color"].As<string>()
-                            }
-                        });
+                                Id = eNode["id"].As<int>(),
+                                FirstName = eNode["first_name"].As<string>(),
+                                LastName = eNode["last_name"].As<string>(),
+                                WorkEmail = eNode["work_email"].As<string>(),
+                                WorkPhone = eNode["work_phone"].As<string>(),
+                                ImagePath = eNode["image_path"].As<string>(),
+
+                                DepartmentId = dNode?["id"].As<int?>() ?? 0,
+                                PositionId = pNode?["id"].As<int?>(),
+                                DiscProfileId = dpNode?["id"].As<int?>(),
+
+                                DiscProfile = dpNode == null ? null : new DiscProfile
+                                {
+                                    Id = dpNode["id"].As<int>(),
+                                    Name = dpNode["name"].As<string>(),
+                                    Color = dpNode["color"].As<string>()
+                                }
+                            });
+                        }
                     }
                     return (employees, totalCount);
                 });

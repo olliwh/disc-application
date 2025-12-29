@@ -145,7 +145,7 @@ namespace backend_disc.Repositories
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string normalizedSearch = search.Trim().ToLower();
+                string normalizedSearch = search.Trim();
                 query = query.Where(e =>
                     e.FirstName.ToLower().Contains(normalizedSearch) ||
                     e.LastName.ToLower().Contains(normalizedSearch)
@@ -160,13 +160,6 @@ namespace backend_disc.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                string normalizedSearch = search.Trim().ToLower();
-                employees = employees
-                    .Where(e => (e.FirstName + " " + e.LastName).ToLower().Contains(normalizedSearch))
-                    .ToList();
-            }
             return (employees, employeesTotalCount);
         }
 

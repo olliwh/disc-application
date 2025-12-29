@@ -102,7 +102,8 @@ namespace backend_disc.Repositories.Mongo
                 var filter = Builders<UserMongo>.Filter.Eq(d => d.Username, username);
                 var result = await _usersCollection.Find(filter).FirstOrDefaultAsync();
 
-                return result == null;
+                if( result == null) return false;
+                return true;
             }
             catch (Exception ex)
             {
