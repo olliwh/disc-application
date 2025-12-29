@@ -79,8 +79,8 @@ namespace class_library_disc.Models.Mongo
         [BsonElement("private_phone")]
         public string PrivatePhone { get; set; } = null!;
 
-        [BsonElement("disc_profile_id")]
-        public int? DiscProfileId { get; set; }
+        [BsonElement("disc_profile")]
+        public DiscProfileMongo? DiscProfile { get; set; } 
 
         [BsonElement("department_id")]
         public int DepartmentId { get; set; }

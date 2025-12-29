@@ -202,7 +202,7 @@ namespace backend_disc.Services
                 ImagePath = e.ImagePath,
                 PositionId = e.PositionId,
                 DepartmentId = e.DepartmentId,
-                DiscProfileId = e.DiscProfileId,
+                DiscProfileId = e.DiscProfile?.Id,
             }).ToList();
 
 

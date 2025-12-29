@@ -31,6 +31,12 @@ namespace backend_disc.Repositories.Mongo
         {
             var random = new Random();
             var uniqueId = random.Next(1, int.MaxValue);
+            DiscProfileMongo? discProfile = null;
+            if (p.DiscProfileId != null)
+            {
+                var cursor = await _discProfilesCollection.FindAsync(dp => dp.DiscProfileId == p.DiscProfileId);
+                discProfile = await cursor.FirstOrDefaultAsync();
+            }
             EmployeeMongo newEmp = new EmployeeMongo()
             {
                 EmployeeId = uniqueId,
@@ -42,7 +48,7 @@ namespace backend_disc.Repositories.Mongo
                 PrivatePhone = p.PrivatePhone,
                 PositionId = p.PositionId,
                 DepartmentId = p.DepartmentId,
-                DiscProfileId = p.DiscProfileId,
+                DiscProfile = discProfile,
                 ImagePath = p.ImagePath,
                 UserRoleId = p.UserRoleId,
             };
@@ -72,7 +78,7 @@ namespace backend_disc.Repositories.Mongo
                 WorkPhone = newEmp.WorkPhone,
                 DepartmentId = newEmp.DepartmentId,
                 PositionId = newEmp.PositionId,
-                DiscProfileId = newEmp.DiscProfileId,
+                DiscProfileId = newEmp.DiscProfile?.DiscProfileId,
             };
             return employee;
 
@@ -105,7 +111,7 @@ namespace backend_disc.Repositories.Mongo
 
                 if (discProfileId.HasValue)
                 {
-                    filters.Add(filterBuilder.Eq(e => e.DiscProfileId, discProfileId.Value));
+                    filters.Add(filterBuilder.Eq("disc_profile.disc_profile_id", discProfileId.Value));
                 }
 
                 if (positionId.HasValue)
@@ -135,18 +141,9 @@ namespace backend_disc.Repositories.Mongo
                     .Limit(pageSize)
                     .ToListAsync();
 
-                var discProfiles = await _discProfilesCollection
-                    .Find(FilterDefinition<DiscProfileMongo>.Empty)
-                    .ToListAsync();
-
-                var discProfileMap = discProfiles.ToDictionary(dp => dp.DiscProfileId, dp => dp);
 
                 var employees = mongoEmployees.Select(me => 
                 {
-                    var discProfile = me.DiscProfileId.HasValue && discProfileMap.ContainsKey(me.DiscProfileId.Value)
-                        ? discProfileMap[me.DiscProfileId.Value]
-                        : null;
-
                     return new Employee
                     {
                         Id = me.EmployeeId,
@@ -157,12 +154,11 @@ namespace backend_disc.Repositories.Mongo
                         ImagePath = me.ImagePath,
                         DepartmentId = me.DepartmentId,
                         PositionId = me?.PositionId,
-                        DiscProfileId = me?.DiscProfileId,
-                        DiscProfile = discProfile != null ? new DiscProfile
+                        DiscProfile = me?.DiscProfile != null ? new DiscProfile
                         {
-                            Id = discProfile.DiscProfileId,
-                            Name = discProfile.Name,
-                            Color = discProfile.Color
+                            Id = me.DiscProfile.DiscProfileId,
+                            Name = me.DiscProfile.Name,
+                            Color = me.DiscProfile.Color
                         } : null
                     };
                 }).ToList();
@@ -181,13 +177,11 @@ namespace backend_disc.Repositories.Mongo
             EmployeeMongo employeeMongo = await _employeesCollection.Find(e=>e.EmployeeId == id).FirstOrDefaultAsync();
             if (employeeMongo == null) return null;
             var userTask = _usersCollection.Find(u => u.EmployeeId == id).FirstOrDefaultAsync();
-            var dpTask = _discProfilesCollection.Find(dp => dp.DiscProfileId == employeeMongo.DiscProfileId).FirstOrDefaultAsync();
             var posTask = _positionssCollection.Find(p => p.PositionId == employeeMongo.PositionId).FirstOrDefaultAsync();
             var depTask = _departmentsCollection.Find(d => d.DepartmentId == employeeMongo.DepartmentId).FirstOrDefaultAsync();
 
-            await Task.WhenAll(userTask, dpTask, posTask, depTask);
+            await Task.WhenAll(userTask, posTask, depTask);
             var userMongo = await userTask;
-            var dp = await dpTask;
             var pos = await posTask;
             var dep = await depTask;
 
@@ -198,8 +192,8 @@ namespace backend_disc.Repositories.Mongo
                 WorkEmail = employeeMongo.WorkEmail,
                 WorkPhone = employeeMongo.WorkPhone,
                 ImagePath = employeeMongo.ImagePath,
-                DiscProfileName = dp.Name,
-                DiscProfileColor = dp.Color,
+                DiscProfileName = employeeMongo.DiscProfile?.Name,
+                DiscProfileColor = employeeMongo.DiscProfile?.Color,
                 Username = userMongo.Username,
                 PositionName = pos.Name,
                 DepartmentName = dep.Name,

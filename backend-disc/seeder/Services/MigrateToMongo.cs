@@ -129,7 +129,13 @@ internal class MigrateToMongo
             WorkEmail = employee.WorkEmail,
             WorkPhone = employee.WorkPhone ?? "",
             ImagePath = employee.ImagePath,
-            DiscProfileId = employee.DiscProfileId,
+            DiscProfile = employee.DiscProfile != null ? new DiscProfileMongo
+            {
+                DiscProfileId = employee.DiscProfile.Id,
+                Name = employee.DiscProfile.Name,
+                Color = employee.DiscProfile.Color,
+                Description = employee.DiscProfile.Description
+            } : null,
             PrivateEmail = employee.EmployeePrivateDatum?.PrivateEmail ?? "",
             PrivatePhone = employee.EmployeePrivateDatum?.PrivatePhone ?? "",
             UserRoleId = employee.User?.UserRoleId ?? 0,
