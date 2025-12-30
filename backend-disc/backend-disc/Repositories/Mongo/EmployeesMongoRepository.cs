@@ -121,9 +121,13 @@ namespace backend_disc.Repositories.Mongo
 
                 if (!string.IsNullOrWhiteSpace(search))
                 {
+                    string searchTerm = search.Trim();
+                    var pattern = $"^{searchTerm}";
+                    var regex = new MongoDB.Bson.BsonRegularExpression(pattern, "i");
+
                     var searchFilter = filterBuilder.Or(
-                        filterBuilder.Regex(e => e.FirstName, new MongoDB.Bson.BsonRegularExpression(search, "i")),
-                        filterBuilder.Regex(e => e.LastName, new MongoDB.Bson.BsonRegularExpression(search, "i"))
+                        filterBuilder.Regex(e => e.FirstName, regex),
+                        filterBuilder.Regex(e => e.LastName, regex)
                     );
                     filters.Add(searchFilter);
                 }
