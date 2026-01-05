@@ -33,7 +33,8 @@ namespace backend_disc.Repositories.Neo4J
 
                 if (!string.IsNullOrWhiteSpace(search))
                 {
-                    matchClauses.Add("WHERE (toLower(e.first_name) CONTAINS toLower($search) OR toLower(e.last_name) CONTAINS toLower($search))");
+                    matchClauses.Add("WHERE (toLower(e.first_name) STARTS WITH toLower($search) " +
+                     "OR toLower(e.last_name) STARTS WITH toLower($search))");
                     parameters["search"] = search;
                 }
 

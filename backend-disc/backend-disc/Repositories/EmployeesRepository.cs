@@ -145,11 +145,9 @@ namespace backend_disc.Repositories
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string normalizedSearch = search.Trim();
-                query = query.Where(e =>
-                    e.FirstName.ToLower().Contains(normalizedSearch) ||
-                    e.LastName.ToLower().Contains(normalizedSearch)
-                );
+                string searchTerm = search.Trim();
+                query = query.Where(e => e.FirstName.StartsWith(searchTerm) ||
+                                 e.LastName.StartsWith(searchTerm));
             }
 
             int employeesTotalCount = await query.CountAsync();
