@@ -40,7 +40,8 @@ namespace backend_disc.Services
 
                 if (user == null)
                 {
-                    _logger.LogWarning("Login attempt failed: User not found - {Username}", dto.Username);
+                    _logger.LogError("Password verification failed for user {Username}", dto.Username);
+
                     return null;
                 }
 
@@ -57,7 +58,8 @@ namespace backend_disc.Services
 
                 if (!isPasswordValid)
                 {
-                    _logger.LogWarning("Login attempt failed: Invalid password - {Username} pa - {Password}", dto.Username, dto.Password);
+                    _logger.LogError("Password verification failed for user {Username}", dto.Username);
+
                     return null;
                 }
 
