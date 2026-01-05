@@ -1,7 +1,4 @@
 import { useState } from "react";
-import type { UseQueryResult } from "@tanstack/react-query";
-import type { Response } from "../../services/api-client";
-
 
 import {
   Box,
@@ -13,6 +10,9 @@ import {
   ListItem,
   Spinner,
 } from "@chakra-ui/react";
+import type { UseQueryResult } from "@tanstack/react-query";
+
+import type { Response } from "../../services/api-client";
 
 interface CustomListProps<T> {
   title: string;
@@ -29,12 +29,18 @@ const CustomList = <T extends { id: number; name: string }>({
   const [isExpanded, setIsExpanded] = useState(false);
   const { data, error, isLoading } = useDataHook();
   const items = data?.items;
-  const displayedItems = isExpanded ? items : (items ?? []).slice(0, 5);//mayby wrong
+  const displayedItems = isExpanded ? items : (items ?? []).slice(0, 5); //mayby wrong
   if (error) return null;
   if (isLoading) return <Spinner />;
   return (
     <Box padding={4}>
-      <Heading fontSize="2xl">{title}</Heading>
+      <Heading
+        fontSize="2xl"
+        onClick={() => onSelectItem(undefined)}
+        cursor="pointer"
+      >
+        {title}
+      </Heading>
       <List>
         {displayedItems?.map((item) => (
           <ListItem key={item.id} paddingY="5px">
