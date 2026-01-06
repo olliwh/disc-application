@@ -30,13 +30,10 @@ namespace backend_disc.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public virtual async Task<IActionResult> GetAll([FromQuery] int? departmentId = null,
             [FromQuery] string db = "mssql",
-            [FromQuery] int? discProfileId = null,
-            [FromQuery] int? positionId = null,
-            [FromQuery] string? search = null,
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10)
         {
-            var entities = await _service.GetAllAsync(departmentId, discProfileId, positionId, search, pageIndex, pageSize, db);
+            var entities = await _service.GetAllAsync(pageIndex, pageSize, db);
             return Ok(entities);
         }
 

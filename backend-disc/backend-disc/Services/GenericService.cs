@@ -21,7 +21,7 @@ namespace backend_disc.Services
             _mapper = mapper;
         }
 
-        public async Task<PaginatedList<TDto>> GetAllAsync(int? departmentId, int? discProfileId, int? positionId, string? search, int pageIndex, int pageSize, string db)
+        public async Task<PaginatedList<TDto>> GetAllAsync(int pageIndex, int pageSize, string db)
         {
             var repo = _factory.GetRepository<TEntity>(db);
 
